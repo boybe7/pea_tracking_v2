@@ -261,10 +261,10 @@ if(!Yii::app()->user->isGuest)
 {
   
   Yii::import('application.controllers.NotifyController');
-  $num = notify::model()->getNotify();
+  ///$num = notify::model()->getNotify();
   
-  //$obj =new NotifyController(); // preparing object
-  //$obj->getNotify();
+  $num = NotifyController::gnotify(1); // preparing object
+  
  $badge= '';
  ///$num = 0;
  if($num>0) 
