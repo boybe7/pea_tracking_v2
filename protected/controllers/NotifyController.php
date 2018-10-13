@@ -137,7 +137,7 @@ class NotifyController extends Controller
 		$model->unsetAttributes();  // clear any default values
 		
 		$this->render('index',array(
-			'model'=>$model,'records'=>$this->notify()
+			'model'=>$model,'records'=>$this->gnotify()
 		));
 	}
 
