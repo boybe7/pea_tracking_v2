@@ -194,6 +194,9 @@
        <div class="span4">
        <?php echo $form->textFieldRow($model,'invoice_alarm',array('class'=>'span12','maxlength'=>3)); ?>
        </div>
+       <div class="span4">
+       <?php echo $form->textFieldRow($model,'invoice_alarm2',array('class'=>'span12','maxlength'=>3)); ?>
+       </div>
   </div>
 	<div class="row-fluid">       
        <div class="span4">

@@ -36,11 +36,11 @@ class PaymentProjectContract extends CActiveRecord
 		return array(
 			array('proj_id,invoice_alarm, invoice_no, invoice_date, user_create, user_update', 'required'),
 			array('proj_id, user_create, user_update,T,A', 'numerical', 'integerOnly'=>true),
-			array('money,invoice_alarm', 'numerical'),
+			array('money,invoice_alarm,invoice_alarm2', 'numerical'),
 			array('invoice_no, bill_no', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, proj_id,T,A, detail,invoice_alarm, money, invoice_no, invoice_date, bill_no, bill_date, user_create, user_update, last_update', 'safe', 'on'=>'search,update,delete'),
+			array('id, proj_id,T,A, detail,invoice_alarm,invoice_alarm2, money, invoice_no, invoice_date, bill_no, bill_date, user_create, user_update, last_update', 'safe', 'on'=>'search,update,delete'),
 		);
 	}
 
@@ -67,7 +67,8 @@ class PaymentProjectContract extends CActiveRecord
 			'money' => 'ได้รับเงิน',
 			'invoice_no' => 'เลขที่ใบแจ้งหนี้',
 			'invoice_date' => 'วันที่ออกใบแจ้งหนี้',
-			'invoice_alarm' => 'ชำระเงินภายใน (วัน)',
+			'invoice_alarm' => 'ชำระเงินภายใน (วัน) ครั้งที่ 1',
+			'invoice_alarm2' => 'ชำระเงินภายใน (วัน) ครั้งที่ 2',
 			'bill_no' => 'เลขที่ใบเสร็จรับเงิน',
 			'bill_date' => 'วันที่ได้รับใบเสร็จรับเงิน',
 			'user_create' => 'User Create',

@@ -35,31 +35,27 @@ $('.search-form form').submit(function(){
 
 <?php
 
-
-
-         
-		
- //echo count($records);
+/*
         $sort = new CSort;
         //$sort->defaultOrder = 'project DESC';
         $sort->defaultOrder = 'date_end ASC';
         $sort->attributes = array('project,contract,date_end,alarm_detail');
-$provAll = new CArrayDataProvider($records,
-    array(
-    	'keyField'=>false,  //don't have 'id' column
-    	'sort'=>$sort,
-        // 'sort' => array( //optional and sortring
-        //     'attributes' => array(
-        //         'project', 
-        //         'contract',
-        //         'date_end',
-        //         'alarm_detail',
-        //     ),
-        // ),
-        'pagination' => array('pageSize' => 10) //optional add a pagination
-    )
-);
-
+        $provAll = new CArrayDataProvider($records,
+            array(
+            	'keyField'=>false,  //don't have 'id' column
+            	'sort'=>$sort,
+                // 'sort' => array( //optional and sortring
+                //     'attributes' => array(
+                //         'project', 
+                //         'contract',
+                //         'date_end',
+                //         'alarm_detail',
+                //     ),
+                // ),
+                'pagination' => array('pageSize' => 10) //optional add a pagination
+            )
+        );
+*/
 
  $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
     'id'=>'search-form',
@@ -87,11 +83,12 @@ $provAll = new CArrayDataProvider($records,
 <?php $this->endWidget(); 
 
  $this->widget('bootstrap.widgets.TbGridView',array(
-	'id'=>'vendor-grid',
-	'dataProvider'=>$provAll,
+	'id'=>'notify-grid',
+	//'dataProvider'=>$provAll,
 	'type'=>'bordered condensed',
 	
-	//'filter'=>$model,
+	'dataProvider'=>$model->search(),
+    'filter'=>$model,
 	'selectableRows' =>2,
 	'htmlOptions'=>array('style'=>'padding-top:40px'),
     'enablePagination' => true,
@@ -102,7 +99,7 @@ $provAll = new CArrayDataProvider($records,
 		'proj'=>array(
 			    'name' => 'project',
 			    'header'=>$model->getAttributeLabel('project'),
-			    //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+			    'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
 				'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #f5f5f5'),  	            	  	
 				'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
 	  	),
@@ -115,8 +112,8 @@ $provAll = new CArrayDataProvider($records,
 	  	),	
 	  	'details'=>array(
 			    'name' => 'alarm_detail',
-			    'header'=>$model->getAttributeLabel('detail'),
-			    //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+			    'header'=>$model->getAttributeLabel('alarm_detail'),
+			    'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
 				'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #f5f5f5'),  	            	  	
 				'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
 	  	),

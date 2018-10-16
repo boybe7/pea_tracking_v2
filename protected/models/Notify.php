@@ -105,12 +105,12 @@ class Notify extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('project, contract, detail, date_end, url', 'required'),
+			array('project, contract, alarm_detail, date_end, url', 'required'),
 			array('project, contract', 'length', 'max'=>700),
 			array('url', 'length', 'max'=>500),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, project, contract, detail, date_end, url', 'safe', 'on'=>'search'),
+			array('id, project, contract, alarm_detail, date_end, url', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -134,7 +134,7 @@ class Notify extends CActiveRecord
 			'id' => 'ID',
 			'project' => 'โครงการ',
 			'contract' => 'สัญญา',
-			'detail' => 'รายละเอียด',
+			'alarm_detail' => 'ประเภทการเตือน',
 			'date_end' => 'วันที่ครบกำหนด',
 			'url' => 'link update',
 		);
@@ -161,12 +161,14 @@ class Notify extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('project',$this->project,true);
 		$criteria->compare('contract',$this->contract,true);
-		$criteria->compare('detail',$this->detail,true);
+		$criteria->compare('alarm_detail',$this->alarm_detail,true);
 		$criteria->compare('date_end',$this->date_end,true);
 		$criteria->compare('url',$this->url,true);
 
+		$sort = new CSort;
+        $sort->defaultOrder = 'date_end ASC';
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria'=>$criteria,'sort'=>$sort
 		));
 	}
 

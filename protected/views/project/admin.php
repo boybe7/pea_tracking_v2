@@ -124,7 +124,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 
  $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'vendor-grid',
-	'dataProvider'=>$model->search(),
 	'type'=>'bordered condensed',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
