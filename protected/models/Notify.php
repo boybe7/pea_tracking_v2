@@ -105,7 +105,7 @@ class Notify extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('project, contract, alarm_detail, date_end, url', 'required'),
+			//array('project, contract, alarm_detail, date_end, url', 'required'),
 			array('project, contract', 'length', 'max'=>700),
 			array('url', 'length', 'max'=>500),
 			// The following rule is used by search().

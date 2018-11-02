@@ -147,14 +147,19 @@ class NotifyController extends Controller
 	
 	public function actionIndex()
 	{
-		//if (!Yii::app()->request->isAjaxRequest)
-		//	$this->gnotify();
+
 
 		$model=new Notify("search");
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Notify']))
 			$model->attributes=$_GET['Notify'];
-		
+
+		if (Yii::app()->request->isAjaxRequest)
+		{
+			
+			  $model->project = $_GET['project'];
+		}
+
 		$this->render('index',array(
 			'model'=>$model//,'records'=>$this->gnotify()
 		));

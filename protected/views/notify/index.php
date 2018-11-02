@@ -16,18 +16,21 @@ $this->breadcrumbs=array(
 );
 
 
-Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-	$('.search-form').toggle();
-	return false;
-});
-$('.search-form form').submit(function(){
-	$.fn.yiiGridView.update('vendor-grid', {
-		data: $(this).serialize()
-	});
-	return false;
+Yii::app()->clientScript->registerScript('submitForm', "
+
+$('#search-form').submit(function(){
+
+    $('#Notify_project').val($('#project').val())
+    $.fn.yiiGridView.update('notify-grid', {
+        data: $(this).serialize()
+    });
+    return false;
+	
 });
 ");
+
+
+
 ?>
 
 <h1>ข้อมูลแจ้งเตือน</h1>
@@ -70,12 +73,33 @@ $('.search-form form').submit(function(){
 
     <div class="row-fluid">
         
-       <div class="span6"> 
-              
+       <div class="span4"> 
+              <?php
+
+                    echo CHtml::label('โครงการ','project');
+                   
+                    echo "<input type='text' class='span12' id='project' name='project' value='' >";
+                                
+              ?>
        </div>
         <div class="span3"> 
         </div>
         <div class="span3"> 
+            <?php
+                $this->widget('bootstrap.widgets.TbButton', array(
+                      'buttonType'=>'submit',
+                      
+                      'type'=>'info',
+                      'label'=>'search',
+                      'icon'=>'search white',
+                      
+                      'htmlOptions'=>array(
+                        'class'=>'span6',
+                        'style'=>'margin:25px 10px 0px 0px;',
+                        'id'=>'searchNotify'
+                      ),
+                  ));
+              ?>
         </div>
         
     </div>
