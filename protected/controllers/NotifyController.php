@@ -158,6 +158,7 @@ class NotifyController extends Controller
 		{
 			
 			  $model->project = $_GET['project'];
+			  $model->contract = $_GET['contract'];
 		}
 
 		$this->render('index',array(

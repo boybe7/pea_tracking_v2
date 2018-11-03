@@ -248,6 +248,11 @@ table tr .tr_white {
   background-color: #ffffff;
 }
 
+select, input[type="file"] {
+    height: 30px;
+    line-height: 30px;
+}
+
 </style>     
      
 <body class="body">

@@ -21,6 +21,7 @@ Yii::app()->clientScript->registerScript('submitForm', "
 $('#search-form').submit(function(){
 
     $('#Notify_project').val($('#project').val())
+    $('#Notify_contract').val($('#contract').val())
     $.fn.yiiGridView.update('notify-grid', {
         data: $(this).serialize()
     });
@@ -73,7 +74,7 @@ $('#search-form').submit(function(){
 
     <div class="row-fluid">
         
-       <div class="span4"> 
+       <div class="span3"> 
               <?php
 
                     echo CHtml::label('โครงการ','project');
@@ -82,7 +83,22 @@ $('#search-form').submit(function(){
                                 
               ?>
        </div>
+        <div class="span2"> 
+            <?php
+
+                    echo CHtml::label('สัญญา','contract');
+                   
+                    echo "<input type='text' class='span12' id='contract' name='contract' value='' >";
+                                
+              ?>
+        </div>
         <div class="span3"> 
+            <?php
+
+                    echo CHtml::label('ประเภทการเตือน','type');
+                   
+                    echo CHtml::dropDownList('type', '', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>''));                              
+              ?>
         </div>
         <div class="span3"> 
             <?php
@@ -130,7 +146,7 @@ $('#search-form').submit(function(){
 		'con'=>array(
 			    'name' => 'contract',
 			    'header'=>$model->getAttributeLabel('contract'),
-			    //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+			    'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
 				'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),  	            	  	
 				'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
 	  	),	
