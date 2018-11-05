@@ -82,13 +82,26 @@ class ProjectController extends Controller
 
     public function actionGetMProject(){
             $request=trim($_GET['term']);
+
+            
+
+           // header('Content-type: text/plain');
+           //                    print_r($search_str);                    
+            //               	  exit;
                     
             //$models=Project::model()->findAll(array("condition"=>"pj_name like '%$request%' AND pj_status=1"));
             $Criteria = new CDbCriteria();
 			$user_dept = Yii::app()->user->userdept;
 			$Criteria->join = 'LEFT JOIN user ON pj_user_create=user.u_id';
-			
-			$Criteria->condition = "pj_name like '%$request%' AND pj_status=1 AND department_id='$user_dept'";
+
+			//search by fiscal_year and pj_name
+            $search_str = preg_split('/\s+/', $request, -1, PREG_SPLIT_NO_EMPTY);
+            if(sizeof($search_str)==2)
+			{
+				$Criteria->condition = "(pj_fiscalyear LIKE '%$search_str[0]%' OR pj_name LIKE '%$search_str[0]%') AND (pj_fiscalyear LIKE '%$search_str[1]%' OR pj_name LIKE '%$search_str[1]%') AND pj_status=1 AND department_id='$user_dept'";
+			}
+			else
+				$Criteria->condition = "(pj_name like '%$request%' OR pj_fiscalyear LIKE '%$request%') AND pj_status=1 AND department_id='$user_dept'";
 			
 			$models = Project::model()->findAll($Criteria);
 
@@ -119,7 +132,7 @@ class ProjectController extends Controller
                 //$remain = 22;
                 $data[] = array(
                         'id'=>$model['pj_id'],
-                        'label'=>$workcat->wc_name." ปี ".$model->pj_fiscalyear.":".$model['pj_name'],//." ".$modelVendor->v_name,
+                        'label'=>$model['pj_id'].$workcat->wc_name." ปี ".$model->pj_fiscalyear.":".$model['pj_name'],//." ".$modelVendor->v_name,
                         'cost'=>number_format($cost_total,2),
                         'pay'=>number_format($pay_total,2),
                         'remain'=>number_format($remain,2),

@@ -10,6 +10,7 @@ $('.search-button').click(function(){
 	return false;
 });
 $('.search-form form').submit(function(){
+
 	$.fn.yiiGridView.update('management-cost-grid', {
 		data: $(this).serialize()
 	});
@@ -18,9 +19,9 @@ $('.search-form form').submit(function(){
 ");
 
 Yii::app()->clientScript->registerScript('search', "
-$('#search-form form').submit(function(){
-    //console.log($('#patient-grid input[name=firstname]','#patient-grid select[name=firstname]').val('x'));
-    
+$('#search-form').submit(function(){
+    alert('ok')
+  
     $.fn.yiiGridView.update('management-cost-grid', {
         data: $(this).serialize()
     });
