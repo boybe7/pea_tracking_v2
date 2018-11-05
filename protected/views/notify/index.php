@@ -22,6 +22,7 @@ $('#search-form').submit(function(){
 
     $('#Notify_project').val($('#project').val())
     $('#Notify_contract').val($('#contract').val())
+    $('#Notify_alarm_detail').val($('#type').val())
     $.fn.yiiGridView.update('notify-grid', {
         data: $(this).serialize()
     });
@@ -92,25 +93,70 @@ $('#search-form').submit(function(){
                                 
               ?>
         </div>
-        <div class="span3"> 
+        <div class="span2"> 
             <?php
 
                     echo CHtml::label('ประเภทการเตือน','type');
                    
-                    echo CHtml::dropDownList('type', '', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>''));                              
+                    echo CHtml::dropDownList('type', '', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'','class'=>'span12'));                              
               ?>
         </div>
-        <div class="span3"> 
+        <div class="span2"> 
+            <?php
+
+                    echo CHtml::label('วันที่เริ่มต้น', 'date_start');
+                    echo '<div style="margin-top:0px;">'; //ใส่ icon ลงไป
+                    $this->widget('zii.widgets.jui.CJuiDatePicker',
+                            array(
+                                'name' => 'date_start',
+                                'attribute' => 'date_start',
+                                'options' => array(
+                                    'mode' => 'focus',
+                                    //'language' => 'th',
+                                    'format' => 'dd/mm/yyyy', //กำหนด date Format
+                                    'showAnim' => 'slideDown',
+                                ),
+                                'htmlOptions' => array('class' => 'span12'), // ใส่ค่าเดิม ในเหตุการ Update
+                            )
+                    );
+                     //echo '<span class="add-on"><i class="icon-calendar"></i></span>';
+                    echo '</div>'; 
+                                
+              ?>
+        </div>
+        <div class="span2"> 
+            <?php
+
+                    echo CHtml::label('วันที่สิ้นสุด', 'date_end');
+                    echo '<div style="margin-top:0px;">'; //ใส่ icon ลงไป
+                    $this->widget('zii.widgets.jui.CJuiDatePicker',
+                            array(
+                                'name' => 'date_end',
+                                'attribute' => 'date_end',
+                                'options' => array(
+                                    'mode' => 'focus',
+                                    //'language' => 'th',
+                                    'format' => 'dd/mm/yyyy', //กำหนด date Format
+                                    'showAnim' => 'slideDown',
+                                ),
+                                'htmlOptions' => array('class' => 'span12'), // ใส่ค่าเดิม ในเหตุการ Update
+                            )
+                    );
+                    //echo '<span class="add-on"><i class="icon-calendar"></i></span>';
+                    echo '</div>';            
+              ?>
+        </div>
+        <div class="span1"> 
             <?php
                 $this->widget('bootstrap.widgets.TbButton', array(
                       'buttonType'=>'submit',
                       
                       'type'=>'info',
-                      'label'=>'search',
+                      'label'=>'',
                       'icon'=>'search white',
                       
                       'htmlOptions'=>array(
-                        'class'=>'span6',
+                        'class'=>'span12',
                         'style'=>'margin:25px 10px 0px 0px;',
                         'id'=>'searchNotify'
                       ),
