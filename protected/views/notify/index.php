@@ -116,7 +116,7 @@ $('#search-form').submit(function(){
                                     'format' => 'dd/mm/yyyy', //กำหนด date Format
                                     'showAnim' => 'slideDown',
                                 ),
-                                'htmlOptions' => array('class' => 'span12'), // ใส่ค่าเดิม ในเหตุการ Update
+                                'htmlOptions' => array('class' => 'span12','autocomplete'=>'off'), // ใส่ค่าเดิม ในเหตุการ Update
                             )
                     );
                      //echo '<span class="add-on"><i class="icon-calendar"></i></span>';
@@ -139,7 +139,7 @@ $('#search-form').submit(function(){
                                     'format' => 'dd/mm/yyyy', //กำหนด date Format
                                     'showAnim' => 'slideDown',
                                 ),
-                                'htmlOptions' => array('class' => 'span12'), // ใส่ค่าเดิม ในเหตุการ Update
+                                'htmlOptions' => array('class' => 'span12','autocomplete'=>'off'), // ใส่ค่าเดิม ในเหตุการ Update
                             )
                     );
                     //echo '<span class="add-on"><i class="icon-calendar"></i></span>';
