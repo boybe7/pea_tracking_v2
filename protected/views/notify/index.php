@@ -16,18 +16,23 @@ $this->breadcrumbs=array(
 );
 
 
-Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-	$('.search-form').toggle();
-	return false;
-});
-$('.search-form form').submit(function(){
-	$.fn.yiiGridView.update('vendor-grid', {
-		data: $(this).serialize()
-	});
-	return false;
+Yii::app()->clientScript->registerScript('submitForm', "
+
+$('#search-form').submit(function(){
+
+    $('#Notify_project').val($('#project').val())
+    $('#Notify_contract').val($('#contract').val())
+    $('#Notify_alarm_detail').val($('#type').val())
+    $.fn.yiiGridView.update('notify-grid', {
+        data: $(this).serialize()
+    });
+    return false;
+	
 });
 ");
+
+
+
 ?>
 
 <h1>ข้อมูลแจ้งเตือน</h1>
@@ -70,12 +75,93 @@ $('.search-form form').submit(function(){
 
     <div class="row-fluid">
         
-       <div class="span6"> 
-              
+       <div class="span3"> 
+              <?php
+
+                    echo CHtml::label('โครงการ','project');
+                   
+                    echo "<input type='text' class='span12' id='project' name='project' value='' >";
+                                
+              ?>
        </div>
-        <div class="span3"> 
+        <div class="span2"> 
+            <?php
+
+                    echo CHtml::label('สัญญา','contract');
+                   
+                    echo "<input type='text' class='span12' id='contract' name='contract' value='' >";
+                                
+              ?>
         </div>
-        <div class="span3"> 
+        <div class="span2"> 
+            <?php
+
+                    echo CHtml::label('ประเภทการเตือน','type');
+                   
+                    echo CHtml::dropDownList('type', '', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'','class'=>'span12'));                              
+              ?>
+        </div>
+        <div class="span2"> 
+            <?php
+
+                    echo CHtml::label('วันที่เริ่มต้น', 'date_start');
+                    echo '<div style="margin-top:0px;">'; //ใส่ icon ลงไป
+                    $this->widget('zii.widgets.jui.CJuiDatePicker',
+                            array(
+                                'name' => 'date_start',
+                                'attribute' => 'date_start',
+                                'options' => array(
+                                    'mode' => 'focus',
+                                    //'language' => 'th',
+                                    'format' => 'dd/mm/yyyy', //กำหนด date Format
+                                    'showAnim' => 'slideDown',
+                                ),
+                                'htmlOptions' => array('class' => 'span12'), // ใส่ค่าเดิม ในเหตุการ Update
+                            )
+                    );
+                     //echo '<span class="add-on"><i class="icon-calendar"></i></span>';
+                    echo '</div>'; 
+                                
+              ?>
+        </div>
+        <div class="span2"> 
+            <?php
+
+                    echo CHtml::label('วันที่สิ้นสุด', 'date_end');
+                    echo '<div style="margin-top:0px;">'; //ใส่ icon ลงไป
+                    $this->widget('zii.widgets.jui.CJuiDatePicker',
+                            array(
+                                'name' => 'date_end',
+                                'attribute' => 'date_end',
+                                'options' => array(
+                                    'mode' => 'focus',
+                                    //'language' => 'th',
+                                    'format' => 'dd/mm/yyyy', //กำหนด date Format
+                                    'showAnim' => 'slideDown',
+                                ),
+                                'htmlOptions' => array('class' => 'span12'), // ใส่ค่าเดิม ในเหตุการ Update
+                            )
+                    );
+                    //echo '<span class="add-on"><i class="icon-calendar"></i></span>';
+                    echo '</div>';            
+              ?>
+        </div>
+        <div class="span1"> 
+            <?php
+                $this->widget('bootstrap.widgets.TbButton', array(
+                      'buttonType'=>'submit',
+                      
+                      'type'=>'info',
+                      'label'=>'',
+                      'icon'=>'search white',
+                      
+                      'htmlOptions'=>array(
+                        'class'=>'span12',
+                        'style'=>'margin:25px 10px 0px 0px;',
+                        'id'=>'searchNotify'
+                      ),
+                  ));
+              ?>
         </div>
         
     </div>
@@ -106,7 +192,7 @@ $('.search-form form').submit(function(){
 		'con'=>array(
 			    'name' => 'contract',
 			    'header'=>$model->getAttributeLabel('contract'),
-			    //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+			    'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
 				'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),  	            	  	
 				'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
 	  	),	

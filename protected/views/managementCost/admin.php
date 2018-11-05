@@ -20,7 +20,7 @@ $('.search-form form').submit(function(){
 Yii::app()->clientScript->registerScript('search', "
 $('#search-form form').submit(function(){
     //console.log($('#patient-grid input[name=firstname]','#patient-grid select[name=firstname]').val('x'));
-    console.log('ff');
+    
     $.fn.yiiGridView.update('management-cost-grid', {
         data: $(this).serialize()
     });
@@ -114,7 +114,7 @@ $('#search-form form').submit(function(){
                             ),
                            'htmlOptions'=>array(
                                 'class'=>'span12',
-                                'placeholder'=>"เลือกโครงการ"
+                                'placeholder'=>"ค้นหาตาม ปี ชื่อโครงการ เช่น 2558 เอบีบี "
                             ),
                                   
                         ));

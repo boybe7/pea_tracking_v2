@@ -105,7 +105,7 @@ class Notify extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('project, contract, alarm_detail, date_end, url', 'required'),
+			//array('project, contract, alarm_detail, date_end, url', 'required'),
 			array('project, contract', 'length', 'max'=>700),
 			array('url', 'length', 'max'=>500),
 			// The following rule is used by search().
@@ -162,8 +162,38 @@ class Notify extends CActiveRecord
 		$criteria->compare('project',$this->project,true);
 		$criteria->compare('contract',$this->contract,true);
 		$criteria->compare('alarm_detail',$this->alarm_detail,true);
-		$criteria->compare('date_end',$this->date_end,true);
+		//$criteria->compare('date_end',$this->date_end,true);
 		$criteria->compare('url',$this->url,true);
+
+		
+
+		if ( stripos( $this->date_end, '..') )
+	    {
+	        $range = explode( '..', $this->date_end );
+	        $date_str = explode("/", $range[0]);
+	        $range[0] = $date_str[2]."-".$date_str[1]."-".$date_str[0];
+	        $date_str = explode("/", $range[1]);
+	        $range[1] = $date_str[2]."-".$date_str[1]."-".$date_str[0];
+
+	        $criteria->compare('date_end','>='.$range[0]);
+	        $criteria->compare('date_end','<='.$range[1]);
+
+	     
+	       // header('Content-type: text/plain');
+	    //print_r($range);
+	    //exit;
+
+
+	    }
+	    else {
+	    	if(!empty($this->date_end))
+	    	{
+	    		$date_str = explode("/", $this->date_end);
+	        	$this->date_end = $date_str[2]."-".$date_str[1]."-".$date_str[0];
+	        	
+	    	}
+	    	$criteria->compare('date_end',$this->date_end);
+	    }
 
 		$sort = new CSort;
         $sort->defaultOrder = 'date_end ASC';
