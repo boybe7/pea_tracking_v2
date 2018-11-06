@@ -132,7 +132,7 @@ class ProjectController extends Controller
                 //$remain = 22;
                 $data[] = array(
                         'id'=>$model['pj_id'],
-                        'label'=>$model['pj_id'].$workcat->wc_name." ปี ".$model->pj_fiscalyear.":".$model['pj_name'],//." ".$modelVendor->v_name,
+                        'label'=>$workcat->wc_name." ปี ".$model->pj_fiscalyear.":".$model['pj_name'],//." ".$modelVendor->v_name,
                         'cost'=>number_format($cost_total,2),
                         'pay'=>number_format($pay_total,2),
                         'remain'=>number_format($remain,2),

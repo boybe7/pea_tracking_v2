@@ -39,8 +39,16 @@ class ProjectContractController extends Controller
             //$models=ProjectContract::model()->findAll(array("condition"=>"pc_code like '$request%'"));
             $Criteria = new CDbCriteria();
 			$user_dept = Yii::app()->user->userdept;
-			$Criteria->join = 'LEFT JOIN user ON pc_user_update=user.u_id LEFT JOIN vendor ON pc_vendor_id=vendor.v_id';
-			$Criteria->condition = "(pc_code like '%$request%' OR vendor.v_name like '%$request%') AND department_id='$user_dept'";
+			$Criteria->join = 'LEFT JOIN project ON pc_proj_id=project.pj_id LEFT JOIN user ON pc_user_update=user.u_id LEFT JOIN vendor ON pc_vendor_id=vendor.v_id';
+			//$Criteria->condition = "(pc_code like '%$request%' OR vendor.v_name like '%$request%') AND department_id='$user_dept'";
+			$search_str = preg_split('/\s+/', $request, -1, PREG_SPLIT_NO_EMPTY);
+            if(sizeof($search_str)==2)
+			{
+				$Criteria->condition = "(pj_fiscalyear LIKE '%$search_str[0]%' OR vendor.v_name LIKE '%$search_str[0]%') AND (pj_fiscalyear LIKE '%$search_str[1]%' OR vendor.v_name LIKE '%$search_str[1]%') AND pj_status=1 AND department_id='$user_dept'";
+			}
+			else
+				$Criteria->condition = "(pj_fiscalyear LIKE '%$request%' OR pc_code like '%$request%' OR vendor.v_name like '%$request%') AND department_id='$user_dept'";
+
 			$models = ProjectContract::model()->findAll($Criteria);
 
 
@@ -49,6 +57,7 @@ class ProjectContractController extends Controller
                 //$data[]["label"]=$get->v_name;
                 //$data[]["id"]=$get->v_id;
                 $modelVendor = Vendor::model()->FindByPk($model['pc_vendor_id']);
+                $modelProject = Project::model()->FindByPk($model['pc_proj_id']);
 
                 $data2 = Yii::app()->db->createCommand()
 										->select('sum(cost) as sum')
@@ -60,7 +69,7 @@ class ProjectContractController extends Controller
 
                 $data[] = array(
                         'id'=>$model['pc_id'],
-                        'label'=>$model['pc_code']." ".$modelVendor->v_name,
+                        'label'=>'ปีงบประมาณ '.$modelProject->pj_fiscalyear.":".$model['pc_code']." ".$modelVendor->v_name,
                         'cost'=>number_format($model['pc_cost']+$change,2)
                 );
 

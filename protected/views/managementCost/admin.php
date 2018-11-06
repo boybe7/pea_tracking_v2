@@ -20,8 +20,7 @@ $('.search-form form').submit(function(){
 
 Yii::app()->clientScript->registerScript('search', "
 $('#search-form').submit(function(){
-    alert('ok')
-  
+   
     $.fn.yiiGridView.update('management-cost-grid', {
         data: $(this).serialize()
     });
