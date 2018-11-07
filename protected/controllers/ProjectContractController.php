@@ -44,7 +44,7 @@ class ProjectContractController extends Controller
 			$search_str = preg_split('/\s+/', $request, -1, PREG_SPLIT_NO_EMPTY);
             if(sizeof($search_str)==2)
 			{
-				$Criteria->condition = "(pj_fiscalyear LIKE '%$search_str[0]%' OR vendor.v_name LIKE '%$search_str[0]%') AND (pj_fiscalyear LIKE '%$search_str[1]%' OR vendor.v_name LIKE '%$search_str[1]%') AND pj_status=1 AND department_id='$user_dept'";
+				$Criteria->condition = "(pj_fiscalyear LIKE '%$search_str[0]%' OR vendor.v_name LIKE '%$search_str[0]%') AND (pj_fiscalyear LIKE '%$search_str[1]%' OR vendor.v_name LIKE '%$search_str[1]%')  AND department_id='$user_dept'";
 			}
 			else
 				$Criteria->condition = "(pj_fiscalyear LIKE '%$request%' OR pc_code like '%$request%' OR vendor.v_name like '%$request%') AND department_id='$user_dept'";
@@ -69,7 +69,7 @@ class ProjectContractController extends Controller
 
                 $data[] = array(
                         'id'=>$model['pc_id'],
-                        'label'=>'ปีงบประมาณ '.$modelProject->pj_fiscalyear.":".$model['pc_code']." ".$modelVendor->v_name,
+                        'label'=>'ปี '.$modelProject->pj_fiscalyear.":".$model['pc_code']." ".$modelVendor->v_name,
                         'cost'=>number_format($model['pc_cost']+$change,2)
                 );
 

@@ -106,7 +106,7 @@ return array(
 			'connectionString' => 'mysql:host=localhost;dbname=pea_proj_tracking',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'meroot',
+			'password' => '',
 			'charset' => 'utf8',
 		),
 		

@@ -50,8 +50,16 @@ class OutsourceContractController extends Controller
             //$models=OutsourceContract::model()->findAll(array("condition"=>"oc_code like '$request%'"));
             $Criteria = new CDbCriteria();
 			$user_dept = Yii::app()->user->userdept;
-			$Criteria->join = 'LEFT JOIN user ON oc_user_create=user.u_id';
-			$Criteria->condition = "(oc_code like '$request%') AND department_id='$user_dept'";
+			$Criteria->join = 'LEFT JOIN project ON oc_proj_id=project.pj_id LEFT JOIN user ON oc_user_create=user.u_id  LEFT JOIN vendor ON oc_vendor_id=vendor.v_id';
+			//$Criteria->condition = "(oc_code like '$request%') AND department_id='$user_dept'";
+
+			$search_str = preg_split('/\s+/', $request, -1, PREG_SPLIT_NO_EMPTY);
+            if(sizeof($search_str)==2)
+			{
+				$Criteria->condition = "(pj_fiscalyear LIKE '%$search_str[0]%' OR vendor.v_name LIKE '%$search_str[0]%') AND (pj_fiscalyear LIKE '%$search_str[1]%' OR vendor.v_name LIKE '%$search_str[1]%') AND  department_id='$user_dept'";
+			}
+			else
+				$Criteria->condition = "(pj_fiscalyear LIKE '%$request%' OR oc_code like '%$request%' OR vendor.v_name like '%$request%') AND department_id='$user_dept'";
 			$models = OutsourceContract::model()->findAll($Criteria);
 
             $data=array();
@@ -60,6 +68,7 @@ class OutsourceContractController extends Controller
                 //$data[]["id"]=$get->v_id;
                 
                 $modelVendor = Vendor::model()->FindByPk($model['oc_vendor_id']);
+                $modelProject = Project::model()->FindByPk($model['oc_proj_id']);
 
                 $data2 = Yii::app()->db->createCommand()
 										->select('sum(cost) as sum')
@@ -75,7 +84,7 @@ class OutsourceContractController extends Controller
                 $oc_cost = str_replace(",", "", $model['oc_cost']) + $change;
                 $data[] = array(
                         'id'=>$model['oc_id'],
-                        'label'=>$model['oc_code'].' '.$modelVendor->v_name,
+                        'label'=>'ปี '.$modelProject->pj_fiscalyear.":".$model['oc_code'].' '.$modelVendor->v_name,
                         'cost'=>number_format($oc_cost,2)
                 );
 

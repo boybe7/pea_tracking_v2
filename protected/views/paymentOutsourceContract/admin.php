@@ -115,7 +115,7 @@ $('#search-form form').submit(function(){
                             ),
                            'htmlOptions'=>array(
                                 'class'=>'span12',
-                                'placeholder'=>"เลือกสัญญาโครงการ"
+                                'placeholder'=>"ค้นหาตาม ปี ชื่อโครงการ เช่น 2558 เอบีบี "
                             ),
                                   
                         ));
