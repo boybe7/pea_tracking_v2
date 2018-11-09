@@ -110,7 +110,7 @@ class Notify extends CActiveRecord
 			array('url', 'length', 'max'=>500),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, project, contract, alarm_detail, date_end, url', 'safe', 'on'=>'search'),
+			array('id, project, contract, alarm_detail, date_end, url,type', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -164,8 +164,59 @@ class Notify extends CActiveRecord
 		$criteria->compare('alarm_detail',$this->alarm_detail,true);
 		//$criteria->compare('date_end',$this->date_end,true);
 		$criteria->compare('url',$this->url,true);
-
+		 // header('Content-type: text/plain');
+	  //   print_r($this);
+	  //   exit;
 		
+		if ( stripos( $this->date_end, '..') )
+	    {
+	        $range = explode( '..', $this->date_end );
+	        $date_str = explode("/", $range[0]);
+	        $range[0] = $date_str[2]."-".$date_str[1]."-".$date_str[0];
+	        $date_str = explode("/", $range[1]);
+	        $range[1] = $date_str[2]."-".$date_str[1]."-".$date_str[0];
+
+	        $criteria->compare('date_end','>='.$range[0]);
+	        $criteria->compare('date_end','<='.$range[1]);
+
+	     
+	      
+
+
+	    }
+	    else {
+	    	
+	    	$date_str = explode("/", $this->date_end);
+
+	    	if(sizeof($date_str)==3)
+	        	$this->date_end = $date_str[2]."-".$date_str[1]."-".$date_str[0];
+	   
+	    	$criteria->compare('date_end',$this->date_end);
+	    }
+
+		$sort = new CSort;
+        $sort->defaultOrder = 'date_end ASC';
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,'sort'=>$sort
+		));
+	}
+
+	public function searchByType($type="")
+	{
+		// @todo Please modify the following code to remove attributes that should not be searched.
+
+		$criteria=new CDbCriteria;
+
+		$criteria->compare('id',$this->id);
+		$criteria->compare('project',$this->project,true);
+		$criteria->compare('contract',$this->contract,true);
+		$criteria->compare('alarm_detail',$this->alarm_detail,true);
+		$criteria->compare('type',$type,true);
+		$criteria->compare('url',$this->url,true);
+
+		 // header('Content-type: text/plain');
+	  //    print_r($this);
+	  //    exit;
 
 		if ( stripos( $this->date_end, '..') )
 	    {
@@ -179,19 +230,15 @@ class Notify extends CActiveRecord
 	        $criteria->compare('date_end','<='.$range[1]);
 
 	     
-	       // header('Content-type: text/plain');
-	    //print_r($range);
-	    //exit;
+	    
 
 
 	    }
 	    else {
-	    	if(!empty($this->date_end))
-	    	{
-	    		$date_str = explode("/", $this->date_end);
+	    	$date_str = explode("/", $this->date_end);
+
+	    	if(sizeof($date_str)==3)
 	        	$this->date_end = $date_str[2]."-".$date_str[1]."-".$date_str[0];
-	        	
-	    	}
 	    	$criteria->compare('date_end',$this->date_end);
 	    }
 

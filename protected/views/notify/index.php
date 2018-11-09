@@ -26,6 +26,7 @@ $('#search-form').submit(function(){
     $.fn.yiiGridView.update('notify-grid', {
         data: $(this).serialize()
     });
+
     return false;
 	
 });
@@ -66,7 +67,7 @@ $('#search-form').submit(function(){
     'id'=>'search-form',
     'enableAjaxValidation'=>false,
     'type'=>'vertical',
-    'htmlOptions'=>  array('class'=>'well','style'=>'margin:0 auto;padding-top:20px;'),
+    'htmlOptions'=>  array('class'=>'well','style'=>'margin:0 auto;padding-top:20px;background-color: #eeeeee'),
     'action'=>Yii::app()->createUrl($this->route),
     'method'=>'get',
 )); 
@@ -186,21 +187,21 @@ $('#search-form').submit(function(){
 			    'name' => 'project',
 			    'header'=>$model->getAttributeLabel('project'),
 			    'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
-				'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #f5f5f5'),  	            	  	
+				'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),  	            	  	
 				'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
 	  	),
 		'con'=>array(
 			    'name' => 'contract',
 			    'header'=>$model->getAttributeLabel('contract'),
 			    'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
-				'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),  	            	  	
+				'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),  	            	  	
 				'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
 	  	),	
 	  	'details'=>array(
 			    'name' => 'alarm_detail',
 			    'header'=>$model->getAttributeLabel('alarm_detail'),
 			    'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
-				'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #f5f5f5'),  	            	  	
+				'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),  	            	  	
 				'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
 	  	),
 	  	'end'=>array(
@@ -209,7 +210,7 @@ $('#search-form').submit(function(){
 			    //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
 				//call the method 'gridDataColumn' from the controller
                 'value'=>array($this,'gridDateRender'),
-				'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),  	            	  	
+				'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),  	            	  	
 				'htmlOptions'=>array('style'=>'text-align:center;')
 	  	), 
 	     array(
@@ -234,10 +235,342 @@ $('#search-form').submit(function(){
 
 
 <ul class="nav nav-tabs">
-      <li  class="active"><a href="#projTab" data-toggle="tab">ค้ำประกันสัญญา</a></li>
-      <li ><a href="#outTab" data-toggle="tab">ชำระเงินของ vendor</a></li>
-      <li ><a href="#outTab" data-toggle="tab">จ่ายเงินให้ supplier</a></li>
-      <li ><a href="#outTab" data-toggle="tab">บันทึกค่ารับรอง</a></li>
-      <li ><a href="#outTab" data-toggle="tab">ปิดงาน</a></li>
+      <li  class="active"><a href="#garanteeTab" data-toggle="tab">ค้ำประกันสัญญา</a></li>
+      <li ><a href="#vendorTab" data-toggle="tab">ชำระเงินของ vendor</a></li>
+      <li ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ supplier</a></li>
+      <li ><a href="#manageTab" data-toggle="tab">บันทึกค่ารับรอง</a></li>
+      <li ><a href="#closeTab" data-toggle="tab">ปิดงาน</a></li>
         
 </ul>
+<div class="tab-content">
+    <div class="tab-pane active " id="garanteeTab">
+        <?php
+            $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'notify-grid-garantee',
+                'type'=>'bordered condensed',            
+                'dataProvider'=>$model->searchByType(1),
+                'filter'=>$model,
+                'selectableRows' =>2,
+                'htmlOptions'=>array('style'=>'padding-top:10px'),
+                'enablePagination' => true,
+                'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+                'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+                'columns'=>array(
+                    
+                    'proj'=>array(
+                            'name' => 'project',
+                            'header'=>$model->getAttributeLabel('project'),
+                            'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'con'=>array(
+                            'name' => 'contract',
+                            'header'=>$model->getAttributeLabel('contract'),
+                            'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
+                    'details'=>array(
+                            'name' => 'alarm_detail',
+                            'header'=>$model->getAttributeLabel('alarm_detail'),
+                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'end'=>array(
+                            'name' => 'date_end',
+                            'header'=>$model->getAttributeLabel('date_end'),
+                            //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+                            //call the method 'gridDataColumn' from the controller
+                            'value'=>array($this,'gridDateRender'),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:center;')
+                    ), 
+                     array(
+                                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                                            'template' => '{update}',
+                                            'buttons'=>array(
+                                                    'update' => array
+                                                    (
+                                                        
+                                                        'icon'=>'icon-pencil',
+                                                        'url'=>'Yii::app()->createUrl($data["url"])',
+                                                        'options'=>array(
+                                                            //'id'=>'$data["id"]',
+                                                            //'new_attribute'=> '$data["your_key"]',
+                                                        ),
+                                                    ),
+                                            )
+                    )   
+                ),
+            )); 
+
+        ?>
+    </div>  
+    <div class="tab-pane " id="vendorTab">
+         <?php
+            $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'notify-grid-garantee',
+                'type'=>'bordered condensed',            
+                'dataProvider'=>$model->searchByType(2),
+                'filter'=>$model,
+                'selectableRows' =>2,
+                'htmlOptions'=>array('style'=>'padding-top:10px'),
+                'enablePagination' => true,
+                'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+                'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+                'columns'=>array(
+                    
+                    'proj'=>array(
+                            'name' => 'project',
+                            'header'=>$model->getAttributeLabel('project'),
+                            'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'con'=>array(
+                            'name' => 'contract',
+                            'header'=>$model->getAttributeLabel('contract'),
+                            'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
+                    'details'=>array(
+                            'name' => 'alarm_detail',
+                            'header'=>$model->getAttributeLabel('alarm_detail'),
+                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'end'=>array(
+                            'name' => 'date_end',
+                            'header'=>$model->getAttributeLabel('date_end'),
+                            //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+                            //call the method 'gridDataColumn' from the controller
+                            'value'=>array($this,'gridDateRender'),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:center;')
+                    ), 
+                     array(
+                                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                                            'template' => '{update}',
+                                            'buttons'=>array(
+                                                    'update' => array
+                                                    (
+                                                        
+                                                        'icon'=>'icon-pencil',
+                                                        'url'=>'Yii::app()->createUrl($data["url"])',
+                                                        'options'=>array(
+                                                            //'id'=>'$data["id"]',
+                                                            //'new_attribute'=> '$data["your_key"]',
+                                                        ),
+                                                    ),
+                                            )
+                    )   
+                ),
+            )); 
+
+        ?>
+    </div> 
+    <div class="tab-pane " id="supplierTab">
+         <?php
+            $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'notify-grid-supplier',
+                'type'=>'bordered condensed',            
+                'dataProvider'=>$model->searchByType(3),
+                'filter'=>$model,
+                'selectableRows' =>2,
+                'htmlOptions'=>array('style'=>'padding-top:10px'),
+                'enablePagination' => true,
+                'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+                'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+                'columns'=>array(
+                    
+                    'proj'=>array(
+                            'name' => 'project',
+                            'header'=>$model->getAttributeLabel('project'),
+                            'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'con'=>array(
+                            'name' => 'contract',
+                            'header'=>$model->getAttributeLabel('contract'),
+                            'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
+                    'details'=>array(
+                            'name' => 'alarm_detail',
+                            'header'=>$model->getAttributeLabel('alarm_detail'),
+                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'end'=>array(
+                            'name' => 'date_end',
+                            'header'=>$model->getAttributeLabel('date_end'),
+                            //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+                            //call the method 'gridDataColumn' from the controller
+                            'value'=>array($this,'gridDateRender'),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:center;')
+                    ), 
+                     array(
+                                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                                            'template' => '{update}',
+                                            'buttons'=>array(
+                                                    'update' => array
+                                                    (
+                                                        
+                                                        'icon'=>'icon-pencil',
+                                                        'url'=>'Yii::app()->createUrl($data["url"])',
+                                                        'options'=>array(
+                                                            //'id'=>'$data["id"]',
+                                                            //'new_attribute'=> '$data["your_key"]',
+                                                        ),
+                                                    ),
+                                            )
+                    )   
+                ),
+            )); 
+
+        ?>
+    </div> 
+    <div class="tab-pane " id="manageTab">
+         <?php
+            $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'notify-grid-manage',
+                'type'=>'bordered condensed',            
+                'dataProvider'=>$model->searchByType(4),
+                'filter'=>$model,
+                'selectableRows' =>2,
+                'htmlOptions'=>array('style'=>'padding-top:10px'),
+                'enablePagination' => true,
+                'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+                'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+                'columns'=>array(
+                    
+                    'proj'=>array(
+                            'name' => 'project',
+                            'header'=>$model->getAttributeLabel('project'),
+                            'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'con'=>array(
+                            'name' => 'contract',
+                            'header'=>$model->getAttributeLabel('contract'),
+                            'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
+                    'details'=>array(
+                            'name' => 'alarm_detail',
+                            'header'=>$model->getAttributeLabel('alarm_detail'),
+                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'end'=>array(
+                            'name' => 'date_end',
+                            'header'=>$model->getAttributeLabel('date_end'),
+                            //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+                            //call the method 'gridDataColumn' from the controller
+                            'value'=>array($this,'gridDateRender'),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:center;')
+                    ), 
+                     array(
+                                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                                            'template' => '{update}',
+                                            'buttons'=>array(
+                                                    'update' => array
+                                                    (
+                                                        
+                                                        'icon'=>'icon-pencil',
+                                                        'url'=>'Yii::app()->createUrl($data["url"])',
+                                                        'options'=>array(
+                                                            //'id'=>'$data["id"]',
+                                                            //'new_attribute'=> '$data["your_key"]',
+                                                        ),
+                                                    ),
+                                            )
+                    )   
+                ),
+            )); 
+
+        ?>
+    </div> 
+    <div class="tab-pane " id="closeTab">
+         <?php
+            $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'notify-grid-close',
+                'type'=>'bordered condensed',            
+                'dataProvider'=>$model->searchByType(5),
+                'filter'=>$model,
+                'selectableRows' =>2,
+                'htmlOptions'=>array('style'=>'padding-top:10px'),
+                'enablePagination' => true,
+                'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+                'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+                'columns'=>array(
+                    
+                    'proj'=>array(
+                            'name' => 'project',
+                            'header'=>$model->getAttributeLabel('project'),
+                            'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'con'=>array(
+                            'name' => 'contract',
+                            'header'=>$model->getAttributeLabel('contract'),
+                            'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
+                    'details'=>array(
+                            'name' => 'alarm_detail',
+                            'header'=>$model->getAttributeLabel('alarm_detail'),
+                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'end'=>array(
+                            'name' => 'date_end',
+                            'header'=>$model->getAttributeLabel('date_end'),
+                            //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+                            //call the method 'gridDataColumn' from the controller
+                            'value'=>array($this,'gridDateRender'),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:center;')
+                    ), 
+                     array(
+                                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                                            'template' => '{update}',
+                                            'buttons'=>array(
+                                                    'update' => array
+                                                    (
+                                                        
+                                                        'icon'=>'icon-pencil',
+                                                        'url'=>'Yii::app()->createUrl($data["url"])',
+                                                        'options'=>array(
+                                                            //'id'=>'$data["id"]',
+                                                            //'new_attribute'=> '$data["your_key"]',
+                                                        ),
+                                                    ),
+                                            )
+                    )   
+                ),
+            )); 
+
+        ?>
+    </div>   
+</div>

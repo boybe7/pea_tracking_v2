@@ -157,14 +157,34 @@ class NotifyController extends Controller
 		if (Yii::app()->request->isAjaxRequest)
 		{
 			
-			  $model->project =  isset($_GET['project']) ? $_GET['project'] : "";
-			  $model->contract = isset($_GET['contract']) ? $_GET['contract'] : "";
-			  $model->alarm_detail = isset($_GET['type']) ? $_GET['type'] : "";
-
-			  if(isset($_GET["date_start"]) && isset($_GET["date_end"]))
+			  
+			  if(isset($_GET['project']) && $_GET['project']!="" ) 
+			  	$model->project =   $_GET['project'] ;
+			  if(isset($_GET['contract']) && $_GET['contract']!="" ) 
+			  	$model->contract =   $_GET['contract'] ;
+			  if(isset($_GET['alarm_detail']) && $_GET['alarm_detail']!="" ) 
+			  	$model->alarm_detail =   $_GET['alarm_detail'] ;
+			 
+			  if(isset($_GET["date_start"]) && isset($_GET["date_end"]) && $_GET["date_start"]!="" && $_GET["date_end"]!="")
 			  {
 			  	$model->date_end = $_GET["date_start"]."..".$_GET["date_end"];
 			  }
+
+			  if($_GET['ajax']=="notify-grid-garantee")
+			  	   $model->type = 1;
+			  if($_GET['ajax']=="notify-grid-vendor")
+			  	   $model->type = 2;
+			  if($_GET['ajax']=="notify-grid-supplier")
+			  	   $model->type = 3;
+			  if($_GET['ajax']=="notify-grid-manage")
+			  	   $model->type = 4;
+			  if($_GET['ajax']=="notify-grid-close")
+			  	   $model->type = 5;	   	   	   	
+
+			  // header('Content-type: text/plain');
+			  // echo "controller";
+	    // print_r($model);
+	    // exit;
 		}
 
 		$this->render('index',array(
