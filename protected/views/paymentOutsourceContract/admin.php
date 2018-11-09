@@ -1,6 +1,6 @@
 <?php
 $this->breadcrumbs=array(
-	'Payment Outsource Contracts'=>array('index'),
+	'เงินงวดของสัญญาจ้างช่วง/ซื้อ'=>array('index'),
 	
 );
 

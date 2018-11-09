@@ -231,3 +231,13 @@ $('#search-form').submit(function(){
 		)	
 	),
 )); ?>
+
+
+<ul class="nav nav-tabs">
+      <li  class="active"><a href="#projTab" data-toggle="tab">ค้ำประกันสัญญา</a></li>
+      <li ><a href="#outTab" data-toggle="tab">ชำระเงินของ vendor</a></li>
+      <li ><a href="#outTab" data-toggle="tab">จ่ายเงินให้ supplier</a></li>
+      <li ><a href="#outTab" data-toggle="tab">บันทึกค่ารับรอง</a></li>
+      <li ><a href="#outTab" data-toggle="tab">ปิดงาน</a></li>
+        
+</ul>

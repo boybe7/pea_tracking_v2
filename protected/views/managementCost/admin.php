@@ -1,7 +1,6 @@
 <?php
 $this->breadcrumbs=array(
-	'Management Costs'=>array('index'),
-	'Manage',
+	'ค่าบริหารโครงการ'=>array('index')
 );
 
 Yii::app()->clientScript->registerScript('search', "
