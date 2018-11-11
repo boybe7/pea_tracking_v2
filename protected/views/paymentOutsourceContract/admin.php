@@ -319,7 +319,7 @@ $('#search-form form').submit(function(){
 			    'name'=>'invoice_receive_date',
 			    'headerHtmlOptions'=>array(),
 			    'type'=> 'raw',
-			    'value' => '$data->invoice_no."<br>".$data->invoice_receive_date',
+			    'value' => '$data->invoice_no."<br>วันที่ ".$data->invoice_receive_date',
 			    //'filter'=>CHtml::activeTextField($model, 'sumcost',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("pj_fiscalyear"))),
 				'headerHtmlOptions' => array('style' => 'width:15%;text-align:center;background-color: #f5f5f5'),  	            	  	
 				'htmlOptions'=>array('style'=>'text-align:center')

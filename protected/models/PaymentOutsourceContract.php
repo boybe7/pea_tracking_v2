@@ -214,4 +214,9 @@ class PaymentOutsourceContract extends CActiveRecord
             else if(count($str_date)>1)
             	$this->approve_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
      }
+
+    public function getInvoiceDate()
+     {
+     	return $this->invoice_no."<br>".$this->invoice_receive_date;
+     } 
 }

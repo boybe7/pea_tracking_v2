@@ -197,7 +197,9 @@ class Notify extends CActiveRecord
 		$sort = new CSort;
         $sort->defaultOrder = 'date_end ASC';
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,'sort'=>$sort
+			'criteria'=>$criteria,'sort'=>$sort,'pagination'=>array(
+                        'pageSize'=>5,
+                ),
 		));
 	}
 

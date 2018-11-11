@@ -244,6 +244,8 @@ $('#search-form').submit(function(){
 </ul>
 <div class="tab-content">
     <div class="tab-pane active " id="garanteeTab">
+         
+         <center><h4>แจ้งเตือนครบกำหนดค้ำประกันสัญญา</h4></center>
         <?php
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-garantee',
@@ -261,23 +263,17 @@ $('#search-form').submit(function(){
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
                             'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
-                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),
                     'con'=>array(
                             'name' => 'contract',
                             'header'=>$model->getAttributeLabel('contract'),
                             'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
-                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
-                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),  
-                    'details'=>array(
-                            'name' => 'alarm_detail',
-                            'header'=>$model->getAttributeLabel('alarm_detail'),
-                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
                             'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),
+                    ),  
+                   
                     'end'=>array(
                             'name' => 'date_end',
                             'header'=>$model->getAttributeLabel('date_end'),
@@ -310,7 +306,9 @@ $('#search-form').submit(function(){
         ?>
     </div>  
     <div class="tab-pane " id="vendorTab">
+         <center><h4>แจ้งเตือนครบกำหนดชำระเงินของ vendor</h4></center>
          <?php
+
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-garantee',
                 'type'=>'bordered condensed',            
@@ -327,23 +325,17 @@ $('#search-form').submit(function(){
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
                             'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
-                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),
                     'con'=>array(
                             'name' => 'contract',
                             'header'=>$model->getAttributeLabel('contract'),
                             'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
-                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
-                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),  
-                    'details'=>array(
-                            'name' => 'alarm_detail',
-                            'header'=>$model->getAttributeLabel('alarm_detail'),
-                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
                             'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),
+                    ),  
+                    
                     'end'=>array(
                             'name' => 'date_end',
                             'header'=>$model->getAttributeLabel('date_end'),
@@ -376,6 +368,7 @@ $('#search-form').submit(function(){
         ?>
     </div> 
     <div class="tab-pane " id="supplierTab">
+         <center><h4>แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier</h4></center>
          <?php
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-supplier',
@@ -393,23 +386,17 @@ $('#search-form').submit(function(){
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
                             'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
-                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),
                     'con'=>array(
                             'name' => 'contract',
                             'header'=>$model->getAttributeLabel('contract'),
                             'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
-                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
-                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),  
-                    'details'=>array(
-                            'name' => 'alarm_detail',
-                            'header'=>$model->getAttributeLabel('alarm_detail'),
-                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
                             'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),
+                    ),  
+                    
                     'end'=>array(
                             'name' => 'date_end',
                             'header'=>$model->getAttributeLabel('date_end'),
@@ -442,6 +429,7 @@ $('#search-form').submit(function(){
         ?>
     </div> 
     <div class="tab-pane " id="manageTab">
+        <center><h4>แจ้งเตือนบันทึกค่ารับรองประจำเดือน</h4></center>
          <?php
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-manage',
@@ -459,23 +447,17 @@ $('#search-form').submit(function(){
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
                             'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
-                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),
                     'con'=>array(
                             'name' => 'contract',
                             'header'=>$model->getAttributeLabel('contract'),
                             'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
-                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
-                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),  
-                    'details'=>array(
-                            'name' => 'alarm_detail',
-                            'header'=>$model->getAttributeLabel('alarm_detail'),
-                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
                             'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),
+                    ),  
+                   
                     'end'=>array(
                             'name' => 'date_end',
                             'header'=>$model->getAttributeLabel('date_end'),
@@ -508,6 +490,7 @@ $('#search-form').submit(function(){
         ?>
     </div> 
     <div class="tab-pane " id="closeTab">
+        <center><h4>แจ้งเตือนปิดสัญญา</h4></center>
          <?php
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-close',
@@ -525,23 +508,17 @@ $('#search-form').submit(function(){
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
                             'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
-                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),
                     'con'=>array(
                             'name' => 'contract',
                             'header'=>$model->getAttributeLabel('contract'),
                             'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
-                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
-                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),  
-                    'details'=>array(
-                            'name' => 'alarm_detail',
-                            'header'=>$model->getAttributeLabel('alarm_detail'),
-                            'filter'=>CHtml::activeDropDownList($model, 'alarm_detail', array('แจ้งเตือนครบกำหนดค้ำประกันสัญญา' => 'แจ้งเตือนครบกำหนดค้ำประกันสัญญา', 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' => 'แจ้งเตือนครบกำหนดชำระเงินของ vendor','แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier'=>'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier','แจ้งเตือนบันทึกค่ารับรองประจำเดือน'=>'แจ้งเตือนบันทึกค่ารับรองประจำเดือน'),array('empty'=>'')),
                             'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
-                    ),
+                    ),  
+                    
                     'end'=>array(
                             'name' => 'date_end',
                             'header'=>$model->getAttributeLabel('date_end'),

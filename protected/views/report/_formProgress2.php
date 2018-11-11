@@ -237,6 +237,11 @@ function renderDate($value)
                         $Criteria = new CDbCriteria();
                         $Criteria->condition = "mc_proj_id='$pj->pj_id' AND mc_type=0 AND mc_in_project=3";
                         $m_type1 = ManagementCost::model()->findAll($Criteria);
+                        if(empty($m_type1))
+                        {
+                            $m_type1[0] = new ManagementCost();
+                            $m_type1[1] = new ManagementCost();
+                        }
                         //print_r($m_type1);
 
                         //find tax
@@ -311,6 +316,7 @@ function renderDate($value)
                          $iOC = 0;
                          $pcCost = 0;
                          $ocCost = 0;
+
                         for ($i=0; $i <$pj_rowspan ; $i++) { 
                             
                             echo "<tr id='row".$i."'>";
@@ -466,6 +472,13 @@ function renderDate($value)
                             		{	
                             			$oc = $ocs[$iOC];	
                             			$vendor = vendor::model()->findByPk($oc->oc_vendor_id);
+
+                                        $ipayment = 0;
+                                        //$Criteria = new CDbCriteria();
+                                        //$Criteria->condition = "contract_id='$oc->oc_id'";
+                                        //$paymentProjs = PaymentOutsourceContract::model()->findAll($Criteria);
+                                        //print_r($paymentProjs);
+
 	                            		echo "<td rowspan='".$maxPayment."'>".$vendor->v_name."</td>";
 
 	                            		echo "<td rowspan='".$maxPayment."'>".$oc->oc_detail."<br><br>";
@@ -533,15 +546,16 @@ function renderDate($value)
 
 
                             	//draw Payment OC
-                                if(!empty($ocs[$iOC]))
+                                //if(!empty($ocs[$iOC]))
+                                if(!empty($oc))
                                 {   
                                 	$Criteria = new CDbCriteria();
                                     $Criteria->condition = "contract_id='$oc->oc_id'";
                                     $paymentProjs = PaymentOutsourceContract::model()->findAll($Criteria);
 
-                                    if(!empty($paymentProjs[$i]))
+                                    if(!empty($paymentProjs[$ipayment]))
                                     {
-                                    		$pay = $paymentProjs[$i];
+                                    		$pay = $paymentProjs[$ipayment];
                                     		echo "<td>".$pay->detail."</td>";
                                         	echo "<td style='text-align:right'>".$pay->money."</td>";
                                         	echo "<td style='text-align:center'>".renderDate($pay->approve_date)."</td>";
@@ -581,7 +595,7 @@ function renderDate($value)
                                     }
                                     else{
 
-                                    	echo "<td>&nbsp;</td><td>&nbsp;</td>";
+                                    	echo "<td>".$i."&nbsp;</td><td>&nbsp;</td>";
                                     	echo "<td>&nbsp;</td><td>&nbsp;</td>";
                                     	//echo "<td>&nbsp;</td><td>&nbsp;</td>";
 
@@ -596,15 +610,17 @@ function renderDate($value)
                                                 echo "<td></td><td></td>";
                                             }
                                     }	
+
+                                    $ipayment++;
                                 }else{
 
-                                    echo "<td>&nbsp;</td><td>&nbsp;</td>";
+                                        echo "<td>&nbsp;</td><td>&nbsp;</td>";
                                         echo "<td>&nbsp;</td><td>&nbsp;</td>";
                                         //echo "<td>&nbsp;</td><td>&nbsp;</td>";
 
                                            if($i%$maxPayment==0 && $iOC!=0 && $iOC<=$nOC)
                                             {
-                                                echo "<td style='text-align:center'>".$oc->oc_T_percent."</td>";
+                                                echo "<td style='text-align:center'>xx".$oc->oc_T_percent."</td>";
                                                 echo "<td style='text-align:center'>".$oc->oc_A_percent."</td>";     
                                                 $sum_oc_T += $oc->oc_T_percent;
                                                 $sum_oc_A += $oc->oc_A_percent;
@@ -651,8 +667,6 @@ function renderDate($value)
 
                         }
 
-
-	                	 
 	                	 
 	                		
 
