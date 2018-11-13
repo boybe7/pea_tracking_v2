@@ -595,7 +595,7 @@ function renderDate($value)
                                     }
                                     else{
 
-                                    	echo "<td>".$i."&nbsp;</td><td>&nbsp;</td>";
+                                    	echo "<td>&nbsp;</td><td>&nbsp;</td>";
                                     	echo "<td>&nbsp;</td><td>&nbsp;</td>";
                                     	//echo "<td>&nbsp;</td><td>&nbsp;</td>";
 

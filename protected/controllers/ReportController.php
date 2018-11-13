@@ -2327,6 +2327,8 @@ $table = $section->addTable(array("cellMargin"=>0));
 		                            	$Criteria = new CDbCriteria();
 		                                $Criteria->condition = "contract_id='$oc->oc_id'";
 		                                $paymentProjs = PaymentOutsourceContract::model()->findAll($Criteria);
+		                                
+		                                
 		                                $row_pay_oc = $row_max;
 		                                foreach ($paymentProjs as $key => $pay)
 		                                {
@@ -2356,8 +2358,10 @@ $table = $section->addTable(array("cellMargin"=>0));
 			                                        else
 			                                        	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('X'.($row_pay_oc), "-");
 
-		                                } 
+			                                    $row_pay_oc++;    
 
+		                                } 
+		                                //echo "row".$row_pay_oc;
 		                                   //cal %A
                                                         //sum income;
                                                         
