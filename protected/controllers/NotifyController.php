@@ -72,6 +72,71 @@ class NotifyController extends Controller
             DAY ) as date_end, CONCAT('paymentOutsourceContract/update/',id) as url,'3' as type, id as update_id FROM payment_outsource_contract pay_p LEFT JOIN outsource_contract ON pay_p.contract_id=oc_id LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON project.pj_user_create=user.u_id WHERE DATEDIFF('".$current_date."',invoice_receive_date)>=10 AND  DATEDIFF('".$current_date."',invoice_receive_date)<60  AND (approve_date='' OR approve_date='0000-00-00')  AND user.department_id='$user_dept'")->execute(); 
             }
 
+
+            //alert close project
+            $Criteria = new CDbCriteria();
+            $Criteria->join = 'LEFT JOIN user ON pj_user_create=user.u_id'; 
+            $Criteria->condition = 'user.department_id = ' . $user_dept.' AND pj_status=1';
+            $projects = Project::model()->findAll($Criteria);
+
+            foreach ($projects as $key => $project) {
+            	//---pro_cost--//
+				$pj_id = $project->pj_id;
+				$pj_name = $project->pj_name;
+
+				$sql = "SELECT pc_cost,pc_id,pc_code FROM project_contract WHERE pc_proj_id='$pj_id' limit 1";                  
+                $records = Yii::app()->db->createCommand($sql)->queryAll();
+
+              
+                if(!count($records)==0)
+                {
+                	$pc_cost = $records[0]['pc_cost'];
+                	$pc_id = $records[0]['pc_id'];
+                	$pc_code = $records[0]['pc_code'];
+
+                	$sql = "SELECT sum(money) as sum_total FROM payment_project_contract WHERE proj_id = '$pc_id' AND bill_no !='' ";                  
+                	$records2 = Yii::app()->db->createCommand($sql)->queryAll();
+                	if(!count($records2)==0)
+                	{
+                          $pay_pc = $records2[0]['sum_total']; 
+                	}
+				
+					$sql = "SELECT oc_cost,oc_id FROM outsource_contract WHERE oc_proj_id='$pj_id' limit 1";                  
+	                $records = Yii::app()->db->createCommand($sql)->queryAll();
+
+	             
+	                if(!count($records)==0)
+	                {
+	                	$oc_cost = $records[0]['oc_cost'];
+	                	$oc_id = $records[0]['oc_id'];
+	                	//---pay_pc--//
+				
+	                	$sql = "SELECT sum(money) as sum_total FROM payment_outsource_contract WHERE contract_id = '$oc_id' AND approve_date !='' ";                  
+	                	$records2 = Yii::app()->db->createCommand($sql)->queryAll();
+	                	if(!count($records2)==0)
+	                	{
+	                          $pay_oc = $records2[0]['sum_total']; 
+	                	}
+						
+						if(($pc_cost-$pay_pc==0) && ($oc_cost-$pay_oc==0) )
+						{
+							
+							Yii::app()->db->createCommand("INSERT INTO  notify (pj_id,project,contract,alarm_detail,date_end,url,type,update_id) VALUES ($pj_id,'$pj_name','$pc_code','แจ้งเตือนดำเนินการปิดงาน','','',5,$pj_id)")->execute();
+
+
+						}
+	                }
+
+				
+                }
+				
+
+				
+            }
+
+
+            //---end close project----//
+
             if(date('d')>=20){
 
                 $month = date("n");
@@ -186,6 +251,8 @@ class NotifyController extends Controller
 	    // print_r($model);
 	    // exit;
 		}
+
+			
 
 		$this->render('index',array(
 			'model'=>$model//,'records'=>$this->gnotify()

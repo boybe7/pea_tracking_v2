@@ -41,27 +41,6 @@ $('#search-form').submit(function(){
 
 <?php
 
-/*
-        $sort = new CSort;
-        //$sort->defaultOrder = 'project DESC';
-        $sort->defaultOrder = 'date_end ASC';
-        $sort->attributes = array('project,contract,date_end,alarm_detail');
-        $provAll = new CArrayDataProvider($records,
-            array(
-            	'keyField'=>false,  //don't have 'id' column
-            	'sort'=>$sort,
-                // 'sort' => array( //optional and sortring
-                //     'attributes' => array(
-                //         'project', 
-                //         'contract',
-                //         'date_end',
-                //         'alarm_detail',
-                //     ),
-                // ),
-                'pagination' => array('pageSize' => 10) //optional add a pagination
-            )
-        );
-*/
 
  $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
     'id'=>'search-form',
@@ -169,6 +148,8 @@ $('#search-form').submit(function(){
     
 <?php $this->endWidget(); 
 
+
+/*
  $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'notify-grid',
 	//'dataProvider'=>$provAll,
@@ -231,9 +212,12 @@ $('#search-form').submit(function(){
 								)
 		)	
 	),
-)); ?>
+)); 
+*/
 
+?>
 
+<br>
 <ul class="nav nav-tabs">
       <li  class="active"><a href="#garanteeTab" data-toggle="tab">ค้ำประกันสัญญา</a></li>
       <li ><a href="#vendorTab" data-toggle="tab">ชำระเงินของ vendor</a></li>
@@ -490,20 +474,60 @@ $('#search-form').submit(function(){
         ?>
     </div> 
     <div class="tab-pane " id="closeTab">
-        <center><h4>แจ้งเตือนปิดสัญญา</h4></center>
+        <center><h4>แจ้งเตือนปิดโครงการ</h4></center>
          <?php
+            $this->widget('bootstrap.widgets.TbButton', array(
+                'buttonType'=>'link',
+                
+                'type'=>'warning',
+                'label'=>'ปิดโครงการ',
+                'icon'=>'bookmark',
+                //'url'=>array('close'),
+                'htmlOptions'=>array('class'=>'pull-right','style'=>'margin-bottom: 20px;',
+
+
+                            'onclick'=>'      
+                                   if($.fn.yiiGridView.getSelection("notify-grid-close").length==0)
+                                      js:bootbox.alert("กรุณาเลือกโครงการที่ต้องการปิด?","ตกลง");   
+                                   else 
+                                   {  
+                                             $.ajax({
+                                                    type: "POST",
+                                                    url: "closeSelected",
+                                                    data: { selectedID: $.fn.yiiGridView.getSelection("notify-grid-close")}
+                                                    })
+                                                    .done(function( msg ) {
+                                                        $("#notify-grid-close").yiiGridView("update",{});
+                                                    });
+                                    }',
+                           
+
+                    ),
+            )); 
+
+            
+
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-close',
                 'type'=>'bordered condensed',            
                 'dataProvider'=>$model->searchByType(5),
                 'filter'=>$model,
                 'selectableRows' =>2,
-                'htmlOptions'=>array('style'=>'padding-top:10px'),
+                'htmlOptions'=>array('style'=>''),
                 'enablePagination' => true,
                 'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
                 'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
                 'columns'=>array(
-                    
+                    'checkbox'=> array(
+                            'id'=>'selectedID',
+                            'class'=>'CCheckBoxColumn',
+                            //'selectableRows' => 2, 
+                             'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
+                             'htmlOptions'=>array(
+                                                'style'=>'text-align:center'
+
+                                            )               
+                    ),
                     'proj'=>array(
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
@@ -519,32 +543,7 @@ $('#search-form').submit(function(){
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),  
                     
-                    'end'=>array(
-                            'name' => 'date_end',
-                            'header'=>$model->getAttributeLabel('date_end'),
-                            //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
-                            //call the method 'gridDataColumn' from the controller
-                            'value'=>array($this,'gridDateRender'),
-                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
-                            'htmlOptions'=>array('style'=>'text-align:center;')
-                    ), 
-                     array(
-                                            'class'=>'bootstrap.widgets.TbButtonColumn',
-                                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
-                                            'template' => '{update}',
-                                            'buttons'=>array(
-                                                    'update' => array
-                                                    (
-                                                        
-                                                        'icon'=>'icon-pencil',
-                                                        'url'=>'Yii::app()->createUrl($data["url"])',
-                                                        'options'=>array(
-                                                            //'id'=>'$data["id"]',
-                                                            //'new_attribute'=> '$data["your_key"]',
-                                                        ),
-                                                    ),
-                                            )
-                    )   
+                  
                 ),
             )); 
 

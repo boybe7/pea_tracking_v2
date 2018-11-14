@@ -164,9 +164,9 @@ class Notify extends CActiveRecord
 		$criteria->compare('alarm_detail',$this->alarm_detail,true);
 		//$criteria->compare('date_end',$this->date_end,true);
 		$criteria->compare('url',$this->url,true);
-		 // header('Content-type: text/plain');
-	  //   print_r($this);
-	  //   exit;
+		  // header('Content-type: text/plain');
+	   //   print_r($this);
+	   //   exit;
 		
 		if ( stripos( $this->date_end, '..') )
 	    {
@@ -196,11 +196,16 @@ class Notify extends CActiveRecord
 
 		$sort = new CSort;
         $sort->defaultOrder = 'date_end ASC';
-		return new CActiveDataProvider($this, array(
+
+        $provider = new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,'sort'=>$sort,'pagination'=>array(
-                        'pageSize'=>5,
+                        'pageSize'=>10,
                 ),
 		));
+       //     header('Content-type: text/plain');
+	      // print_r($provider->getModels());
+	      // exit;
+		return  $provider;
 	}
 
 	public function searchByType($type="")
