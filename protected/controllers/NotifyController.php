@@ -78,7 +78,7 @@ class NotifyController extends Controller
             $Criteria->join = 'LEFT JOIN user ON pj_user_create=user.u_id'; 
             $Criteria->condition = 'user.department_id = ' . $user_dept.' AND pj_status=1';
             $projects = Project::model()->findAll($Criteria);
-
+            $closeProjectData = array();
             foreach ($projects as $key => $project) {
             	//---pro_cost--//
 				$pj_id = $project->pj_id;
@@ -123,6 +123,12 @@ class NotifyController extends Controller
 							
 							Yii::app()->db->createCommand("INSERT INTO  notify (pj_id,project,contract,alarm_detail,date_end,url,type,update_id) VALUES ($pj_id,'$pj_name','$pc_code','แจ้งเตือนดำเนินการปิดงาน','','',5,$pj_id)")->execute();
 
+							$mangement["project"] = $pj_name;//.':'.$project->pj_work_cat;
+	                        $mangement["contract"] = $pc_code;
+	                        $mangement["date_end"] = "";
+	                        $mangement["url"] = "";
+	                        $mangement["alarm_detail"] =  "แจ้งเตือนดำเนินการปิดงาน";
+	                        $closeProjectData[] = $mangement;
 
 						}
 	                }
@@ -187,11 +193,11 @@ class NotifyController extends Controller
                           
                     
 
-                $records=array_merge($projectContractData , $paymentProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2);
+                $records=array_merge($projectContractData , $paymentProjectData,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2);
             
             }  
             else
-               $records=array_merge($projectContractData , $paymentProjectData, $paymentOutsourceData);
+               $records=array_merge($projectContractData , $paymentProjectData, $closeProjectData,$paymentOutsourceData);
 
             if($type==0)
                 return $records;
