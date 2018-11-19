@@ -143,6 +143,17 @@ class NotifyController extends Controller
 
             //---end close project----//
 
+            //alert .1000
+            $Criteria = new CDbCriteria();
+            $Criteria->join = 'LEFT JOIN project ON pc_proj_id=project.pj_id'; 
+            $Criteria->condition = '1000_notify=1';
+            $projects = ProjectContract::model()->findAll($Criteria);
+
+
+
+
+            //--end .10000----//
+
             if(date('d')>=20){
 
                 $month = date("n");

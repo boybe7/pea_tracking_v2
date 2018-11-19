@@ -171,7 +171,7 @@ hr {
     <div style="text-align:left"><?php echo $form->errorSummary(array($model));?></div>
 		
 		<div class="row-fluid">
-			<div class="well span8">
+			<div class="well-blue span8">
       			
       				<!-- <span style='display: block;margin-bottom: 5px;'>คู่สัญญา</span>  -->
       				
@@ -402,7 +402,7 @@ hr {
             </div>
           </div>
         </div>  
-      <div class="well span4">
+      <div class="well-blue span4">
       			<?php 
       			
            
