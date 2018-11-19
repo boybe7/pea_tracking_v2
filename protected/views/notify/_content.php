@@ -157,7 +157,8 @@ $user_dept = Yii::app()->user->userdept;
          
         //} end user
          
-        
+$process = Yii::app()->createController('Notify'); //create instance of controller
+$records = $process[0]->gnotify(); //call function       
 $projData = array();
 foreach ($records as $key => $value) {
 
@@ -171,8 +172,15 @@ foreach ($records as $key => $value) {
 foreach ($projData as $key => $value) {
     $key_a = explode(":", $key);
     //echo $key_a[0];
-    $wc = WorkCategory::model()->findByPk($key_a[1]);
-	echo "<div class='header'>".$wc->wc_name." : โครงการ".$key_a[0] ."</div><hr>";
+    if(sizeof($key_a)>1)
+    {
+        $wc = WorkCategory::model()->findByPk($key_a[1]);
+       echo "<div class='header'>".$wc->wc_name." : โครงการ ".$key_a[0] ."</div><hr>";
+    }
+    else{
+       echo "<div class='header'>โครงการ ".$key_a[0] ."</div><hr>";   
+    }
+        
 	foreach ($value as $key => $value2) {
        if($value2["contract"]=='')
         echo "ค่าบริหารโครงการ : <font color='red'>".$value2["alarm_detail"]."</font><br>";

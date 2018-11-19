@@ -41,7 +41,7 @@ $('#search-form').submit(function(){
 
 <?php
 
-
+/*
  $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
     'id'=>'search-form',
     'enableAjaxValidation'=>false,
@@ -51,7 +51,7 @@ $('#search-form').submit(function(){
     'method'=>'get',
 )); 
 
-?>
+
 
     <div class="row-fluid">
         
@@ -498,6 +498,7 @@ $('#search-form').submit(function(){
                                                     })
                                                     .done(function( msg ) {
                                                         $("#notify-grid-close").yiiGridView("update",{});
+                                                        location.reload();
                                                     });
                                     }',
                            

@@ -27,7 +27,7 @@ class NotifyController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','update','view','getNotify','gnotify','content'),
+				'actions'=>array('index','update','view','getNotify','gnotify','content','CloseSelected'),
 				'users'=>array('*'),
 			),
 			
@@ -384,6 +384,28 @@ class NotifyController extends Controller
 	    }
 
 	}
+
+	public function loadModel($id)
+	{
+		$model=Notify::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function actionCloseSelected()
+    {
+    	$autoIdAll = $_POST['selectedID'];
+        if(count($autoIdAll)>0)
+        {
+            foreach($autoIdAll as $autoId)
+            {
+                $pjModel = Project::model()->findbyPk($this->loadModel($autoId)->pj_id);
+                $pjModel->pj_status = 0;
+                $pjModel->save();
+            }
+        }    
+    }
 
 
 }
