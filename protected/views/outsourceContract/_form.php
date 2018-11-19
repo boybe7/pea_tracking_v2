@@ -13,7 +13,7 @@
   }
 
 </style>
-<fieldset class="well the-fieldset">
+<fieldset class="well-yellow">
         <legend class="the-legend contract-no">สัญญาที่ <?php echo ($index);?></legend>
        
           <div class="row-fluid"> 

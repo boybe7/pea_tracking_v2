@@ -31,7 +31,7 @@ Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/assets/7d883f12/
       });
   });
  </script>
-<fieldset class="well the-fieldset">
+<fieldset class="well the-fieldset-yellow">
         <legend class="the-legend contract_no">สัญญาที่ <?php echo ($index);?></legend>
         <?php echo CHtml::activeHiddenField($model, '[' . $index . ']pc_id'); ?>
         
@@ -332,6 +332,9 @@ Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/assets/7d883f12/
         	<legend class="the-legend">รายละเอียดการเพิ่ม-ลดวงเงิน</legend>
         	<div class="row-fluid"> 
 	        <?php	
+
+            
+
 	  		$this->widget('bootstrap.widgets.TbButton', array(
 	              'buttonType'=>'link',
 	              
@@ -567,6 +570,16 @@ Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/assets/7d883f12/
         	<legend class="the-legend">รายละเอียดการอนุมัติ</legend>
         	<div class="row-fluid"> 
 	        <?php	
+            //echo "<pre>";
+            //print_r($model);
+            //echo "</pre>";
+
+          if(Yii::app()->user->username=="tsd03" || Yii::app()->user->username=="tsd")
+          {
+            echo CHtml::activeCheckBox($model,'[' . $index . ']1000_notify',  array());
+            echo "  <font color='red'><b>เตือนของบประมาณ .1000</b></font>";    
+          }  
+
 	  		$this->widget('bootstrap.widgets.TbButton', array(
 	              'buttonType'=>'link',
 	              
@@ -712,7 +725,7 @@ Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/assets/7d883f12/
 									
 								'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #eeeeee'),  	            	  		
 								'htmlOptions'=>array(
-					  	            	  			'style'=>'text-align:left'
+					  	            	  			'style'=>'text-align:center'
 
 					  	        )
 					  	    ),	

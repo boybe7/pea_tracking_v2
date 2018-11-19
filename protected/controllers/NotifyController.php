@@ -250,12 +250,14 @@ class NotifyController extends Controller
 			  if($_GET['ajax']=="notify-grid-manage")
 			  	   $model->type = 4;
 			  if($_GET['ajax']=="notify-grid-close")
-			  	   $model->type = 5;	   	   	   	
+			  	   $model->type = 5;
+			  if($_GET['ajax']=="notify-grid-1000")
+			  	   $model->type = 6;		   	   	   	   	
 
-			  // header('Content-type: text/plain');
-			  // echo "controller";
-	    // print_r($model);
-	    // exit;
+			// header('Content-type: text/plain');
+			// echo "controller";
+	    	// print_r($model);
+	    	// exit;
 		}
 
 			
@@ -276,12 +278,7 @@ class NotifyController extends Controller
 
 	 protected function gridDateRender($data,$row)
      {
-          // ... generate the output for the column
  
-          // Params:
-          // $data ... the current row data   
-         // $row ... the row index
-         //print_r($data);
 
          $date = '';
          $str_date = explode("-", $data["date_end"]);

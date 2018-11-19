@@ -10,7 +10,8 @@
     border-bottom:none;
 }
 .the-fieldset {
-    background-color: whiteSmoke;
+   background-color: whiteSmoke;
+
 	border: 1px solid #E3E3E3;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
@@ -19,6 +20,20 @@
 	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
+
+.the-fieldset-yellow {
+   background-color: #f8c10621;
+
+  border: 1px solid #E3E3E3;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+
 hr {
   border-bottom: 1px solid #E3E3E3;
   margin: -5px 0 18px 0;

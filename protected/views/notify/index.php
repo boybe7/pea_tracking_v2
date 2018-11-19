@@ -224,6 +224,7 @@ $('#search-form').submit(function(){
       <li ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ supplier</a></li>
       <li ><a href="#manageTab" data-toggle="tab">บันทึกค่ารับรอง</a></li>
       <li ><a href="#closeTab" data-toggle="tab">ปิดงาน</a></li>
+      <li ><a href="#1000Tab" data-toggle="tab">ของบ .1000</a></li>
         
 </ul>
 <div class="tab-content">
@@ -549,5 +550,68 @@ $('#search-form').submit(function(){
             )); 
 
         ?>
-    </div>   
+    </div> 
+    <div class="tab-pane " id="1000Tab">
+        <center><h4>แจ้งเตือนของบประมาณ .1000</h4></center>
+         <?php
+           
+
+            $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'notify-grid-1000',
+                'type'=>'bordered condensed',            
+                'dataProvider'=>$model->searchByType(6),
+                'filter'=>$model,
+                'selectableRows' =>2,
+                'htmlOptions'=>array('style'=>''),
+                'enablePagination' => true,
+                'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+                'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+                'columns'=>array(
+                   
+                    'proj'=>array(
+                            'name' => 'project',
+                            'header'=>$model->getAttributeLabel('project'),
+                            'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
+                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'con'=>array(
+                            'name' => 'contract',
+                            'header'=>$model->getAttributeLabel('contract'),
+                            'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
+                   
+                    'end'=>array(
+                            'name' => 'date_end',
+                            'header'=>$model->getAttributeLabel('date_end'),
+                            //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
+                            //call the method 'gridDataColumn' from the controller
+                            'value'=>array($this,'gridDateRender'),
+                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:center;')
+                    ), 
+                     array(
+                                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                                            'template' => '{update}',
+                                            'buttons'=>array(
+                                                    'update' => array
+                                                    (
+                                                        
+                                                        'icon'=>'icon-pencil',
+                                                        'url'=>'Yii::app()->createUrl($data["url"])',
+                                                        'options'=>array(
+                                                            //'id'=>'$data["id"]',
+                                                            //'new_attribute'=> '$data["your_key"]',
+                                                        ),
+                                                    ),
+                                            )
+                    )   
+                ),
+            ));  
+
+        ?>
+    </div>     
 </div>

@@ -31,7 +31,7 @@ Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/assets/7d883f12/
   });
  </script> 
 
-<fieldset class="well the-fieldset">
+<fieldset class="well-yellow">
         <legend class="the-legend contract_no">สัญญาที่ <?php echo ($index);?></legend>
         <?php echo CHtml::activeHiddenField($model, '[' . $index . ']pc_id'); ?>
         <div class="row-fluid">

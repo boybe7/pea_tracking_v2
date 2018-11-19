@@ -15,7 +15,7 @@
       background-color: white;
    }
 </style>
-<fieldset class="well the-fieldset">
+<fieldset class="well-yellow">
         <legend class="the-legend contract_no_oc">สัญญาที่ <?php echo ($index);?></legend>
          <?php echo CHtml::activeHiddenField($model, '[' . $index . ']oc_id'); ?>
           <div class="row-fluid"> 
