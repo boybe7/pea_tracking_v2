@@ -53,7 +53,7 @@ class NotifyController extends Controller
 
         //2.แจ้งเตือนครบกำหนดชำระเงินของ vendor
         //Alert before 7 days, until 60 days
-        $paymentProjectData=Yii::app()->db->createCommand("SELECT pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
+        $paymentProjectData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ),'".$current_date."')<=7  AND DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ),'".$current_date."')>-60  AND (bill_date='' OR bill_date='0000-00-00') AND user.department_id='$user_dept'")->queryAll(); 
@@ -66,6 +66,7 @@ class NotifyController extends Controller
         //4.แจ้งเตือนบันทึกค่ารับรองประจำเดือน
         $mangementCostData1 = array();
         $mangementCostData2 = array();
+        $fiscal_year  = 2558;//date("n") < 10 ? date("Y")+543 : date("Y")+543 +1;
         if(date('d')>=20){
 
                 $month = date("n");
@@ -75,7 +76,7 @@ class NotifyController extends Controller
 
                 $Criteria = new CDbCriteria();
                 $Criteria->join = 'LEFT JOIN user ON pj_user_create=user.u_id'; 
-                $Criteria->condition = 'user.department_id = ' . $user_dept;
+                $Criteria->condition = 'user.department_id = ' . $user_dept.' AND pj_fiscalyear='.$fiscal_year;
                 $projects = Project::model()->findAll($Criteria);
                 
                 //print_r($Criteria);
@@ -89,10 +90,13 @@ class NotifyController extends Controller
                     if(count($records)==0)
                     {
                         //$mProj = Project::model()->findbyPk($);
-                        $mangement["project"] = $project->pj_name.':'.$project->pj_work_cat;
+                        $mangement["pj_id"] = $pid;
+                        $mangement["type"] = 4;
+                        $mangement["project"] = $project->pj_name;//.':'.$project->pj_work_cat;
                         $mangement["contract"] = "";
                         $mangement["date_end"] = $lastDay;
-                        $mangement["url"] = "managementCost/create";
+                        $mangement["update_id"] = $pid;
+                        $mangement["url"] = "managementCost/create/".$pid;
                         $mangement["alarm_detail"] =  "แจ้งเตือนบันทึกค่ารับรองประจำเดือน";
                         $mangementCostData1[] = $mangement;
                     }
@@ -103,10 +107,13 @@ class NotifyController extends Controller
                     if(count($records)==0)
                     {
                         //$mProj = Project::model()->findbyPk($);
+                        $mangement["pj_id"] = $pid;
+                        $mangement["type"] = 4;
                         $mangement["project"] = $project->pj_name;//.':'.$project->pj_work_cat;
                         $mangement["contract"] = "";
                         $mangement["date_end"] = $lastDay;
-                        $mangement["url"] = "managementCost/create";
+                        $mangement["update_id"] = $pid;
+                        $mangement["url"] = "managementCost/create/".$pid;
                         $mangement["alarm_detail"] =  "แจ้งเตือนบันทึกค่าใช้จริงประจำเดือน";
                         $mangementCostData2[] = $mangement;
                     }   
@@ -120,7 +127,7 @@ class NotifyController extends Controller
         //5.alert close project
         $Criteria = new CDbCriteria();
             $Criteria->join = 'LEFT JOIN user ON pj_user_create=user.u_id'; 
-            $Criteria->condition = 'user.department_id = ' . $user_dept.' AND pj_status=1';
+            $Criteria->condition = 'user.department_id = ' . $user_dept.' AND pj_status=1 AND pj_fiscalyear='.$fiscal_year;
             $projects = Project::model()->findAll($Criteria);
             $closeProjectData = array();
             foreach ($projects as $key => $project) {
@@ -165,11 +172,13 @@ class NotifyController extends Controller
 						if(($pc_cost-$pay_pc==0) && ($oc_cost-$pay_oc==0) )
 						{
 							
-							Yii::app()->db->createCommand("INSERT INTO  notify (pj_id,project,contract,alarm_detail,date_end,url,type,update_id) VALUES ($pj_id,'$pj_name','$pc_code','แจ้งเตือนดำเนินการปิดงาน','','',5,$pj_id)")->execute();
-
+							//Yii::app()->db->createCommand("INSERT INTO  notify (pj_id,project,contract,alarm_detail,date_end,url,type,update_id) VALUES ($pj_id,'$pj_name','$pc_code','แจ้งเตือนดำเนินการปิดงาน','','',5,'')")->execute();
+                            $mangement["pj_id"] = $pj_id;
 							$mangement["project"] = $pj_name;//.':'.$project->pj_work_cat;
 	                        $mangement["contract"] = $pc_code;
 	                        $mangement["date_end"] = "";
+	                        $mangement["type"] = 5;
+	                        $mangement["update_id"] = "";
 	                        $mangement["url"] = "";
 	                        $mangement["alarm_detail"] =  "แจ้งเตือนดำเนินการปิดงาน";
 	                        $closeProjectData[] = $mangement;
@@ -190,6 +199,8 @@ class NotifyController extends Controller
         //merge all notify data   
         $records=array_merge($projectContractData , $paymentProjectData,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2); 
 
+        //echo sizeof($closeProjectData);
+
 
         //get data from notify table
         $notify_records = Notify::model()->findAll();   
@@ -197,15 +208,19 @@ class NotifyController extends Controller
         //check have already notify
         foreach ($records as $key => $value) {
         	$found = 0;
+        	//echo $value['date_end']."<br>";
         	foreach ($notify_records as $key => $notify) {
-        		if($value['project']==$notify->project && $value['contract']==$notify->contract && $value['alarm_detail']==$notify->alarm_detail && $value['date_end']==$notify->date_end)
+        		if($value['pj_id']==$notify->pj_id && $value['type']==$notify->type )
         		{
         			$found = 1;
 
         			//set flag_del = 0
         			$notify->flag_del = 0;
+        			$notify->url = $value['url'];
         			//update
         			$notify->save();
+
+        			//echo "update";
         			break;
         		}
         	}
@@ -233,7 +248,7 @@ class NotifyController extends Controller
 
 
         //delete data not notify
-        Yii::app()->db->createCommand("DELETE notify WHERE flag_del=1")->execute(); 
+        //Yii::app()->db->createCommand("DELETE FROM notify WHERE flag_del=1")->execute(); 
 
 
 		if($type==0)
@@ -254,7 +269,7 @@ class NotifyController extends Controller
 		
 	}	
 
-	public static function gnotify2($type=0)
+	public static function gnotify3($type=0)
 	{
 		$current_date = (date("Y")+543).date("-m-d");
 
