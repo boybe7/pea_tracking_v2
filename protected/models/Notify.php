@@ -110,7 +110,7 @@ class Notify extends CActiveRecord
 			array('url', 'length', 'max'=>500),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, project, contract, alarm_detail, date_end, url,type', 'safe', 'on'=>'search'),
+			array('id, project, contract, alarm_detail, date_end, url,type,flag_del,status,update_date', 'safe', 'on'=>'search'),
 		);
 	}
 
