@@ -158,55 +158,61 @@ $user_dept = Yii::app()->user->userdept;
         //} end user
          
 $process = Yii::app()->createController('Notify'); //create instance of controller
-$records = $process[0]->gnotify(); //call function       
-$projData = array();
+$records = $process[0]->gnotify(); //call function 
+
+$old_proj = "";
 foreach ($records as $key => $value) {
+     
+     $workcat  = WorkCategory::model()->findbyPk(Project::model()->findbyPk($value['pj_id'])->pj_work_cat)->wc_name; 
+     if($old_proj!=$value['pj_id']) 
+        echo "<div class='header'> ".$workcat.":".$value['project'] ."</div><hr>";
 
-     $index = $value["project"];//array_search($value["pj_id"],$projData, true); 
-     $projData[$index][] = $value;
+     if($value["contract"]!="")
+        echo "สัญญา ".$value["contract"]." : <font color='red'>".$value["alarm_detail"]."</font><br>";
+     else
+        echo "<font color='red'>".$value["alarm_detail"]."</font><br>";
 
-}
+    if($old_proj=="")
+          $old_proj = $value['pj_id'];
+
+    echo "<br>";  
+
+}   
+
+
+// $projData = array();
+// foreach ($records as $key => $value) {
+
+//      $index = $value["project"];//array_search($value["pj_id"],$projData, true); 
+//      $projData[$index][] = $value;
+
+// }
 
 // print_r($projData);
 
-foreach ($projData as $key => $value) {
-    $key_a = explode(":", $key);
-    //echo $key_a[0];
-    if(sizeof($key_a)>1)
-    {
-        $wc = WorkCategory::model()->findByPk($key_a[1]);
-       echo "<div class='header'>".$wc->wc_name." : โครงการ ".$key_a[0] ."</div><hr>";
-    }
-    else{
-       echo "<div class='header'>โครงการ ".$key_a[0] ."</div><hr>";   
-    }
+// foreach ($projData as $key => $value) {
+//     $key_a = explode(":", $key);
+//     //echo $key_a[0];
+//     if(sizeof($key_a)>1)
+//     {
+//         $wc = WorkCategory::model()->findByPk($key_a[1]);
+//        echo "<div class='header'>".$wc->wc_name." : โครงการ ".$key_a[0] ."</div><hr>";
+//     }
+//     else{
+//        echo "<div class='header'>โครงการ ".$key_a[0] ."</div><hr>";   
+//     }
         
-	foreach ($value as $key => $value2) {
-       if($value2["contract"]=='')
-        echo "ค่าบริหารโครงการ : <font color='red'>".$value2["alarm_detail"]."</font><br>";
-       else 
-		echo "สัญญา ".$value2["contract"]." : <font color='red'>".$value2["alarm_detail"]."</font><br>";
-	}
-	echo "<br>";
-}
+// 	foreach ($value as $key => $value2) {
+//        if($value2["contract"]=='')
+//         echo "ค่าบริหารโครงการ : <font color='red'>".$value2["alarm_detail"]."</font><br>";
+//        else 
+// 		echo "สัญญา ".$value2["contract"]." : <font color='red'>".$value2["alarm_detail"]."</font><br>";
+// 	}
+// 	echo "<br>";
+// }
 
 
 
-//echo count($records);
-$provAll = new CArrayDataProvider($records,
-    array(
-    	'keyField'=>false,  //don't have 'id' column
-        'sort' => array( //optional and sortring
-            'attributes' => array(
-                'project', 
-                'contract',
-                'date_end',
-                'alarm_detail',
-            ),
-        ),
-        'pagination' => array('pageSize' => 10) //optional add a pagination
-    )
-);
 
 
   ?>

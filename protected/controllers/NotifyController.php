@@ -202,9 +202,9 @@ class NotifyController extends Controller
          //$Criteria->select = "pc_code, pj_name ";
          $Criteria->join = 'LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id'; 
          $Criteria->with = array("project"=>array("select"=>"pj_name"));
-         $Criteria->condition = '1000_notify=1  AND user.department_id = ' . $user_dept.' AND pj_status=1 AND pj_fiscalyear='.$fiscal_year;
+         $Criteria->condition = 'notify_1000=1  AND user.department_id = ' . $user_dept.' AND pj_status=1 AND pj_fiscalyear='.$fiscal_year;
 
-         $sql = "SELECT pj_id,pj_name as project, pc_code as contract,'' as date_end, '' as url,'' as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail  FROM project_contract  LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE 1000_notify=1  AND user.department_id = '$user_dept' AND pj_status=1 AND pj_fiscalyear='$fiscal_year'";                  
+         $sql = "SELECT pj_id,pj_name as project, pc_code as contract,'' as date_end, '' as url,pc_id as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail  FROM project_contract  LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE notify_1000=1  AND user.department_id = '$user_dept' AND pj_status=1 AND pj_fiscalyear='$fiscal_year'";                  
 	     $notify1000Data = Yii::app()->db->createCommand($sql)->queryAll();
          
         
@@ -261,12 +261,15 @@ class NotifyController extends Controller
 
 
         //delete data not notify
-        //Yii::app()->db->createCommand("DELETE FROM notify WHERE flag_del=1")->execute(); 
+        Yii::app()->db->createCommand("DELETE FROM notify WHERE flag_del=1")->execute(); 
 
 
 		if($type==0)
         {        
-        	return $records;
+        	//return $records;
+        	$sql = "SELECT *  FROM notify  ORDER BY id DESC,pj_id ASC  LIMIT 10";                  
+	        $notifyData = Yii::app()->db->createCommand($sql)->queryAll();
+	        return $notifyData;
         }    
         else
         {	
@@ -391,7 +394,7 @@ class NotifyController extends Controller
             //alert .1000
             $Criteria = new CDbCriteria();
             $Criteria->join = 'LEFT JOIN project ON pc_proj_id=project.pj_id'; 
-            $Criteria->condition = '1000_notify=1';
+            $Criteria->condition = 'notify_1000=1';
             $projects = ProjectContract::model()->findAll($Criteria);
 
 
@@ -670,9 +673,9 @@ class NotifyController extends Controller
         {
             foreach($autoIdAll as $autoId)
             {
-                $model = $this->loadModel($id);
-                $model->1000_notify = 0;
-                $model->save();
+                $pjModel = ProjectContract::model()->findbyPk($this->loadModel($autoId)->update_id);
+                $pjModel->notify_1000 = 0;
+                $pjModel->save();
             }
         }    
     }
