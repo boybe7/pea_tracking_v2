@@ -224,7 +224,12 @@ $('#search-form').submit(function(){
       <li ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ supplier</a></li>
       <li ><a href="#manageTab" data-toggle="tab">บันทึกค่ารับรอง</a></li>
       <li ><a href="#closeTab" data-toggle="tab">ปิดงาน</a></li>
-      <li ><a href="#1000Tab" data-toggle="tab">ของบ .1000</a></li>
+
+      <?php
+          if(Yii::app()->user->username=='tsd' || Yii::app()->user->username=='tsd02' || Yii::app()->user->username=='tsd03')  
+                echo  '<li ><a href="#1000Tab" data-toggle="tab">ของบ .1000</a></li>';
+
+       ?>     
         
 </ul>
 <div class="tab-content">
@@ -551,10 +556,45 @@ $('#search-form').submit(function(){
 
         ?>
     </div> 
+
+    <?php
+    if(Yii::app()->user->username=='tsd' || Yii::app()->user->username=='tsd02' || Yii::app()->user->username=='tsd03') 
+    { 
+    ?>
     <div class="tab-pane " id="1000Tab">
         <center><h4>แจ้งเตือนของบประมาณ .1000</h4></center>
          <?php
            
+            $this->widget('bootstrap.widgets.TbButton', array(
+                'buttonType'=>'link',
+                
+                'type'=>'warning',
+                'label'=>'ปิดแจ้งเตือน',
+                'icon'=>'bookmark',
+                //'url'=>array('close'),
+                'htmlOptions'=>array('class'=>'pull-right','style'=>'margin-bottom: 20px;',
+
+
+                            'onclick'=>'      
+                                   if($.fn.yiiGridView.getSelection("notify-grid-1000").length==0)
+                                      js:bootbox.alert("กรุณาเลือกโครงการที่ต้องการปิด?","ตกลง");   
+                                   else 
+                                   {  
+                                             $.ajax({
+                                                    type: "POST",
+                                                    url: "disableNotify",
+                                                    data: { selectedID: $.fn.yiiGridView.getSelection("notify-grid-1000")}
+                                                    })
+                                                    .done(function( msg ) {
+                                                        $("#notify-grid-1000").yiiGridView("update",{});
+                                                        location.reload();
+                                                    });
+                                    }',
+                           
+
+                    ),
+            )); 
+
 
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-1000',
@@ -567,7 +607,16 @@ $('#search-form').submit(function(){
                 'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
                 'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
                 'columns'=>array(
-                   
+                    'checkbox'=> array(
+                            'id'=>'selectedID',
+                            'class'=>'CCheckBoxColumn',
+                            //'selectableRows' => 2, 
+                             'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
+                             'htmlOptions'=>array(
+                                                'style'=>'text-align:center'
+
+                                            )               
+                    ),
                     'proj'=>array(
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
@@ -592,26 +641,11 @@ $('#search-form').submit(function(){
                             'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:center;')
                     ), 
-                     array(
-                                            'class'=>'bootstrap.widgets.TbButtonColumn',
-                                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
-                                            'template' => '{update}',
-                                            'buttons'=>array(
-                                                    'update' => array
-                                                    (
-                                                        
-                                                        'icon'=>'icon-pencil',
-                                                        'url'=>'Yii::app()->createUrl($data["url"])',
-                                                        'options'=>array(
-                                                            //'id'=>'$data["id"]',
-                                                            //'new_attribute'=> '$data["your_key"]',
-                                                        ),
-                                                    ),
-                                            )
-                    )   
+                    
                 ),
             ));  
 
         ?>
-    </div>     
+    </div>  
+    <?php }?>   
 </div>

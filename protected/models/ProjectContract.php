@@ -26,6 +26,8 @@ class ProjectContract extends CActiveRecord
 
 	private $idCache;
 
+	//for notify
+
 	public function tableName()
 	{
 		return 'project_contract';

@@ -27,7 +27,7 @@ class NotifyController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','update','view','getNotify','gnotify','content','CloseSelected'),
+				'actions'=>array('index','update','view','getNotify','gnotify','content','CloseSelected','DisableNotify'),
 				'users'=>array('*'),
 			),
 			
@@ -185,19 +185,32 @@ class NotifyController extends Controller
 
 						}
 	                }
+	               
+
 
 				
                 }
 				
 
+
 				
             }
 
-        //6.เตือนของบ .1000
+         //6.เตือนของบ .1000
+         $Criteria = new CDbCriteria();
+         //$Criteria->select = "pj_id,pj_name as project, pc_code as contract,'' as date_end, '' as url,'' as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail ";
+         //$Criteria->select = "pc_code, pj_name ";
+         $Criteria->join = 'LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id'; 
+         $Criteria->with = array("project"=>array("select"=>"pj_name"));
+         $Criteria->condition = '1000_notify=1  AND user.department_id = ' . $user_dept.' AND pj_status=1 AND pj_fiscalyear='.$fiscal_year;
 
+         $sql = "SELECT pj_id,pj_name as project, pc_code as contract,'' as date_end, '' as url,'' as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail  FROM project_contract  LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE 1000_notify=1  AND user.department_id = '$user_dept' AND pj_status=1 AND pj_fiscalyear='$fiscal_year'";                  
+	     $notify1000Data = Yii::app()->db->createCommand($sql)->queryAll();
+         
+        
 
         //merge all notify data   
-        $records=array_merge($projectContractData , $paymentProjectData,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2); 
+        $records=array_merge($projectContractData , $paymentProjectData,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2,$notify1000Data); 
 
         //echo sizeof($closeProjectData);
 
@@ -646,6 +659,20 @@ class NotifyController extends Controller
                 $pjModel = Project::model()->findbyPk($this->loadModel($autoId)->pj_id);
                 $pjModel->pj_status = 0;
                 $pjModel->save();
+            }
+        }    
+    }
+
+    public function actionDisableNotify()
+    {
+    	$autoIdAll = $_POST['selectedID'];
+        if(count($autoIdAll)>0)
+        {
+            foreach($autoIdAll as $autoId)
+            {
+                $model = $this->loadModel($id);
+                $model->1000_notify = 0;
+                $model->save();
             }
         }    
     }
