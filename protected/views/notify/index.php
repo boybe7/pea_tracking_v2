@@ -437,26 +437,25 @@ $('#search-form').submit(function(){
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
                             'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
+                            'value'=>array($this,'gridProjectRender'),
                             'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),
-                    'con'=>array(
-                            'name' => 'contract',
-                            'header'=>$model->getAttributeLabel('contract'),
-                            'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
+/*'workcat'=>array(
+                            'name' => 'workcat',
+                            'header'=>'ประเภทงาน',
+                    
                             'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),  
                    
-                    'end'=>array(
-                            'name' => 'date_end',
-                            'header'=>$model->getAttributeLabel('date_end'),
-                            //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
-                            //call the method 'gridDataColumn' from the controller
-                            'value'=>array($this,'gridDateRender'),
+                    'year'=>array(
+                            'name' => 'year',
+                            'header'=>'ปีงบประมาณ',
+                            //'value'=>array($this,'gridDateRender'),
                             'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:center;')
-                    ), 
+                    ), */
                      array(
                                             'class'=>'bootstrap.widgets.TbButtonColumn',
                                             'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),

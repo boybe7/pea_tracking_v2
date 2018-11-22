@@ -550,6 +550,12 @@ class NotifyController extends Controller
          return $date;    
     }       
 
+     protected function gridProjectRender($data,$row)
+     {
+ 		$model =Yii::app()->db->createCommand("SELECT * FROM project LEFT JOIN work_category ON pj_work_cat=wc_id  WHERE pj_id=".$data['pj_id'])->queryAll(); 
+         return $model[0]['pj_fiscalyear']." : ".$model[0]['wc_name']." ".$data['project'];    
+    } 
+
 	
 	public function actionGetNotify()
 	{
