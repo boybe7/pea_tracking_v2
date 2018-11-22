@@ -631,15 +631,7 @@ $('#search-form').submit(function(){
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),  
                    
-                    'end'=>array(
-                            'name' => 'date_end',
-                            'header'=>$model->getAttributeLabel('date_end'),
-                            //'filter'=>CHtml::activeTextField($model, 'v_name',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_name"))),
-                            //call the method 'gridDataColumn' from the controller
-                            'value'=>array($this,'gridDateRender'),
-                            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
-                            'htmlOptions'=>array('style'=>'text-align:center;')
-                    ), 
+                    
                     
                 ),
             ));  
