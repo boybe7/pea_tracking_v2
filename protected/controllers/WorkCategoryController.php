@@ -66,6 +66,8 @@ class WorkCategoryController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
+	
+
 		if(isset($_POST['name']) && $_POST['name']!="")
 		{
 			$model->wc_name=$_POST['name'];

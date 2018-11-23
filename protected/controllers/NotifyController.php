@@ -46,6 +46,7 @@ class NotifyController extends Controller
 		Yii::app()->db->createCommand("UPDATE notify SET flag_del=1")->execute(); 
 
 		//---------seek notify-----------//
+		ini_set('max_execution_time', 300);
 	
 		//1.แจ้งเตือนครบกำหนดค้ำประกันสัญญา
 		//Alert before 7 days, until 60 days
@@ -54,9 +55,16 @@ class NotifyController extends Controller
         //2.แจ้งเตือนครบกำหนดชำระเงินของ vendor
         //Alert before 7 days, until 60 days
         $paymentProjectData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
-            DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
+            DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url,'2' as type,pj_id as update_id  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ),'".$current_date."')<=7  AND DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
-            DAY ),'".$current_date."')>-60  AND (bill_date='' OR bill_date='0000-00-00') AND user.department_id='$user_dept'")->queryAll(); 
+            DAY ),'".$current_date."')>-60  AND (bill_date='' OR bill_date='0000-00-00') AND user.department_id='$user_dept'")->queryAll();
+
+        $paymentProjectData2=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm2
+            DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url,'2' as type,pj_id as update_id  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
+            DAY ),'".$current_date."')<=7  AND DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
+            DAY ),'".$current_date."')>-60  AND (bill_date='' OR bill_date='0000-00-00') AND invoice_alarm2!='' AND user.department_id='$user_dept'")->queryAll();      
+
+        	
 
         //3.แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier
         //Alert before 10 days, until 60 days
@@ -210,7 +218,7 @@ class NotifyController extends Controller
         
 
         //merge all notify data   
-        $records=array_merge($projectContractData , $paymentProjectData,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2,$notify1000Data); 
+        $records=array_merge($projectContractData , $paymentProjectData,$paymentProjectData2,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2,$notify1000Data); 
 
         //echo sizeof($closeProjectData);
 
@@ -226,6 +234,15 @@ class NotifyController extends Controller
         		if($value['pj_id']==$notify->pj_id && $value['type']==$notify->type )
         		{
         			$found = 1;
+
+        			if(($value['date_end']) > ($notify->date_end))
+        			{
+        				$notify->date_end = $value['date_end'];
+        				
+        			}	
+
+        			//if($value['contract']=='TEST')
+        			//	 echo strtotime($value['date_end']).":".strtotime($notify->date_end)."<br>";
 
         			//set flag_del = 0
         			$notify->flag_del = 0;
@@ -245,7 +262,10 @@ class NotifyController extends Controller
         		$new_rec->project = $value['project'];
         		$new_rec->contract = $value['contract'];
         		$new_rec->url = $value['url'];
-        		$new_rec->type = $value['type'];
+                if(isset($value['type']))
+        		   $new_rec->type = $value['type'];
+        		else
+        			echo $value['alarm_detail'];
         		$new_rec->pj_id = $value['pj_id'];
         		$new_rec->update_id = $value['update_id'];
         		$new_rec->alarm_detail = $value['alarm_detail'];

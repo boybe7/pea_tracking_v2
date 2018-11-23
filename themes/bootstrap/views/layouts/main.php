@@ -295,7 +295,10 @@ if(!Yii::app()->user->isGuest)
   Yii::import('application.controllers.NotifyController');
   ///$num = notify::model()->getNotify();
   
-  $num = NotifyController::gnotify(1); // preparing object
+  //$num = NotifyController::gnotify(1); // preparing object
+  $Criteria = new CDbCriteria();
+  $Criteria->condition = 'status=1';
+  $num = count(Notify::model()->findAll($Criteria));
   
  $badge= '';
  ///$num = 0;
