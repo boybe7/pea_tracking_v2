@@ -300,7 +300,7 @@ $('#search-form').submit(function(){
          <?php
 
             $this->widget('bootstrap.widgets.TbGridView',array(
-                'id'=>'notify-grid-garantee',
+                'id'=>'notify-grid-vendor',
                 'type'=>'bordered condensed',            
                 'dataProvider'=>$model->searchByType(2),
                 'filter'=>$model,
@@ -310,19 +310,25 @@ $('#search-form').submit(function(){
                 'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
                 'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
                 'columns'=>array(
-                    
+                    'detail'=>array(
+                            'name' => 'alarm_detail',
+                            'header'=>$model->getAttributeLabel('alarm_detail'),
+                            'filter'=>CHtml::activeTextField($model, 'alarm_detail',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("alarm_detail"))),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
                     'proj'=>array(
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
                             'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
-                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),
                     'con'=>array(
                             'name' => 'contract',
                             'header'=>$model->getAttributeLabel('contract'),
                             'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
-                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),  
                     

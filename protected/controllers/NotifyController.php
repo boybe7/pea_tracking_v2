@@ -49,32 +49,36 @@ class NotifyController extends Controller
 		ini_set('max_execution_time', 300);
 	
 		//1.แจ้งเตือนครบกำหนดค้ำประกันสัญญา
-		//Alert before 7 days, until 60 days
-        $projectContractData=Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,pc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญา' as alarm_detail,pc_garantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, pc_id as update_id FROM project_contract pc LEFT JOIN project p ON pc.pc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(pc_garantee_date,'".$current_date."')<=7 AND DATEDIFF(pc_garantee_date,'".$current_date."')>-60  AND (pc_garantee_end='')  AND user.department_id='$user_dept'")->queryAll(); 
+		//Alert before 7 days, until 90 days
+        $projectContractData=Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,pc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญา' as alarm_detail,pc_garantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, pc_id as update_id FROM project_contract pc LEFT JOIN project p ON pc.pc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(pc_garantee_date,'".$current_date."')<=7 AND DATEDIFF(pc_garantee_date,'".$current_date."')>-90  AND (pc_garantee_end='')  AND user.department_id='$user_dept'")->queryAll(); 
 
         //2.แจ้งเตือนครบกำหนดชำระเงินของ vendor
-        //Alert before 7 days, until 60 days
-        $paymentProjectData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
-            DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url,'2' as type,pj_id as update_id  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
+        //Alert before 7 days, until 90 days
+        $paymentProjectData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor ครั้งที่ 1' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
+            DAY ) as date_end, CONCAT('payme1ntProjectContract/update/',id) as url,'2' as type,pj_id as update_id  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ),'".$current_date."')<=7  AND DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
-            DAY ),'".$current_date."')>-60  AND (bill_date='' OR bill_date='0000-00-00') AND user.department_id='$user_dept'")->queryAll();
+            DAY ),'".$current_date."')>-90 AND (invoice_alarm2 IS NULL  OR DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
+            DAY ),'".$current_date."')>7)  AND (bill_date='' OR bill_date='0000-00-00') AND user.department_id='$user_dept'")->queryAll();
 
-        $paymentProjectData2=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm2
+        $paymentProjectData2=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor ครั้งที่ 2' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm2
             DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url,'2' as type,pj_id as update_id  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
             DAY ),'".$current_date."')<=7  AND DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
-            DAY ),'".$current_date."')>-60  AND (bill_date='' OR bill_date='0000-00-00') AND invoice_alarm2!='' AND user.department_id='$user_dept'")->queryAll();      
+            DAY ),'".$current_date."')>-90  AND (bill_date='' OR bill_date='0000-00-00') AND invoice_alarm2!='' AND user.department_id='$user_dept'")->queryAll();      
 
-        	
+	    // echo "SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor ครั้งที่ 2' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm2
+     //        DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url,'2' as type,pj_id as update_id  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
+     //        DAY ),'".$current_date."')<=7  AND DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
+     //        DAY ),'".$current_date."')>-90  AND (bill_date='' OR bill_date='0000-00-00') AND invoice_alarm2!='' AND user.department_id='$user_dept'";         	
 
         //3.แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier
-        //Alert before 10 days, until 60 days
+        //Alert before 10 days, until 90 days
         $paymentOutsourceData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,oc_code as contract, 'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier' as alarm_detail,DATE_ADD( invoice_receive_date, INTERVAL 10
-            DAY ) as date_end, CONCAT('paymentOutsourceContract/update/',id) as url,'3' as type, id as update_id FROM payment_outsource_contract pay_p LEFT JOIN outsource_contract ON pay_p.contract_id=oc_id LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON project.pj_user_create=user.u_id WHERE DATEDIFF('".$current_date."',invoice_receive_date)>=10 AND  DATEDIFF('".$current_date."',invoice_receive_date)<60  AND (approve_date='' OR approve_date='0000-00-00')  AND user.department_id='$user_dept'")->queryAll(); 
+            DAY ) as date_end, CONCAT('paymentOutsourceContract/update/',id) as url,'3' as type, id as update_id FROM payment_outsource_contract pay_p LEFT JOIN outsource_contract ON pay_p.contract_id=oc_id LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON project.pj_user_create=user.u_id WHERE DATEDIFF('".$current_date."',invoice_receive_date)>=10 AND  DATEDIFF('".$current_date."',invoice_receive_date)<90  AND (approve_date='' OR approve_date='0000-00-00')  AND user.department_id='$user_dept'")->queryAll(); 
 
         //4.แจ้งเตือนบันทึกค่ารับรองประจำเดือน
         $mangementCostData1 = array();
         $mangementCostData2 = array();
-        $fiscal_year  = 2558;//date("n") < 10 ? date("Y")+543 : date("Y")+543 +1;
+        $fiscal_year  = date("n") < 10 ? date("Y")+543 : date("Y")+543 +1;
         if(date('d')>=20){
 
                 $month = date("n");
@@ -84,7 +88,8 @@ class NotifyController extends Controller
 
                 $Criteria = new CDbCriteria();
                 $Criteria->join = 'LEFT JOIN user ON pj_user_create=user.u_id'; 
-                $Criteria->condition = 'user.department_id = ' . $user_dept.' AND pj_fiscalyear='.$fiscal_year;
+                $Criteria->condition = 'user.department_id = ' . $user_dept.' AND ('.$fiscal_year.' - pj_fiscalyear)<2';
+                $Criteria->order = 'pj_fiscalyear ASC';
                 $projects = Project::model()->findAll($Criteria);
                 
                 //print_r($Criteria);
@@ -135,7 +140,7 @@ class NotifyController extends Controller
         //5.alert close project
         $Criteria = new CDbCriteria();
             $Criteria->join = 'LEFT JOIN user ON pj_user_create=user.u_id'; 
-            $Criteria->condition = 'user.department_id = ' . $user_dept.' AND pj_status=1 AND pj_fiscalyear='.$fiscal_year;
+            $Criteria->condition = 'user.department_id = ' . $user_dept.' AND pj_status=1 AND ('.$fiscal_year.' - pj_fiscalyear)<2';
             $projects = Project::model()->findAll($Criteria);
             $closeProjectData = array();
             foreach ($projects as $key => $project) {
@@ -210,7 +215,7 @@ class NotifyController extends Controller
          //$Criteria->select = "pc_code, pj_name ";
          $Criteria->join = 'LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id'; 
          $Criteria->with = array("project"=>array("select"=>"pj_name"));
-         $Criteria->condition = 'notify_1000=1  AND user.department_id = ' . $user_dept.' AND pj_status=1 AND pj_fiscalyear='.$fiscal_year;
+         $Criteria->condition = 'notify_1000=1  AND user.department_id = ' . $user_dept.' AND pj_status=1 AND ('.$fiscal_year.' - pj_fiscalyear)<2';
 
          $sql = "SELECT pj_id,pj_name as project, pc_code as contract,'' as date_end, '' as url,pc_id as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail  FROM project_contract  LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE notify_1000=1  AND user.department_id = '$user_dept' AND pj_status=1 AND pj_fiscalyear='$fiscal_year'";                  
 	     $notify1000Data = Yii::app()->db->createCommand($sql)->queryAll();
@@ -238,11 +243,9 @@ class NotifyController extends Controller
         			if(($value['date_end']) > ($notify->date_end))
         			{
         				$notify->date_end = $value['date_end'];
+        				$notify->alarm_detail = $value['alarm_detail'];
         				
-        			}	
-
-        			//if($value['contract']=='TEST')
-        			//	 echo strtotime($value['date_end']).":".strtotime($notify->date_end)."<br>";
+        			}
 
         			//set flag_del = 0
         			$notify->flag_del = 0;
@@ -287,7 +290,7 @@ class NotifyController extends Controller
 		if($type==0)
         {        
         	//return $records;
-        	$sql = "SELECT *  FROM notify  ORDER BY id DESC,pj_id ASC  LIMIT 10";                  
+        	$sql = "SELECT *  FROM notify  ORDER BY id DESC,pj_id ASC  LIMIT 100";                  
 	        $notifyData = Yii::app()->db->createCommand($sql)->queryAll();
 	        return $notifyData;
         }    
@@ -540,6 +543,9 @@ class NotifyController extends Controller
 			// echo "controller";
 	    	// print_r($model);
 	    	// exit;
+		}
+		else{
+			$this->gnotify();
 		}
 
 			

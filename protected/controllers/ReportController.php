@@ -76,6 +76,13 @@ class ReportController extends Controller
 		$this->render('summary');
 	}
 
+	public function actionBSC()
+	{
+    	
+		// display the progress form
+		$this->render('bsc');
+	}
+
 	 public function actionGenProgress()
     {
         $user_dept = Yii::app()->user->userdept;
