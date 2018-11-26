@@ -54,10 +54,11 @@ var bootbox = window.bootbox || (function(document, $) {
         }
     };
 
-    that.alert = function(/*str, label, cb*/) {
+    that.alert = function(/*str, label, cb, header*/) {
         var str   = "",
             label = _translate('OK'),
             cb    = null;
+            header = "";
 
         switch (arguments.length) {
             case 1:
@@ -76,9 +77,10 @@ var bootbox = window.bootbox || (function(document, $) {
             case 3:
                 // callback and custom button label
                 str   = arguments[0];
-                label = arguments[1];
-                cb    = arguments[2];
+                cb = arguments[1];
+                header    = arguments[2];
                 break;
+           
             default:
                 throw new Error("Incorrect number of arguments: expected 1-3");
         }
@@ -92,6 +94,7 @@ var bootbox = window.bootbox || (function(document, $) {
         }, {
             // ensure that the escape key works; either invoking the user's
             // callback or true to just close the dialog
+            "header" : header,
             "onEscape": cb || true
         });
     };

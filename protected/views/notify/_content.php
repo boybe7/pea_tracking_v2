@@ -9,8 +9,11 @@
 		font-size: 20px;
 	}
 
+    .modal-header {
+        background-color: #f89406;
+    }
 </style>
-<div class="alert alert-danger" role="alert"><h4>รายการแจ้งเตือน</h4></div>
+<!-- <div class="alert alert-danger modal-header" role="alert"><h4>รายการแจ้งเตือน</h4></div> -->
 
 
 <?php

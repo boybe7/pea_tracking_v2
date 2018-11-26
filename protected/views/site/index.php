@@ -13,6 +13,7 @@ $cs->registerScriptFile( $theme->getBaseUrl() . '/js/highcharts.js' );
 
 
 <div id="modal-content" class="hide">
+
     <div id="modal-body">
 <!-- put whatever you want to show up on bootbox here -->
     	<?php 
@@ -38,7 +39,7 @@ if(!Yii::app()->user->isExecutive())
         success:function(msg){
 
             if(msg>0)    
-    			js:bootbox.alert($("#modal-body").html(),"close");
+    			js:bootbox.alert($("#modal-body").html(),"close","รายการแจ้งเตือน");
     	}
     });			
 
