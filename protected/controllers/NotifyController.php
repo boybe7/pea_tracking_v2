@@ -103,6 +103,7 @@ class NotifyController extends Controller
                     if(count($records)==0)
                     {
                         //$mProj = Project::model()->findbyPk($);
+                        $mangement = array();
                         $mangement["pj_id"] = $pid;
                         $mangement["type"] = 4;
                         $mangement["project"] = $project->pj_name;//.':'.$project->pj_work_cat;
@@ -120,6 +121,7 @@ class NotifyController extends Controller
                     if(count($records)==0)
                     {
                         //$mProj = Project::model()->findbyPk($);
+                        $mangement = array();
                         $mangement["pj_id"] = $pid;
                         $mangement["type"] = 4;
                         $mangement["project"] = $project->pj_name;//.':'.$project->pj_work_cat;
@@ -129,6 +131,8 @@ class NotifyController extends Controller
                         $mangement["url"] = "managementCost/create/".$pid;
                         $mangement["alarm_detail"] =  "แจ้งเตือนบันทึกค่าใช้จริงประจำเดือน";
                         $mangementCostData2[] = $mangement;
+
+                        
                     }   
                     
                 }
@@ -146,46 +150,40 @@ class NotifyController extends Controller
             foreach ($projects as $key => $project) {
             	//---pro_cost--//
 				$pj_id = $project->pj_id;
+				
 				$pj_name = $project->pj_name;
 
-				$sql = "SELECT pc_cost,pc_id,pc_code FROM project_contract WHERE pc_proj_id='$pj_id' limit 1";                  
+				$sql = "SELECT sum(pc_cost) as sum_total,pc_code FROM project_contract WHERE pc_proj_id='$pj_id'";                  
                 $records = Yii::app()->db->createCommand($sql)->queryAll();
+                $pc_cost = empty($records) ? 1 : $records[0]['sum_total'];
+                $pc_code = empty($records) ? "" : $records[0]['pc_code'];
 
+                $sql = "SELECT sum(money) as sum_total FROM payment_project_contract p LEFT JOIN project_contract o ON p.proj_id=o.pc_id WHERE o.pc_proj_id = '$pj_id'";// AND bill_no !=''  ";                  
+	            $records2 = Yii::app()->db->createCommand($sql)->queryAll();
+	            $pay_pc = empty($records2) ? 0 : $records2[0]['sum_total'];
               
-                if(!count($records)==0)
-                {
-                	$pc_cost = $records[0]['pc_cost'];
-                	$pc_id = $records[0]['pc_id'];
-                	$pc_code = $records[0]['pc_code'];
+               
 
-                	$sql = "SELECT sum(money) as sum_total FROM payment_project_contract WHERE proj_id = '$pc_id' AND bill_no !='' ";                  
-                	$records2 = Yii::app()->db->createCommand($sql)->queryAll();
-                	if(!count($records2)==0)
-                	{
-                          $pay_pc = $records2[0]['sum_total']; 
-                	}
-				
-					$sql = "SELECT oc_cost,oc_id FROM outsource_contract WHERE oc_proj_id='$pj_id' limit 1";                  
-	                $records = Yii::app()->db->createCommand($sql)->queryAll();
+                //---outsource payment------//
+                $sql = "SELECT sum(oc_cost) as sum_total FROM outsource_contract WHERE oc_proj_id = '$pj_id' ";                  
+	            $records2 = Yii::app()->db->createCommand($sql)->queryAll();
+	            $oc_cost = empty($records2) ? 1 : $records2[0]['sum_total'];
+	            
+				$sql = "SELECT sum(money) as sum_total FROM payment_outsource_contract p LEFT JOIN outsource_contract o ON p.contract_id=o.oc_id WHERE o.oc_proj_id = '$pj_id'";// AND approve_date !=''  ";                  
+	            $records2 = Yii::app()->db->createCommand($sql)->queryAll();
+	            $pay_oc = empty($records2) ? 0 : $records2[0]['sum_total'];
 
-	             
-	                if(!count($records)==0)
-	                {
-	                	$oc_cost = $records[0]['oc_cost'];
-	                	$oc_id = $records[0]['oc_id'];
-	                	//---pay_pc--//
-				
-	                	$sql = "SELECT sum(money) as sum_total FROM payment_outsource_contract WHERE contract_id = '$oc_id' AND approve_date !='' ";                  
-	                	$records2 = Yii::app()->db->createCommand($sql)->queryAll();
-	                	if(!count($records2)==0)
-	                	{
-	                          $pay_oc = $records2[0]['sum_total']; 
-	                	}
-						
-						if(($pc_cost-$pay_pc==0) && ($oc_cost-$pay_oc==0) )
-						{
+	            // if($pj_id==267)
+	            // {
+	            // 	echo $pay_pc.":".$pc_cost."<br>";
+	            // 	echo $pay_oc.":".$oc_cost."<br>";
+	            // }
+	            //------check-------------//
+	            if(($pc_cost-$pay_pc==0) && ($oc_cost-$pay_oc==0) )
+				{
 							
 							//Yii::app()->db->createCommand("INSERT INTO  notify (pj_id,project,contract,alarm_detail,date_end,url,type,update_id) VALUES ($pj_id,'$pj_name','$pc_code','แจ้งเตือนดำเนินการปิดงาน','','',5,'')")->execute();
+							$mangement = array();
                             $mangement["pj_id"] = $pj_id;
 							$mangement["project"] = $pj_name;//.':'.$project->pj_work_cat;
 	                        $mangement["contract"] = $pc_code;
@@ -195,29 +193,15 @@ class NotifyController extends Controller
 	                        $mangement["url"] = "";
 	                        $mangement["alarm_detail"] =  "แจ้งเตือนดำเนินการปิดงาน";
 	                        $closeProjectData[] = $mangement;
-
-						}
-	                }
-	               
-
-
-				
-                }
-				
-
-
-				
+	                        
+				}
+	            
             }
 
          //6.เตือนของบ .1000
-         $Criteria = new CDbCriteria();
-         //$Criteria->select = "pj_id,pj_name as project, pc_code as contract,'' as date_end, '' as url,'' as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail ";
-         //$Criteria->select = "pc_code, pj_name ";
-         $Criteria->join = 'LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id'; 
-         $Criteria->with = array("project"=>array("select"=>"pj_name"));
-         $Criteria->condition = 'notify_1000=1  AND user.department_id = ' . $user_dept.' AND pj_status=1 AND ('.$fiscal_year.' - pj_fiscalyear)<2';
+;
 
-         $sql = "SELECT pj_id,pj_name as project, pc_code as contract,'' as date_end, '' as url,pc_id as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail  FROM project_contract  LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE notify_1000=1  AND user.department_id = '$user_dept' AND pj_status=1 AND pj_fiscalyear='$fiscal_year'";                  
+         $sql = "SELECT pj_id,pj_name as project, pc_code as contract,'' as date_end, '' as url,pc_id as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail  FROM project_contract  LEFT JOIN project ON pc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE notify_1000=1  AND user.department_id = '$user_dept' AND pj_status=1 AND (".$fiscal_year."-pj_fiscalyear)<2";                  
 	     $notify1000Data = Yii::app()->db->createCommand($sql)->queryAll();
          
         
