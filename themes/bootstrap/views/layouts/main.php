@@ -280,6 +280,16 @@ select, input[type="file"] {
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
+/*scrollable*/
+ .ui-autocomplete {
+            max-height: 200px;
+            max-width: 800px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+            /* add padding to account for vertical scrollbar */
+            padding-right: 20px;
+        } 
 </style>     
      
 <body class="body">
