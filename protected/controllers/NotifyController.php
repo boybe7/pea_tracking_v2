@@ -193,7 +193,7 @@ class NotifyController extends Controller
 	                        $mangement["url"] = "";
 	                        $mangement["alarm_detail"] =  "แจ้งเตือนดำเนินการปิดงาน";
 	                        $closeProjectData[] = $mangement;
-	                        
+
 				}
 	            
             }
@@ -274,7 +274,9 @@ class NotifyController extends Controller
 		if($type==0)
         {        
         	//return $records;
-        	$sql = "SELECT *  FROM notify  ORDER BY id DESC,pj_id ASC  LIMIT 100";                  
+        	//$sql = "SELECT *  FROM notify  ORDER BY id DESC,pj_id ASC  LIMIT 100";
+
+        	$sql = "SELECT count(id) as amount,type  FROM notify  GROUP BY type ORDER BY type ASC";                  
 	        $notifyData = Yii::app()->db->createCommand($sql)->queryAll();
 	        return $notifyData;
         }    

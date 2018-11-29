@@ -102,6 +102,8 @@ class ProjectController extends Controller
 			}
 			else
 				$Criteria->condition = "(pj_name like '%$request%' OR pj_fiscalyear LIKE '%$request%') AND pj_status=1 AND department_id='$user_dept'";
+
+			$Criteria->order = "pj_fiscalyear desc";
 			
 			$models = Project::model()->findAll($Criteria);
 

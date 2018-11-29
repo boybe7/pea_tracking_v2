@@ -54,12 +54,18 @@ class OutsourceContractController extends Controller
 			//$Criteria->condition = "(oc_code like '$request%') AND department_id='$user_dept'";
 
 			$search_str = preg_split('/\s+/', $request, -1, PREG_SPLIT_NO_EMPTY);
-            if(sizeof($search_str)==2)
+            if(sizeof($search_str)==3)
 			{
-				$Criteria->condition = "(pj_fiscalyear LIKE '%$search_str[0]%' OR vendor.v_name LIKE '%$search_str[0]%') AND (pj_fiscalyear LIKE '%$search_str[1]%' OR vendor.v_name LIKE '%$search_str[1]%') AND  department_id='$user_dept'";
+				$Criteria->condition = "(pj_fiscalyear LIKE '%$search_str[0]%' OR vendor.v_name LIKE '%$search_str[0]%' OR oc_code LIKE '%$search_str[0]%') AND (pj_fiscalyear LIKE '%$search_str[1]%' OR vendor.v_name LIKE '%$search_str[1]%' OR oc_code LIKE '%$search_str[1]%') AND (pj_fiscalyear LIKE '%$search_str[2]%' OR vendor.v_name LIKE '%$search_str[2]%' OR oc_code LIKE '%$search_str[2]%')  AND department_id='$user_dept'";
+			}
+            else if(sizeof($search_str)==2)
+			{
+				$Criteria->condition = "(pj_fiscalyear LIKE '%$search_str[0]%' OR vendor.v_name LIKE '%$search_str[0]%' OR oc_code LIKE '%$search_str[0]%') AND (pj_fiscalyear LIKE '%$search_str[1]%' OR vendor.v_name LIKE '%$search_str[1]%' OR oc_code LIKE '%$search_str[1]%')  AND department_id='$user_dept'";
 			}
 			else
-				$Criteria->condition = "(pj_fiscalyear LIKE '%$request%' OR oc_code like '%$request%' OR vendor.v_name like '%$request%') AND department_id='$user_dept'";
+				$Criteria->condition = "(pj_fiscalyear LIKE '%$request%' OR oc_code like '%$request%' OR vendor.v_name like '%$request%' OR oc_code like '%$request%' ) AND department_id='$user_dept'";
+
+			$Criteria->order = "pj_fiscalyear DESC,oc_sign_date DESC ";
 			$models = OutsourceContract::model()->findAll($Criteria);
 
             $data=array();
