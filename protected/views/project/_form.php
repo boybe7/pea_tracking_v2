@@ -293,6 +293,11 @@ hr {
             ?>
             </div>
           </div>
+          <div class="row-fluid">  
+            <div class="span12">
+            <?php echo $form->textFieldRow($model,'pj_close',array('class'=>'span12')); ?>
+            </div>
+          </div>
     		</div>	
 			<div class="well span4">
       			<?php 

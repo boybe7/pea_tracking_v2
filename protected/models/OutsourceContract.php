@@ -62,7 +62,7 @@ class OutsourceContract extends CActiveRecord
 			array('oc_detail', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('oc_id,oc_num_payment,oc_PO,oc_insurance_start,oc_insurance_end, oc_code, oc_proj_id, oc_vendor_id, oc_detail, oc_sign_date, oc_end_date, oc_approve_date, oc_cost, oc_T_percent, oc_A_percent, oc_guarantee, oc_guarantee_cf, oc_adv_guarantee, oc_adv_guarantee_cf, oc_insurance, oc_letter, oc_user_create, oc_user_update', 'safe', 'on'=>'search'),
+			array('oc_id,oc_num_payment,oc_PO,oc_insurance_start,oc_insurance_end, oc_code, oc_proj_id, oc_vendor_id, oc_detail, oc_sign_date, oc_end_date, oc_approve_date, oc_cost, oc_T_percent, oc_A_percent, oc_guarantee, oc_guarantee_cf, oc_adv_guarantee, oc_adv_guarantee_cf, oc_insurance, oc_letter, oc_user_create, oc_user_update,notify_1000', 'safe', 'on'=>'search'),
 		);
 		
 		// return array(
@@ -232,6 +232,7 @@ class OutsourceContract extends CActiveRecord
 			'oc_user_update' => 'ผู้บันทึก',
 			'oc_num_payment'=>'จำนวนงวดเงิน',
 			'oc_last_update' => 'แก้ไขล่าสุดเมื่อ',
+			'notify_1000'=>'เตือนของงบประมาณ .1000'
 		);
 	}
 
@@ -290,7 +291,7 @@ class OutsourceContract extends CActiveRecord
 		$criteria->compare('oc_letter',$this->oc_letter,true);
 		$criteria->compare('oc_user_create',$this->oc_user_create);
 		$criteria->compare('oc_user_update',$this->oc_user_update);
-
+		$criteria->compare('notify_1000',$this->notify_1000);
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

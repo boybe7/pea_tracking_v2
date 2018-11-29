@@ -53,7 +53,7 @@ class ProjectContract extends CActiveRecord
 			array('pc_A_percent', 'application.extensions.numericRangeValidator', 'min'=>0, 'max'=>100),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('pc_id,pc_code_request,pc_name_request,pc_num_payment,pc_garantee_end,pc_garantee_date, pc_code, pc_proj_id, pc_vendor_id,pc_PO, pc_details, pc_sign_date, pc_end_date, pc_cost, pc_T_percent, pc_A_percent, pc_guarantee, pc_last_update, pc_user_update,notify_1000', 'safe', 'on'=>'search,create,update'),
+			array('pc_id,pc_code_request,pc_name_request,pc_num_payment,pc_garantee_end,pc_garantee_date, pc_code, pc_proj_id, pc_vendor_id,pc_PO, pc_details, pc_sign_date, pc_end_date, pc_cost, pc_T_percent, pc_A_percent, pc_guarantee, pc_last_update, pc_user_update', 'safe', 'on'=>'search,create,update'),
 		);
 	}
 

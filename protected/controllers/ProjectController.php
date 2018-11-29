@@ -985,7 +985,11 @@ class ProjectController extends Controller
 		    	
 			    	$modelProj->attributes = $_POST["Project"];
 			    	$modelProj->pj_CA = $_POST["Project"]["pj_CA"];
-			    	$modelProj->pj_name = $_POST["pj_vendor_id"];	
+			    	$modelProj->pj_name = $_POST["pj_vendor_id"];
+			    	$modelProj->pj_status = empty($_POST['Project']['pj_close']) ? 1 : 0;	
+			    	 // header('Content-type: text/plain');
+	        //                  print_r($modelProj);
+	        //                  	exit;
 			    	if($modelProj->save())
 			    		$msg = "successful";
 			    	else{
@@ -1346,6 +1350,7 @@ class ProjectController extends Controller
 												$modelOC->oc_approve_date = $value["oc_approve_date"];
 												$modelOC->oc_insurance_start = $value["oc_insurance_start"];
 												$modelOC->oc_insurance_end = $value["oc_insurance_end"];
+												$modelOC->notify_1000 = $value["notify_1000"];
 
 												//check difference
 												//1.project contract
@@ -1387,10 +1392,10 @@ class ProjectController extends Controller
 
 
 													
-												//header('Content-type: text/plain');
-						                        //print_r($modelPC);
+												// header('Content-type: text/plain');
+						      //                   print_r($modelOC);
 						                        
-						                        //exit;
+						      //                   exit;
 
 												if($difference==1)
 												{
@@ -1525,6 +1530,7 @@ class ProjectController extends Controller
                 foreach ($outsource_contract as $key => $value) {
 
                     $modelOC =new OutsourceContract("search");
+
                     $modelOC->attributes = $value;
                     $str_date = explode("-", $value["oc_sign_date"]);
                     if(count($str_date)>1)
@@ -1582,6 +1588,8 @@ class ProjectController extends Controller
 					//end cal 
 
                     $modelOC->oc_cost = number_format($modelOC->oc_cost,2);
+
+
                     array_push($modelOutsource, $modelOC);
                  
                 }

@@ -46,7 +46,7 @@ class Project extends CActiveRecord
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('pj_id,pj_status,cost, pj_name,pj_CA, pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_date_approved, pj_user_create, pj_user_update,workcat_search', 'safe', 'on'=>'search,create,update'),
+			array('pj_id,pj_status,cost, pj_name,pj_CA, pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_date_approved, pj_user_create, pj_user_update,workcat_search,pj_close', 'safe', 'on'=>'search,create,update'),
 		);
 	}
 
@@ -89,7 +89,8 @@ class Project extends CActiveRecord
 			'pj_user_update' => 'ผู้บันทึก',
 			'pj_CA' => 'หมายเลข CA',
 			'cost'=> 'วงเงินรวม',
-			'pj_status'=>'แล้วเสร็จ'
+			'pj_status'=>'แล้วเสร็จ',
+			'pj_close'=>'เลขที่หนังสือปิดโครงการ/วันที่'
 		);
 	}
 
@@ -122,6 +123,7 @@ class Project extends CActiveRecord
 		$criteria->compare('pj_user_update',$this->pj_user_update);
 		$criteria->compare('pj_CA',$this->pj_CA,true);
 		$criteria->compare('pj_status',$this->pj_status,true);
+		$criteria->compare('pj_close',$this->pj_close,true);
 		$criteria->compare('workcat.wc_name',$this->workcat_search);
 		$user_dept = Yii::app()->user->userdept;
 		if(!Yii::app()->user->isExecutive())

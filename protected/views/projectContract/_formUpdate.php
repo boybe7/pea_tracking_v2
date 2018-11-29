@@ -574,11 +574,7 @@ Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/assets/7d883f12/
             //print_r($model);
             //echo "</pre>";
 
-          if(Yii::app()->user->username=="tsd03" || Yii::app()->user->username=="tsd")
-          {
-            echo CHtml::activeCheckBox($model,'[' . $index . ']notify_1000',  array());
-            echo "  <font color='red'><b>เตือนของบประมาณ .1000</b></font>";    
-          }  
+        
 
 	  		$this->widget('bootstrap.widgets.TbButton', array(
 	              'buttonType'=>'link',

@@ -207,7 +207,7 @@ hr {
                  ?>
             </div>
 		    <div class="row-fluid">
-            <div class="span9">  		
+            <div class="span10">  		
 		    		<?php 
       				
               $workcat = Yii::app()->db->createCommand()
@@ -222,17 +222,17 @@ hr {
 
       				?>
            </div>
-           <div class="span3">
+           <div class="span2">
            <?php
              
-            if($model->pj_status=="อยู่ระหว่างดำเนินการ")
-              $model->pj_status = 1;
-            else
-              $model->pj_status = 0;
+            // if($model->pj_status=="อยู่ระหว่างดำเนินการ")
+            //   $model->pj_status = 1;
+            // else
+            //   $model->pj_status = 0;
             
-             echo "สถานะโครงการ";
+            //  echo "สถานะโครงการ";
             
-             echo $form->checkBoxRow($model,'pj_status',  array('value'=>0, 'uncheckValue'=>1));
+            //  echo $form->checkBoxRow($model,'pj_status',  array('value'=>0, 'uncheckValue'=>1));
            
            ?>
            </div>
@@ -401,6 +401,14 @@ hr {
             ?>
             </div>
           </div>
+
+           <div class="row-fluid">  
+            <div class="span12">
+            <?php echo $form->textFieldRow($model,'pj_close',array('class'=>'span6')); ?>
+            </div>
+          </div>
+
+
         </div>  
       <div class="well-blue span4">
       			<?php 

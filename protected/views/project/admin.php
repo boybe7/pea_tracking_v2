@@ -57,7 +57,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 )); 
 
 
-$this->widget('bootstrap.widgets.TbButton', array(
+/*$this->widget('bootstrap.widgets.TbButton', array(
     'buttonType'=>'link',
     
     'type'=>'warning',
@@ -84,7 +84,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 
 
     	),
-)); 
+)); */
 
 
 $this->widget('bootstrap.widgets.TbButton', array(

@@ -487,37 +487,7 @@ $('#search-form').submit(function(){
     <div class="tab-pane " id="closeTab">
         <center><h4>แจ้งเตือนปิดโครงการ</h4></center>
          <?php
-            $this->widget('bootstrap.widgets.TbButton', array(
-                'buttonType'=>'link',
-                
-                'type'=>'warning',
-                'label'=>'ปิดโครงการ',
-                'icon'=>'bookmark',
-                //'url'=>array('close'),
-                'htmlOptions'=>array('class'=>'pull-right','style'=>'margin-bottom: 20px;',
-
-
-                            'onclick'=>'      
-                                   if($.fn.yiiGridView.getSelection("notify-grid-close").length==0)
-                                      js:bootbox.alert("กรุณาเลือกโครงการที่ต้องการปิด?","ตกลง");   
-                                   else 
-                                   {  
-                                             $.ajax({
-                                                    type: "POST",
-                                                    url: "closeSelected",
-                                                    data: { selectedID: $.fn.yiiGridView.getSelection("notify-grid-close")}
-                                                    })
-                                                    .done(function( msg ) {
-                                                        $("#notify-grid-close").yiiGridView("update",{});
-                                                        location.reload();
-                                                    });
-                                    }',
-                           
-
-                    ),
-            )); 
-
-            
+                        
 
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-close',
@@ -554,8 +524,20 @@ $('#search-form').submit(function(){
                             'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),  
-                    
-                  
+                   
+                     array(
+                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                            'template' => '{update}',
+                            'buttons'=>array(
+                                'update' => array
+                                    (
+                                                        
+                                        'icon'=>'icon-pencil',
+                                        'url'=>'Yii::app()->createUrl($data["url"])'
+                                    ),
+                            )
+                    )   
                 ),
             )); 
 
