@@ -62,7 +62,7 @@ class OutsourceContract extends CActiveRecord
 			array('oc_detail', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('oc_id,oc_num_payment,oc_PO,oc_insurance_start,oc_insurance_end, oc_code, oc_proj_id, oc_vendor_id, oc_detail, oc_sign_date, oc_end_date, oc_approve_date, oc_cost, oc_T_percent, oc_A_percent, oc_guarantee, oc_guarantee_cf, oc_adv_guarantee, oc_adv_guarantee_cf, oc_insurance, oc_letter, oc_user_create, oc_user_update,notify_1000', 'safe', 'on'=>'search'),
+			array('oc_id,oc_num_payment,oc_PO,oc_insurance_start,oc_insurance_end, oc_code, oc_proj_id, oc_vendor_id, oc_detail, oc_sign_date, oc_end_date, oc_approve_date, oc_cost, oc_T_percent, oc_A_percent, oc_guarantee, oc_guarantee_cf, oc_adv_guarantee, oc_adv_guarantee_cf, oc_insurance, oc_letter, oc_user_create, oc_user_update,notify_1000,oc_guarantee_date,oc_guarantee_end', 'safe', 'on'=>'search'),
 		);
 		
 		// return array(
@@ -115,6 +115,9 @@ class OutsourceContract extends CActiveRecord
         $str_date = explode("/", $this->oc_insurance_end);
         if(count($str_date)>1)
         	$this->oc_insurance_end= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        $str_date = explode("/", $this->oc_guarantee_date;
+        if(count($str_date)>1)
+        	$this->oc_guarantee_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
 
         //check record is updated
         $newattributes = $this->Owner->getAttributes();
@@ -175,7 +178,9 @@ class OutsourceContract extends CActiveRecord
         $str_date = explode("-", $this->oc_insurance_end);
         if(count($str_date)>1)
         	$this->oc_insurance_end= $str_date[2]."/".$str_date[1]."/".$str_date[0];
-                
+        $str_date = explode("-", $this->oc_guarantee_date);
+        if(count($str_date)>1)
+        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];        
 
 
 	    return parent::afterFind();
@@ -197,7 +202,9 @@ class OutsourceContract extends CActiveRecord
         $str_date = explode("-", $this->oc_insurance_end);
         if(count($str_date)>1)
         	$this->oc_insurance_end= $str_date[2]."/".$str_date[1]."/".$str_date[0];
-                
+        $str_date = explode("-", $this->oc_guarantee_date);
+        if(count($str_date)>1)
+        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];        
 
 	    return parent::afterSave();
 	}
@@ -232,7 +239,10 @@ class OutsourceContract extends CActiveRecord
 			'oc_user_update' => 'ผู้บันทึก',
 			'oc_num_payment'=>'จำนวนงวดเงิน',
 			'oc_last_update' => 'แก้ไขล่าสุดเมื่อ',
-			'notify_1000'=>'เตือนของงบประมาณ .1000'
+			'notify_1000'=>'เตือนของงบประมาณ .1000',
+			'oc_guarantee_date'=>'วันที่ครบกำหนดประกันสัญญา',
+			'oc_garantee_end'=>'เลขที่บันทึกส่งคืนหนังสือค้ำประกันส่งกองการเงิน/วันที่',
+
 		);
 	}
 
@@ -284,6 +294,8 @@ class OutsourceContract extends CActiveRecord
 		$criteria->compare('oc_T_percent',$this->oc_T_percent);
 		$criteria->compare('oc_A_percent',$this->oc_A_percent);
 		$criteria->compare('oc_guarantee',$this->oc_guarantee,true);
+		$criteria->compare('oc_guarantee_date',$this->oc_guarantee_date,true);
+		$criteria->compare('oc_guarantee_end',$this->oc_guarantee_end,true);
 		$criteria->compare('oc_guarantee_cf',$this->oc_guarantee_cf,true);
 		$criteria->compare('oc_adv_guarantee',$this->oc_adv_guarantee,true);
 		$criteria->compare('oc_adv_guarantee_cf',$this->oc_adv_guarantee_cf,true);
