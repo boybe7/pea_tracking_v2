@@ -219,6 +219,7 @@
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_guarantee', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_guarantee',array('class'=>'help-block error')); ?>          
           </div>  
+       
           <div class="span5">     
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee'); ?>
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee', array( 'maxlength' => 255,'class'=>'span12')); ?>
@@ -253,17 +254,40 @@
           </div> 
            
         </div>
+
         <div class="row-fluid">
-          <div class="span5">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_guarantee_cf'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_guarantee_cf', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_guarantee_cf',array('class'=>'help-block error')); ?>          
-          </div>  
-          <div class="span5">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee_cf'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee_cf', array( 'maxlength' => 255,'class'=>'span12')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee_cf',array('class'=>'help-block error')); ?>          
+         
+          <div class="span2">     
+              <?php 
+                   
+                    echo CHtml::activeLabelEx($model, '[' . $index . ']oc_guarantee_date'); 
+                    echo '<div class="input-append" style="">'; //ใส่ icon ลงไป
+                        $this->widget('zii.widgets.jui.CJuiDatePicker',
+
+                        array(
+                            'name'=>'OutsourceContract[' . $index . '][oc_guarantee_date]',
+                            'id'=>$index.'oc_guarantee_date',
+                            'model'=>$model,
+                            'value'=>$model->oc_guarantee_date,
+                            'options' => array(
+                                              'mode'=>'focus',
+                                              //'language' => 'th',
+                                              'format'=>'dd/mm/yyyy', //กำหนด date Format
+                                              'showAnim' => 'slideDown',
+                                              ),
+                            'htmlOptions'=>array('class'=>'span9'),  // ใส่ค่าเดิม ในเหตุการ Update 
+                         )
+                    );
+                    echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
+                    echo CHtml::error($model, '[' . $index . ']oc_guarantee_date',array('class'=>'help-block error'));
+
+               ?>           
           </div> 
+           <div class="span8">     
+              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_guarantee_end'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_guarantee_end', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_guarantee_end',array('class'=>'help-block error')); ?>          
+          </div>  
           <div class="span2">
 
                <?php 
@@ -293,6 +317,23 @@
         </div>
         <div class="row-fluid">
           <div class="span5">     
+              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_guarantee_cf'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_guarantee_cf', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_guarantee_cf',array('class'=>'help-block error')); ?>          
+          </div>  
+          <div class="span5">     
+              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee_cf'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee_cf', array( 'maxlength' => 255,'class'=>'span12')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee_cf',array('class'=>'help-block error')); ?>          
+          </div> 
+          <div class="span2">     
+              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_num_payment'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_num_payment', array( 'maxlength' => 2,'class'=>'span6')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_num_payment',array('class'=>'help-block error')); ?>          
+          </div>  
+        </div>
+        <div class="row-fluid">
+          <div class="span5">     
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_insurance'); ?>
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_insurance', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_insurance',array('class'=>'help-block error')); ?>          
@@ -302,11 +343,7 @@
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_letter', array( 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_letter',array('class'=>'help-block error')); ?>          
           </div>
-           <div class="span2">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_num_payment'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_num_payment', array( 'maxlength' => 2,'class'=>'span12')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_num_payment',array('class'=>'help-block error')); ?>          
-          </div>  
+           
         </div>
         <div class="row-fluid">
           <div class="span2">
@@ -836,15 +873,33 @@
 
         <fieldset class="well the-fieldset">
           <legend class="the-legend">รายละเอียดการอนุมัติ</legend>
+          <div class="row-fluid">
+             <?php
+                  if(Yii::app()->user->username=="tsd03" || Yii::app()->user->username=="tsd")
+                  {
+                    echo "<div class='span3'>";
+                     echo CHtml::label("&nbsp;",false); 
+                    echo CHtml::activeCheckBox($model,'[' . $index . ']notify_1000',  array('class'=>''));
+                    echo "  <font color='red'><b>เตือนของบประมาณ .1000</b></font>";
+                    echo "</div>";    
+                  }  
+
+                 // print_r($model->notify_1000);
+                  if($model->notify_1000 == 1 && Yii::app()->user->username=="tsd02" )
+                  {
+                    echo "<div class='span4'>";
+                      echo CHtml::activeLabelEx($model, '[' . $index . ']notify_1000_close'); 
+                      echo CHtml::activeTextField($model, '[' . $index . ']notify_1000_close', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); 
+                    echo "</div>";    
+                  }  
+
+             ?>   
+          </div>
           <div class="row-fluid"> 
           <?php 
 
 
-          if(Yii::app()->user->username=="tsd03" || Yii::app()->user->username=="tsd")
-          {
-            echo CHtml::activeCheckBox($model,'[' . $index . ']notify_1000',  array());
-            echo "  <font color='red'><b>เตือนของบประมาณ .1000</b></font>";    
-          }  
+         
 
 
         $this->widget('bootstrap.widgets.TbButton', array(

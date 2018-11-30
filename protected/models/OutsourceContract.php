@@ -115,7 +115,7 @@ class OutsourceContract extends CActiveRecord
         $str_date = explode("/", $this->oc_insurance_end);
         if(count($str_date)>1)
         	$this->oc_insurance_end= $str_date[2]."-".$str_date[1]."-".$str_date[0];
-        $str_date = explode("/", $this->oc_guarantee_date;
+        $str_date = explode("/", $this->oc_guarantee_date);
         if(count($str_date)>1)
         	$this->oc_guarantee_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
 
@@ -241,7 +241,8 @@ class OutsourceContract extends CActiveRecord
 			'oc_last_update' => 'แก้ไขล่าสุดเมื่อ',
 			'notify_1000'=>'เตือนของงบประมาณ .1000',
 			'oc_guarantee_date'=>'วันที่ครบกำหนดประกันสัญญา',
-			'oc_garantee_end'=>'เลขที่บันทึกส่งคืนหนังสือค้ำประกันส่งกองการเงิน/วันที่',
+			'oc_guarantee_end'=>'เลขที่บันทึกส่งคืนหนังสือค้ำประกันส่งกองการเงิน/วันที่',
+			'notify_1000_close'=>'เลขที่บันทึกของบ .1000',
 
 		);
 	}
