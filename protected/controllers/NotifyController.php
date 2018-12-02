@@ -50,7 +50,9 @@ class NotifyController extends Controller
 	
 		//1.แจ้งเตือนครบกำหนดค้ำประกันสัญญา
 		//Alert before 7 days, until 90 days
-        $projectContractData=Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,pc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญา' as alarm_detail,pc_garantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, pc_id as update_id FROM project_contract pc LEFT JOIN project p ON pc.pc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(pc_garantee_date,'".$current_date."')<=7 AND DATEDIFF(pc_garantee_date,'".$current_date."')>-90  AND (pc_garantee_end='')  AND user.department_id='$user_dept'")->queryAll(); 
+        $projectContractData=Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,pc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญาหลัก' as alarm_detail,pc_garantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, pc_id as update_id FROM project_contract pc LEFT JOIN project p ON pc.pc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(pc_garantee_date,'".$current_date."')<=7 AND DATEDIFF(pc_garantee_date,'".$current_date."')>-90  AND (pc_garantee_end='')  AND user.department_id='$user_dept'")->queryAll(); 
+
+        $projectContractData2 =Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,oc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญาจ้างช่วง' as alarm_detail,oc_guarantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, oc_id as update_id FROM outsource_contract oc LEFT JOIN project p ON oc.oc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(oc_guarantee_date,'".$current_date."')<=7 AND DATEDIFF(oc_guarantee_date,'".$current_date."')>-90  AND (oc_guarantee_end='')  AND user.department_id='$user_dept'")->queryAll(); 
 
         //2.แจ้งเตือนครบกำหนดชำระเงินของ vendor
         //Alert before 7 days, until 90 days
@@ -201,13 +203,13 @@ class NotifyController extends Controller
          //6.เตือนของบ .1000
 ;
 
-         $sql = "SELECT pj_id,pj_name as project, oc_code as contract,'' as date_end, 'project/update/' as url,oc_id as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail  FROM outsource_contract  LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE notify_1000=1  AND user.department_id = '$user_dept' AND pj_status=1 AND (".$fiscal_year."-pj_fiscalyear)<2";                  
+         $sql = "SELECT pj_id,pj_name as project, oc_code as contract,'' as date_end, CONCAT('project/update/',pj_id) as url,oc_id as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail  FROM outsource_contract  LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE notify_1000=1 AND (notify_1000_close IS NULL OR notify_1000_close='') AND user.department_id = '$user_dept' AND pj_status=1 AND (".$fiscal_year."-pj_fiscalyear)<2";                  
 	     $notify1000Data = Yii::app()->db->createCommand($sql)->queryAll();
          
         
 
         //merge all notify data   
-        $records=array_merge($projectContractData , $paymentProjectData,$paymentProjectData2,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2,$notify1000Data); 
+        $records=array_merge($projectContractData,$projectContractData2 , $paymentProjectData,$paymentProjectData2,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2,$notify1000Data); 
 
         //echo sizeof($closeProjectData);
 

@@ -1350,7 +1350,17 @@ class ProjectController extends Controller
 												$modelOC->oc_approve_date = $value["oc_approve_date"];
 												$modelOC->oc_insurance_start = $value["oc_insurance_start"];
 												$modelOC->oc_insurance_end = $value["oc_insurance_end"];
-												$modelOC->notify_1000 = $value["notify_1000"];
+												$modelOC->oc_guarantee_date = $value["oc_guarantee_date"];
+												$modelOC->oc_guarantee_end = $value["oc_guarantee_end"];
+												if(isset($value["notify_1000"]))
+													$modelOC->notify_1000 = $value["notify_1000"];
+												if(isset($value["notify_1000_close"]))
+													$modelOC->notify_1000_close = $value["notify_1000_close"];
+
+													 // header('Content-type: text/plain');
+						        //                 print_r($modelOC);
+						                        
+						        //                 exit;
 
 												//check difference
 												//1.project contract

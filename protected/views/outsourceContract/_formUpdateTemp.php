@@ -17,7 +17,7 @@
 
 </style>
 <fieldset class="well-yellow">
-        <legend class="the-legend contract_no_oc">สัญญาที่ xxx <?php echo ($index);?></legend>
+        <legend class="the-legend contract_no_oc">สัญญาที่ <?php echo ($index);?></legend>
        
           <div class="row-fluid"> 
             <div class="span12">
@@ -416,7 +416,7 @@
 
         <!-- PO -->
         <fieldset class="well the-fieldset">
-          <legend class="the-legend">xxรายละเอียด PO</legend>
+          <legend class="the-legend">รายละเอียด PO</legend>
           <div class="row-fluid"> 
           <?php 
         $this->widget('bootstrap.widgets.TbButton', array(

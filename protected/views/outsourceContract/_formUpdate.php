@@ -885,7 +885,7 @@
                   }  
 
                  // print_r($model->notify_1000);
-                  if($model->notify_1000 == 1 && Yii::app()->user->username=="tsd02" )
+                  if($model->notify_1000 == 1 && (Yii::app()->user->username=="tsd01" || Yii::app()->user->username=='tsd02') )
                   {
                     echo "<div class='span4'>";
                       echo CHtml::activeLabelEx($model, '[' . $index . ']notify_1000_close'); 

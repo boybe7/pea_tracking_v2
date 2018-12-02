@@ -43,9 +43,10 @@ $records = $process[0]->gnotify(); //call function
 
 // }   
 
-$tpye_name = array('1' => 'เตือนครบกำหนดค้ำประกันสัญญา','2' => 'เตือนครบกำหนดชำระเงินของ vendor','3' => 'เตือนครบกำหนดจ่ายเงินให้ supplier','4' => 'เตือนบันทึกค่าบริหารงานโครงการ','5' => 'เตือนของบ .1000','6' => 'เตือนปิดโครงการ' );
+$tpye_name = array('1' => 'เตือนครบกำหนดค้ำประกันสัญญา','2' => 'เตือนครบกำหนดชำระเงินของ vendor','3' => 'เตือนครบกำหนดจ่ายเงินให้ supplier','4' => 'เตือนบันทึกค่าบริหารงานโครงการ','5' => 'เตือนปิดโครงการ' ,'6' => 'เตือนของบ .1000');
 foreach ($records as $key => $value) {
-    if(($value['type']==5  && Yii::app()->user->username=='tsd02') )
+
+    if(($value['type']==5  && (Yii::app()->user->username=='tsd01' ||Yii::app()->user->username=='tsd02' )) )
     {
 
       echo "<div class='header'><font color=green>!!! ".$tpye_name[$value['type']]."</font> จำนวน <font color=red>".$value['amount'] ."</font> รายการ</div><br>";

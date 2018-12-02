@@ -52,56 +52,61 @@ window.onload = function (){
 
 <div class="well">
   <div class="row-fluid">
-	<div class="span2">
+	<div class="span3">
 		<?php
 
-                    echo CHtml::label('เดือน-ปี เริ่มต้น', 'month_start');
-                    echo CHtml::dropDownList('month_start', '', 
-                              array(1=>'มกราคม',2=>'กุมภาพันธ์',3=>'มีนาคม',4=>'เมษายน',5=>'พฤษภาคม',6=>'มิถุนายน',7=>'กรกฎาคม',8=>'สิงหาคม',9=>'กันยายน',10=>'ตุลาคม',11=>'พฤศจิกายน',12=>'ธันวาคม'),
-                              array('class'=>'span12'));
-              ?>
+
+                    echo CHtml::label('วันที่เริ่มต้น', 'date_start');
+                    echo '<div class="input-append" style="margin-top:0px;">'; //ใส่ icon ลงไป
+                        $this->widget('zii.widgets.jui.CJuiDatePicker',
+
+                        array(
+                            'name'=>'date_start',
+                            'id'=>'date_start',
+                            'model'=>'',
+                            'value'=>'',
+                            'options' => array(
+                                              'mode'=>'focus',
+                                              //'language' => 'th',
+                                              'format'=>'dd/mm/yyyy', //กำหนด date Format
+                                              'showAnim' => 'slideDown',
+                                              ),
+                            'htmlOptions'=>array('class'=>'span12','autocomplete'=>'off'),  // ใส่ค่าเดิม ในเหตุการ Update 
+                         )
+                    );
+                    echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
+        
+    ?>
 
 	</div>
-  <div class="span1">
+  <div class="span3">
     <?php
 
-                    echo CHtml::label('&nbsp;', 'year_start');
-                    $list = array();
-                    for ($i=2551; $i <= date("Y")+543 ; $i++) { 
-                        $list[] = $i;
-                    }
-                    echo CHtml::dropDownList('year_start', '', 
-                              $list,
-                              array('class'=>'span12'));
+                     echo CHtml::label('วันที่สิ้นสุด', 'date_end');
+                    echo '<div class="input-append" style="margin-top:0px;">'; //ใส่ icon ลงไป
+                        $this->widget('zii.widgets.jui.CJuiDatePicker',
+
+                        array(
+                            'name'=>'date_end',
+                            'id'=>'date_end',
+                            'model'=>'',
+                            'value'=>'',
+                            'options' => array(
+                                              'mode'=>'focus',
+                                              //'language' => 'th',
+                                              'format'=>'dd/mm/yyyy', //กำหนด date Format
+                                              'showAnim' => 'slideDown',
+                                              ),
+                            'htmlOptions'=>array('class'=>'span12','autocomplete'=>'off'),  // ใส่ค่าเดิม ในเหตุการ Update 
+                         )
+                    );
+                    echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
               ?>
 
   </div>
-	<div class="span2">
-    <?php
-
-                    echo CHtml::label('เดือน-ปี สิ้นสุด', 'month_end');
-                    echo CHtml::dropDownList('month_end', '', 
-                              array(1=>'มกราคม',2=>'กุมภาพันธ์',3=>'มีนาคม',4=>'เมษายน',5=>'พฤษภาคม',6=>'มิถุนายน',7=>'กรกฎาคม',8=>'สิงหาคม',9=>'กันยายน',10=>'ตุลาคม',11=>'พฤศจิกายน',12=>'ธันวาคม'),
-                              array('class'=>'span12'));
-              ?>
-
-  </div>
-  <div class="span1">
-    <?php
-
-                    echo CHtml::label('&nbsp;', 'year_end');
-                    $list = array();
-                    for ($i=2551; $i <= date("Y")+543 ; $i++) { 
-                        $list[] = $i;
-                    }
-                    echo CHtml::dropDownList('year_end', '', 
-                              $list,
-                              array('class'=>'span12'));
-              ?>
-
-  </div>
+	
   
-	<div class="span3">
+	<div class="span6">
 	  <?php
 		$this->widget('bootstrap.widgets.TbButton', array(
               'buttonType'=>'link',
@@ -138,7 +143,7 @@ window.onload = function (){
               'buttonType'=>'link',
               
               'type'=>'info',
-              'label'=>'',
+              'label'=>'print',
               'icon'=>'print white',
               
               'htmlOptions'=>array(
@@ -162,16 +167,15 @@ Yii::app()->clientScript->registerScript('gentReport', '
 $("#gentReport").click(function(e){
     e.preventDefault();
 
-    if($("#project").val()!="")
+    if($("#date_start").val()!="" && $("#date_end").val()!="")
     {    
         $.ajax({
-            url: "genSummary",
+            url: "genBSC",
             cache:false,
-            data: {project: $("#project").val()},
+            data: {date_start: $("#date_start").val(),date_end: $("#date_end").val()},
             success:function(response){
                 $("#printcontent").html("");
-                //var success = new PDFObject({ url: "../summaryReport.pdf",height: "800px" }).embed("printcontent");
-                
+ 
                $("#printcontent").html(response);                 
             }
 
@@ -179,7 +183,7 @@ $("#gentReport").click(function(e){
     }
     else
     {
-        js:bootbox.alert("<font color=red>!!!!กรุณาเลือกโครงการ</font>","ตกลง");
+        js:bootbox.alert("<font color=red>!!!!กรุณาเลือกวันที่</font>","ตกลง");
                                                                             
     }
 });

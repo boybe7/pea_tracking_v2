@@ -545,43 +545,14 @@ $('#search-form').submit(function(){
     </div> 
 
     <?php
-    if(Yii::app()->user->username=='tsd' || Yii::app()->user->username=='tsd02' || Yii::app()->user->username=='tsd03') 
+    if(Yii::app()->user->username=='tsd' || Yii::app()->user->username=='tsd01' || Yii::app()->user->username=='tsd02' || Yii::app()->user->username=='tsd03') 
     { 
     ?>
     <div class="tab-pane " id="1000Tab">
         <center><h4>แจ้งเตือนของบประมาณ .1000</h4></center>
          <?php
            
-            $this->widget('bootstrap.widgets.TbButton', array(
-                'buttonType'=>'link',
-                
-                'type'=>'warning',
-                'label'=>'ปิดแจ้งเตือน',
-                'icon'=>'bookmark',
-                //'url'=>array('close'),
-                'htmlOptions'=>array('class'=>'pull-right','style'=>'margin-bottom: 20px;',
-
-
-                            'onclick'=>'      
-                                   if($.fn.yiiGridView.getSelection("notify-grid-1000").length==0)
-                                      js:bootbox.alert("กรุณาเลือกโครงการที่ต้องการปิด?","ตกลง");   
-                                   else 
-                                   {  
-                                             $.ajax({
-                                                    type: "POST",
-                                                    url: "disableNotify",
-                                                    data: { selectedID: $.fn.yiiGridView.getSelection("notify-grid-1000")}
-                                                    })
-                                                    .done(function( msg ) {
-                                                        $("#notify-grid-1000").yiiGridView("update",{});
-                                                        location.reload();
-                                                    });
-                                    }',
-                           
-
-                    ),
-            )); 
-
+           
 
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-1000',
@@ -619,7 +590,19 @@ $('#search-form').submit(function(){
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),  
                    
-                    
+                    array(
+                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                            'template' => '{update}',
+                            'buttons'=>array(
+                                'update' => array
+                                    (
+                                                        
+                                        'icon'=>'icon-pencil',
+                                        'url'=>'Yii::app()->createUrl($data["url"])'
+                                    ),
+                            )
+                    ) 
                     
                 ),
             ));  

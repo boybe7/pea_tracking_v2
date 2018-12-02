@@ -4533,5 +4533,16 @@ $table = $section->addTable(array("cellMargin"=>0));
     }
 
     
+    public function actionGenBSC()
+    {
+        
+    
+        $this->renderPartial('_formBSC', array(
+            'date_start' => $_GET['date_start'],
+            'date_end' => $_GET['date_end'],
+            'display' => 'block',
+        ), false, true);
 
+        
+    }
 }
