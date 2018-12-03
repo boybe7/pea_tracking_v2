@@ -57,16 +57,26 @@ function renderDate2($value)
 }
 
 	//$fiscal_year  = date("n") < 10 ? date("Y")+543 : date("Y")+543 +1;
-	$Criteria = new CDbCriteria();
-	$dateStr = explode("/", $date_start);
-	$dateSearch = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
-	$Criteria->condition = "pj_date_approved <= '$dateSearch'";// AND pj_status=1";
-	$Criteria->order = 'pj_fiscalyear DESC, pj_date_approved DESC';
-	$projects = Project::model()->findAll($Criteria);
-
+	
 	echo "<center><div class='header'><b>ข้อมูลด้านการให้บริการ วันที่ ".renderDate($date_start)." ถึงวันที่ ".renderDate($date_end)." (วงเงินไม่รวมภาษีมูลค่าเพิ่ม)</b></div></center>";
 	echo "<br>";
 	
+	$Criteria = new CDbCriteria();
+	$dateStr = explode("/", $date_start);
+	$date_start = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+	$dateStr = explode("/", $date_end);
+	$date_end = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+
+
+	$Criteria->join = 'LEFT JOIN project_contract ON pc_proj_id=pj_id'; 
+	$Criteria->condition = " (pc_end_date >= '$date_start' AND pc_sign_date<='$date_end') OR (pc_sign_date <= '$date_end' AND pc_end_date>='$date_start') AND (pc_sign_date!='0000-00-00' AND pc_end_date='0000-00-00') GROUP BY pj_id ";// AND pj_status=1";
+
+	//echo  " (pc_end_date >= '$date_start' AND pc_sign_date<='$date_end') OR (pc_sign_date <= '$date_end' AND pc_end_date>='$date_start') AND (pc_sign_date!='0000-00-00' AND pc_end_date='0000-00-00')  ";
+	$Criteria->order = 'pj_fiscalyear DESC, pj_date_approved DESC';
+	$projects = Project::model()->findAll($Criteria);
+
+
+
 	echo "<table border='1' class='span12' style='margin-left:0px;'>";
 		echo "<tr>";
 		 echo "<td  style='font-weight: bold;text-align:center;width:5%;background-color: #ddd;'>ลำดับ</td>";
@@ -82,10 +92,7 @@ function renderDate2($value)
 		$proj_cost_total = 0;
 		$income_total = 0;
 		$year = 0;
-		$dateStr = explode("/", $date_start);
-	    $date_start = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
-	    $dateStr = explode("/", $date_end);
-	    $date_end = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+		
 
 		foreach ($projects as $key => $proj) {
 			if($year!=$proj->pj_fiscalyear)
