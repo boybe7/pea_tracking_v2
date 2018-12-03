@@ -56,9 +56,12 @@ function renderDate2($value)
     return $renderDate;             
 }
 
-	$fiscal_year  = date("n") < 10 ? date("Y")+543 : date("Y")+543 +1;
+	//$fiscal_year  = date("n") < 10 ? date("Y")+543 : date("Y")+543 +1;
 	$Criteria = new CDbCriteria();
-	$Criteria->condition = "pj_fiscalyear='$fiscal_year'";
+	$dateStr = explode("/", $date_start);
+	$dateSearch = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+	$Criteria->condition = "pj_date_approved <= '$dateSearch'";// AND pj_status=1";
+	$Criteria->order = 'pj_fiscalyear DESC, pj_date_approved DESC';
 	$projects = Project::model()->findAll($Criteria);
 
 	echo "<center><div class='header'><b>ข้อมูลด้านการให้บริการ วันที่ ".renderDate($date_start)." ถึงวันที่ ".renderDate($date_end)." (วงเงินไม่รวมภาษีมูลค่าเพิ่ม)</b></div></center>";
@@ -66,26 +69,40 @@ function renderDate2($value)
 	
 	echo "<table border='1' class='span12' style='margin-left:0px;'>";
 		echo "<tr>";
-		 echo "<td  style='text-align:center;width:5%'>ลำดับ</td>";
-		 echo "<td  style='text-align:center;width:25%'>โครงการ/ผู้ว่าจ้าง</td>";
-		 echo "<td  style='text-align:center;width:40%'>รายละเอียดงาน</td>";
-		 echo "<td style='text-align:center;width:10%'>วงเงินตามสัญญา<br>(ไม่รวม VAT)</td>";
-		 echo "<td style='text-align:center;width:10%'>กำไรขั้นต้น (บาท)</td>";		 
-		 echo "<td style='text-align:center;width:10%'>คิดเป็นร้อยละ</td>";
+		 echo "<td  style='font-weight: bold;text-align:center;width:5%;background-color: #ddd;'>ลำดับ</td>";
+		 echo "<td  style='font-weight: bold;text-align:center;width:25%;background-color: #ddd;'>โครงการ/ผู้ว่าจ้าง</td>";
+		 echo "<td  style='font-weight: bold;text-align:center;width:40%;background-color: #ddd;'>รายละเอียดงาน</td>";
+		 echo "<td style='font-weight: bold;text-align:center;width:10%;background-color: #ddd;'>วงเงินตามสัญญา<br>(ไม่รวม VAT)</td>";
+		 echo "<td style='font-weight: bold;text-align:center;width:10%;background-color: #ddd;'>กำไรขั้นต้น (บาท)</td>";		 
+		 echo "<td style='font-weight: bold;text-align:center;width:10%;background-color: #ddd;'>คิดเป็นร้อยละ</td>";
 		
 		echo "</tr>";
 
 		$i=1;
 		$proj_cost_total = 0;
 		$income_total = 0;
+		$year = 0;
+		$dateStr = explode("/", $date_start);
+	    $date_start = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+	    $dateStr = explode("/", $date_end);
+	    $date_end = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+
 		foreach ($projects as $key => $proj) {
+			if($year!=$proj->pj_fiscalyear)
+			{
+				$year = $proj->pj_fiscalyear;
+				echo "<tr><td colspan=6 height=30><b> ปีงบประมาณ ".$year."</b></td></tr>";
+			}
 			echo "<tr>";
-				echo "<td style='text-align:center;'>".$i."</td>";
-				echo "<td style=''>".$proj->pj_name."</td>";
+				echo "<td style='text-align:center;' height=30>".$i."</td>";
+				echo "<td style='' height=30>".$proj->pj_name.":".$proj->pj_id."</td>";
 				//project contract
 				$pcData=Yii::app()->db->createCommand("SELECT sum(pc_cost) as proj_cost,pc_details FROM project_contract WHERE pc_proj_id='$proj->pj_id'")->queryAll(); 
 				
-				$incomeData=Yii::app()->db->createCommand("SELECT sum(cost) as income FROM project_contract c LEFT JOIN contract_approve_history a ON pc_id=contract_id WHERE pc_proj_id='$proj->pj_id' AND type=1 AND detail LIKE '%กำไร%'")->queryAll();
+				$incomeData=Yii::app()->db->createCommand("SELECT sum(cost) as income FROM project_contract c LEFT JOIN contract_approve_history a ON pc_id=contract_id WHERE pc_proj_id='$proj->pj_id' AND type=1 AND detail LIKE '%กำไร%' AND dateApprove BETWEEN '$date_start' AND '$date_end' ")->queryAll();
+
+				if($proj->pj_id==281)
+				echo "SELECT sum(cost) as income FROM project_contract c LEFT JOIN contract_approve_history a ON pc_id=contract_id WHERE pc_proj_id='$proj->pj_id' AND type=1 AND detail LIKE '%กำไร%' AND dateApprove BETWEEN '$date_start' AND '$date_end' ";
 
 				$proj_cost_total += $pcData[0]['proj_cost'];
 				$income_total += $incomeData[0]['income'];
@@ -106,7 +123,7 @@ function renderDate2($value)
 		
 		echo "<tr>";
 		 
-		 echo "<td colspan=3 style='text-align:center;width:70%'>รวมเป็นเงิน</td>";
+		 echo "<td colspan=3 style='text-align:center;width:70%' height=30>รวมเป็นเงิน</td>";
 		 echo "<td style='text-align:right;width:10%'>".number_format($proj_cost_total,2)."</td>";
 		 echo "<td style='text-align:right;width:10%'>".number_format($income_total,2)."</td>";	
 		 $percent = $proj_cost_total==0 ? 0: ($income_total/$proj_cost_total)*100;	 
