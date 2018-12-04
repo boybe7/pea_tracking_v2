@@ -102,14 +102,14 @@ function renderDate2($value)
 			}
 			echo "<tr>";
 				echo "<td style='text-align:center;' height=30>".$i."</td>";
-				echo "<td style='' height=30>".$proj->pj_name.":".$proj->pj_id."</td>";
+				echo "<td style='' height=30>".$proj->pj_name."</td>";
 				//project contract
 				$pcData=Yii::app()->db->createCommand("SELECT sum(pc_cost) as proj_cost,pc_details FROM project_contract WHERE pc_proj_id='$proj->pj_id'")->queryAll(); 
 				
 				$incomeData=Yii::app()->db->createCommand("SELECT sum(cost) as income FROM project_contract c LEFT JOIN contract_approve_history a ON pc_id=contract_id WHERE pc_proj_id='$proj->pj_id' AND type=1 AND detail LIKE '%กำไร%' AND dateApprove BETWEEN '$date_start' AND '$date_end' ")->queryAll();
 
-				if($proj->pj_id==281)
-				echo "SELECT sum(cost) as income FROM project_contract c LEFT JOIN contract_approve_history a ON pc_id=contract_id WHERE pc_proj_id='$proj->pj_id' AND type=1 AND detail LIKE '%กำไร%' AND dateApprove BETWEEN '$date_start' AND '$date_end' ";
+				//if($proj->pj_id==281)
+				//echo "SELECT sum(cost) as income FROM  contract_approve_history a LEFT JOIN project_contract c ON pc_id=contract_id WHERE pc_proj_id='$proj->pj_id' AND type=1 AND detail LIKE '%กำไร%' AND dateApprove BETWEEN '$date_start' AND '$date_end' ";
 
 				$proj_cost_total += $pcData[0]['proj_cost'];
 				$income_total += $incomeData[0]['income'];
@@ -130,14 +130,16 @@ function renderDate2($value)
 		
 		echo "<tr>";
 		 
-		 echo "<td colspan=3 style='text-align:center;width:70%' height=30>รวมเป็นเงิน</td>";
-		 echo "<td style='text-align:right;width:10%'>".number_format($proj_cost_total,2)."</td>";
-		 echo "<td style='text-align:right;width:10%'>".number_format($income_total,2)."</td>";	
+		 echo "<td colspan=3 style='text-align:center;width:70%;background-color: #ddd;' height=30>รวมเป็นเงิน</td>";
+		 echo "<td style='text-align:right;width:10%;background-color: #ddd;'>".number_format($proj_cost_total,2)."</td>";
+		 echo "<td style='text-align:right;width:10%;background-color: #ddd;'>".number_format($income_total,2)."</td>";	
 		 $percent = $proj_cost_total==0 ? 0: ($income_total/$proj_cost_total)*100;	 
-		 echo "<td style='text-align:right;'>".number_format($percent,2)."</td>";
+		 echo "<td style='text-align:right;background-color: #ddd;'>".number_format($percent,2)."</td>";
 		
 		echo "</tr>";
 
 	echo "</table>";
 		
 ?>
+
+<br><br><br>
