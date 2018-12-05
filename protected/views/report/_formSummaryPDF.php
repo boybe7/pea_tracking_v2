@@ -472,6 +472,7 @@ $html = "";
 			        }
     }
     //if($index!=0)
+
     $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
 // Print text using writeHTMLCell()
 

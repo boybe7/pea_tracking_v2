@@ -189,17 +189,14 @@ $("#gentReport").click(function(e){
 });
 ', CClientScript::POS_END);
 
-Yii::app()->clientScript->registerScript('printReport', '
+Yii::app()->clientScript->registerScript('printReportBSC', '
 $("#printReport").click(function(e){
     e.preventDefault();
-    //window.location.href = "printSummary?project="+$("#project").val();
-    //window.print();
     $.ajax({
-        url: "printSummary",
-        data: {project: $("#project").val()},
+        url: "printBSC",
+        data: {date_start: $("#date_start").val(),date_end: $("#date_end").val()},
         success:function(response){
             
-            //var success = new PDFObject({ url: "../summaryReport.pdf",height: "800px" }).embed("pdf");
              window.open("../tempReport.pdf", "_blank", "fullscreen=yes");              
             
         }
@@ -212,17 +209,7 @@ $("#printReport").click(function(e){
 Yii::app()->clientScript->registerScript('exportExcel', '
 $("#exportExcel").click(function(e){
     e.preventDefault();
-    window.location.href = "genSummaryExcel?project="+$("#project").val();
-    // $.ajax({
-    //     url: "genExcel",
-    //     data: {project: $("#project").val()},
-    //     success:function(response){
-            
-    //         //$("#reportContent").html(response);
-            
-    //     }
-
-    // });
+    window.location.href = "genBscExcel?date_start="+$("#date_start").val()+"&date_end="+$("#date_end").val();
 
 });
 ', CClientScript::POS_END);
