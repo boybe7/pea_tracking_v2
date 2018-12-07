@@ -39,7 +39,7 @@ class PaymentOutsourceContract extends CActiveRecord
 			array('invoice_no', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id,approve_by, contract_id, invoice_receive_date,invoice_send_date,T,B, detail, money, invoice_no, approve_date, user_create, user_update, last_update', 'safe', 'on'=>'search,create,update'),
+			array('id,approve_by, contract_id, invoice_receive_date,invoice_send_date,T,B, detail, money, invoice_no, approve_date, user_create, user_update, last_update,fine_amount', 'safe', 'on'=>'search,create,update'),
 		);
 	}
 
@@ -77,7 +77,9 @@ class PaymentOutsourceContract extends CActiveRecord
 			'B%'=>'B%',
 			'bill_no/date'=>'เลขที่ใบเสร็จรับเงิน/วันที่ได้รับ',
 			'invoice_no/date'=>'เลขที่ใบแจ้งหนี้/วันที่ได้รับ',
-			'approve_by'=>'อนุมัติโดย'
+			'approve_by'=>'อนุมัติโดย',
+			'fine_amount'=>'ค่าปรับ'
+
 		);
 	}
 

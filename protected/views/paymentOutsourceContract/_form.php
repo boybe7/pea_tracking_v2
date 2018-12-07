@@ -175,14 +175,13 @@
        <div class="span7">
           <?php echo $form->textFieldRow($model,'invoice_no',array('class'=>'span12','maxlength'=>200)); ?>
        </div>
-       
-       <div class="span3">
-           <?php
-             echo $form->textFieldRow($model,'T',array('class'=>'span9','maxlength'=>3));
-            //echo CHtml::label('%ความก้าวหน้าด้านเทคนิค','t_percent');        
-            //echo "<input type='text' id='t_percent' name='t_percent' value='$T_percent' class='span12' >";
+        <div class="span5">
+          <?php
+            echo $form->textFieldRow($model,'fine_amount',array('class'=>'span10','style'=>'text-align:right'));
+          
         ?> 
        </div>
+      
        
     </div>   
 	
@@ -241,12 +240,12 @@
        
        </div>
 
-       <div class="span3"> 
-          <?php
-            // echo $form->textFieldRow($model,'B',array('class'=>'span9','maxlength'=>3));
-            //echo CHtml::label('%ความก้าวหน้าการเรียกเก็บเงิน','a_percent');        
-	          //echo "<input type='text' id='a_percent' name='a_percent' value='$A_percent' class='span12' >";
-	      ?> 
+       <div class="span3">
+           <?php
+             echo $form->textFieldRow($model,'T',array('class'=>'span9','maxlength'=>3));
+            //echo CHtml::label('%ความก้าวหน้าด้านเทคนิค','t_percent');        
+            //echo "<input type='text' id='t_percent' name='t_percent' value='$T_percent' class='span12' >";
+        ?> 
        </div>
     </div>   
 	
