@@ -172,13 +172,10 @@
 
 		     ?>
        </div>
-       <div class="span3">
+       <div class="span4">
           <?php
-            echo $form->textFieldRow($model,'T',array('class'=>'span5','maxlength'=>3));
-            
-
-            //echo CHtml::label('%ความก้าวหน้าด้านเทคนิค','t_percent');        
-            //echo "<input type='text' id='t_percent' name='t_percent' value='$T_percent' class='span12' >";
+            echo $form->textFieldRow($model,'fine_amount',array('class'=>'span10','style'=>'text-align:right'));
+          
         ?> 
        </div>
        <!--  <div class="span4"> 
@@ -196,6 +193,15 @@
        </div>
        <div class="span4">
        <?php echo $form->textFieldRow($model,'invoice_alarm2',array('class'=>'span12','maxlength'=>3)); ?>
+       </div>
+       <div class="span3">
+          <?php
+            echo $form->textFieldRow($model,'T',array('class'=>'span5','maxlength'=>3));
+            
+
+            //echo CHtml::label('%ความก้าวหน้าด้านเทคนิค','t_percent');        
+            //echo "<input type='text' id='t_percent' name='t_percent' value='$T_percent' class='span12' >";
+        ?> 
        </div>
   </div>
 	<div class="row-fluid">       
