@@ -198,8 +198,36 @@ function renderDate2($value)
                	{
                		
                		echo "<td valign='top'>".$data_payment[$i]["detail"]."</td>";
-               		echo "<td style='text-align:center' valign='top'>".$data_payment[$i]["invoice_no"]."<br>".renderDate2($data_payment[$i]["invoice_date"])."</td>";
-               		echo "<td style='text-align:center' valign='top'>".$data_payment[$i]["bill_no"]."<br>".renderDate2($data_payment[$i]["bill_date"])."</td>";
+               		
+               		
+               		if(empty($data_payment[$i]["fine_amount"]) || $data_payment[$i]["fine_amount"]==0) 
+		            {
+		               	//echo "<td style='text-align:center'>".$data_payment[$i]["approve_by"]."</td>";
+		               	//echo "<td style='text-align:center'>".renderDate2($data_payment[$i]["approve_date"])."</td>";
+
+		            	echo "<td style='text-align:center' valign='top'>".$data_payment[$i]["invoice_no"]."<br>".renderDate2($data_payment[$i]["invoice_date"])."</td>";
+		               	echo "<td style='text-align:center' valign='top'>".$data_payment[$i]["bill_no"]."<br>".renderDate2($data_payment[$i]["bill_date"])."</td>";
+               			
+		            }
+		            else
+		            {
+		            	echo "<td style='text-align:center;'>".$data_payment[$i]["invoice_no"]."<br>".renderDate2($data_payment[$i]["invoice_date"]);
+		               				echo "<br><br><br><br>ภาษีมูลค่าเพิ่ม";
+		               				echo "<br>รวมเบิกจ่าย";
+		               				echo "<br><u>หัก</u> ค่าปรับส่งของล่าช้า";
+		               				echo "<br>รวมเบิกจ่ายทั้งสิ้น";
+		               	echo "</td>";
+		               	echo "<td ><center>".($data_payment[$i]["bill_no"])."<br>".renderDate2($data_payment[$i]["bill_date"]);
+		               			echo "</center><br><br><br><div style='text-align:right'>";
+		               				
+		               			echo "<u>".number_format($data_payment[$i]["money"]*0.07,2)."</u><br>";
+		               				
+		               			echo number_format($data_payment[$i]["money"]*1.07,2)."<br>";
+		               			echo "<u>".number_format($data_payment[$i]["fine_amount"],2)."</u><br><br>";
+		               			echo "<p style='text-decoration-line: underline;text-decoration-style: double;'>".number_format($data_payment[$i]["money"]*1.07-$data_payment[$i]["fine_amount"],2)."</p></div>";
+		               	echo "</td>";
+		            }
+               		
                		echo "<td style='text-align:right' valign='top'>".number_format($data_payment[$i]["money"],2)."</td>";
 
                		if($data_payment[$i]["bill_no"]!=""){

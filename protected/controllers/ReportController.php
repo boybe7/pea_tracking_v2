@@ -4540,6 +4540,7 @@ $table = $section->addTable(array("cellMargin"=>0));
         $this->renderPartial('_formBSC', array(
             'date_start' => $_GET['date_start'],
             'date_end' => $_GET['date_end'],
+
             'display' => 'block',
         ), false, true);
 
@@ -4553,9 +4554,12 @@ $table = $section->addTable(array("cellMargin"=>0));
         $this->render('_formBscPDF', array(
             'date_start' => $_GET['date_start'],
             'date_end' => $_GET['date_end'],
+             'filename' => $_GET['filename'],
             
         ));
 
+        //if (Yii::app()->request->isAjaxRequest)
+        //   echo ("tempReport2.pdf");
         
     }
 

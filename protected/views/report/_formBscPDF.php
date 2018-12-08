@@ -195,8 +195,8 @@ $html = "";
                 $html .= '<tr><td colspan="6" height="30"><b> ปีงบประมาณ '.$year.'</b></td></tr>';
             }
             $html .= '<tr>';
-                $html .= '<td style="text-align:center;" height=30>'.$i.'</td>';
-                $html .= '<td  height=30>'.$proj->pj_name.'</td>';
+                $html .= '<td style="text-align:center;width:5%;" height=30>'.$i.'</td>';
+                $html .= '<td style="width:25%;" height=30>'.$proj->pj_name.'</td>';
                 //project contract
                 $pcData=Yii::app()->db->createCommand("SELECT sum(pc_cost) as proj_cost,pc_details FROM project_contract WHERE pc_proj_id='$proj->pj_id'")->queryAll(); 
                 
@@ -209,13 +209,13 @@ $html = "";
                 $income_total += $incomeData[0]['income'];
 
                 
-                $html .= '<td >'.$pcData[0]['pc_details'].'</td>';
-                $html .= '<td style="text-align:right;">'.number_format($pcData[0]['proj_cost'],2).'</td>';
+                $html .= '<td style="width:40%;">'.$pcData[0]['pc_details'].'</td>';
+                $html .= '<td style="text-align:right;width:10%;">'.number_format($pcData[0]['proj_cost'],2).'</td>';
                 
 
-                $html .= '<td style="text-align:right;">'.number_format($incomeData[0]['income'],2).'</td>';
+                $html .= '<td style="text-align:right;width:10%;">'.number_format($incomeData[0]['income'],2).'</td>';
                 $percent = $pcData[0]['proj_cost']==0 ? 0: ($incomeData[0]['income']/$pcData[0]['proj_cost'])*100;
-                $html .= '<td style="text-align:right;">'.number_format($percent,2).'</td>';
+                $html .= '<td style="text-align:right;width:10%;">'.number_format($percent,2).'</td>';
             $html .= '</tr>';
 
             $i++;
@@ -239,6 +239,7 @@ $html = "";
   
 $pdf->AddPage();
 $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+$pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/report/temp/'.$filename,'F');
 // Print text using writeHTMLCell()
 
 
@@ -246,13 +247,13 @@ $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
 
 // Close and output PDF document
 // // This method has several options, check the source code documentation for more information.
-if(file_exists($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf'))
-{    
-    if(unlink($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf'))
-        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf','F');
-}else{
-   $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf','F');
-}
+// if(file_exists($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf'))
+// {    
+//     if(unlink($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf'))
+//         $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf','F');
+// }else{
+//    $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf','F');
+// }
 ob_end_clean() ;
 
 exit;

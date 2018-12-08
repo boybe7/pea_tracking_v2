@@ -192,12 +192,13 @@ $("#gentReport").click(function(e){
 Yii::app()->clientScript->registerScript('printReportBSC', '
 $("#printReport").click(function(e){
     e.preventDefault();
+    filename = "bsc"+$.now()+".pdf";
     $.ajax({
         url: "printBSC",
-        data: {date_start: $("#date_start").val(),date_end: $("#date_end").val()},
+        data: {date_start: $("#date_start").val(),date_end: $("#date_end").val(),filename: filename},
         success:function(response){
-            
-             window.open("../tempReport.pdf", "_blank", "fullscreen=yes");              
+             
+             window.open("../report/temp/"+filename, "_blank", "fullscreen=yes");              
             
         }
 

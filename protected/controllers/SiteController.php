@@ -100,7 +100,23 @@ class SiteController extends Controller
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login())
-                       $this->redirect(array('site/index'));
+			{
+
+
+				//clear temp files 
+				$dir = $_SERVER['DOCUMENT_ROOT'].'/pea_track/report/temp/';//dir absolute path
+				$interval = strtotime('-24 hours');//files older than 24hours
+
+				foreach (glob($dir."*") as $file) 
+				{    //delete if older
+					if (filemtime($file) <= $interval ) unlink($file);
+				}
+
+
+				$this->redirect(array('site/index'));
+
+			}
+                       
 				//$this->redirect(Yii::app()->user->returnUrl);
 		}
 		// display the login form

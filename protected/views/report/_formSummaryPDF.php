@@ -294,10 +294,35 @@ $html = "";
                  if(!empty($data_payment[$i])) 
                 {
                     
-                    $html .= '<td >'.$data_payment[$i]['detail'].'</td>';
-                    $html .= '<td style="text-align:center">'.$data_payment[$i]['invoice_no'].'<br>'.renderDate2($data_payment[$i]['invoice_date']).'</td>';
-                    $html .= '<td style="text-align:center">'.$data_payment[$i]['bill_no'].'<br>'.renderDate2($data_payment[$i]['bill_date']).'</td>';
-                    $html .= '<td style="text-align:right">'.number_format($data_payment[$i]['money'],2).'</td>';
+                    $html .= '<td valign="top">'.$data_payment[$i]['detail'].'</td>';
+                    
+                    //if(empty($data_payment[$i]["fine_amount"]) || $data_payment[$i]["fine_amount"]==0) 
+                    //{
+                        $html .= '<td style="text-align:center" valign="top">'.$data_payment[$i]['invoice_no'].'<br>'.renderDate2($data_payment[$i]['invoice_date']).'</td>';
+                        $html .= '<td style="text-align:center" valign="top">'.$data_payment[$i]['bill_no'].'<br>'.renderDate2($data_payment[$i]['bill_date']).'</td>';
+                    //}
+                    //else
+                    //{
+
+                        // $html .= '<td style="text-align:center;">'.$data_payment[$i]["invoice_no"]."<br>".renderDate2($data_payment[$i]["invoice_date"]);
+                        //             $html .= "<br><br><br><br>ภาษีมูลค่าเพิ่ม";
+                        //             $html .= "<br>รวมเบิกจ่าย";
+                        //             $html .= "<br><u>หัก</u> ค่าปรับส่งของล่าช้า";
+                        //             $html .= "<br>รวมเบิกจ่ายทั้งสิ้น";
+                        // $html .= "</td>";
+                        // $html .= "<td ><center>".($data_payment[$i]["bill_no"])."<br>".renderDate2($data_payment[$i]["bill_date"]);
+                        //         $html .= '</center><br><br><br><div style="text-align:right">';
+                                    
+                        //         $html .= "<u>".number_format($data_payment[$i]["money"]*0.07,2)."</u><br>";
+                                    
+                        //         $html .= number_format($data_payment[$i]["money"]*1.07,2)."<br>";
+                        //         $html .= "<u>".number_format($data_payment[$i]["fine_amount"],2)."</u><br><br>";
+                        //         $html .= '<p style="text-decoration-line: underline;text-decoration-style: double;">'.number_format($data_payment[$i]["money"]*1.07-$data_payment[$i]["fine_amount"],2)."</p></div>";
+                        // $html .= "</td>";
+                    //}
+
+
+                    $html .= '<td style="text-align:right" valign="top">'.number_format($data_payment[$i]['money'],2).'</td>';
 
                     if($data_payment[$i]['bill_no']!=''){
                         $sum_pay += $data_payment[$i]['money'];
@@ -472,23 +497,25 @@ $html = "";
 			        }
     }
     //if($index!=0)
-
-    $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+$pdf->AddPage();
+$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
 // Print text using writeHTMLCell()
-
+//echo $html;
 //$pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'summaryReport.pdf','F');
 
 // ---------------------------------------------------------
 
 // Close and output PDF document
 // // This method has several options, check the source code documentation for more information.
-if(file_exists($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf'))
-{    
-    if(unlink($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf'))
-        $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf','F');
-}else{
-   $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf','F');
-}
+// if(file_exists($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf'))
+// {    
+//     if(unlink($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf'))
+//         $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf','F');
+// }else{
+//    $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf','F');
+// }
+
+$pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport2.pdf','F');
 ob_end_clean() ;
 
 exit;
