@@ -1394,6 +1394,33 @@ $table = $section->addTable(array("cellMargin"=>0));
 			        	)
 			    ));
 
+			$detail_fine = new PHPExcel_Style();
+			$detail_fine->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'borders' => array(
+				           
+				           	'left'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'right'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	)             
+			        	)
+			    ));
+
 		   $row_start = 2;
 		   $row = 2;
 		    $pj = $model;
@@ -1541,29 +1568,82 @@ $table = $section->addTable(array("cellMargin"=>0));
 	                            ->from('contract_approve_history')
 	                            ->where("contract_id='$pc->pc_id' AND type=1")
 	                            ->queryAll();
-	            foreach ($approve as $key => $value) {
-			    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row_ap,$index);
-			    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row_ap,$value["detail"]);
-					$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row_ap,$value["approveBy"]."\r".$this->renderDate2($value["dateApprove"]));
-					$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row_ap,number_format($value["cost"],2));
-					$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row_ap,$value["timeSpend"]);
-					$index++;
-			    	$row_ap++;
-	            }
-	            
+
 	            $payment = Yii::app()->db->createCommand()
 	                            ->select('*')
 	                            ->from('payment_project_contract')
 	                            ->where("proj_id='$pc->pc_id'")
 	                            ->queryAll();                
-	           
+	                                            
+	            $pay_index = 0;                                
+	            foreach ($approve as $key => $value) {
+
+                    if( isset($payment[$pay_index]) && (!empty($payment[$pay_index]["fine_amount"]) || $payment[$pay_index]["fine_amount"]!=0) )
+                    {	
+                    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$row_ap.':A'.($row_ap+4));
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row_ap,$index);
+                    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('B'.$row_ap.':B'.($row_ap+4));
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row_ap,$value["detail"]);
+                    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('C'.$row_ap.':C'.($row_ap+4));
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row_ap,$value["approveBy"]."\r".$this->renderDate2($value["dateApprove"]));
+                    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('D'.$row_ap.':D'.($row_ap+4));
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row_ap,number_format($value["cost"],2));
+                    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('E'.$row_ap.':E'.($row_ap+4));
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row_ap,$value["timeSpend"]);
+                    	$row_ap += 5;
+                    }
+                    else
+                    {
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row_ap,$index);
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row_ap,$value["detail"]);
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row_ap,$value["approveBy"]."\r".$this->renderDate2($value["dateApprove"]));
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row_ap,number_format($value["cost"],2));
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row_ap,$value["timeSpend"]);
+                    	$row_ap++;
+                    }
+					
+			    	
+
+			    	$index++;
+			    	$pay_index++;
+	            }
+	            
+	            
+	            $row_fine = array();
 	            foreach ($payment as $key => $value) {
 	            	
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row_pa,$value["detail"]);
-					$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row_pa,$value["invoice_no"]."\r".$this->renderDate2($value["invoice_date"]));
-					$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$row_pa,$value["bill_no"]."\r".$this->renderDate2($value["bill_date"]));
-					$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$row_pa,number_format($value["money"],2));
-					$row_pa++;
+	            	if( (!empty($value["fine_amount"]) || $value["fine_amount"]!=0) )
+                    {	
+                    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('G'.$row_pa.':G'.($row_pa+4));
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row_pa,$value["detail"]);
+                    	
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row_pa,$value["invoice_no"]."\r".$this->renderDate2($value["invoice_date"])."\r");
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$row_pa,$value["bill_no"]."\r".$this->renderDate2($value["bill_date"])."\r");
+
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($row_pa+1),'ภาษีมูลค่าเพิ่ม');
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($row_pa+1),number_format($value["money"]*0.07,2));
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($row_pa+2),'รวมเบิกจ่าย');
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($row_pa+2),number_format($value["money"]*1.07,2));
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($row_pa+3),'หักค่าปรับ');
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($row_pa+3),number_format($value["fine_amount"],2));
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($row_pa+4),'รวมเบิกจ่ายทั้งสิ้น');
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($row_pa+4),number_format($value["money"]*1.07-$value["fine_amount"],2));
+						
+						$row_fine[] = $row_pa;
+                    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('J'.$row_pa.':J'.($row_pa+4));
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$row_pa,number_format($value["money"],2));
+                    	$row_pa += 5;
+                    }
+                    else
+                    {
+                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row_pa,$value["detail"]);
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row_pa,$value["invoice_no"]."\r".$this->renderDate2($value["invoice_date"]));
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$row_pa,$value["bill_no"]."\r".$this->renderDate2($value["bill_date"]));
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$row_pa,number_format($value["money"],2));
+						$row_pa++;
+                    }
+
+	        		
 
 					if($value["bill_no"]!=""){
                			$sum_pay += $value["money"];
@@ -1590,6 +1670,11 @@ $table = $section->addTable(array("cellMargin"=>0));
             $objPHPExcel->getActiveSheet()->getStyle("C".$row_tb.":C".($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $objPHPExcel->getActiveSheet()->getStyle("H".$row_tb.":I".($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             
+            foreach ($row_fine as $key => $r) {
+
+            	//$objPHPExcel->getActiveSheet()->setSharedStyle($detail_fine, "I".($r+1).":I".($r+4));
+            	$objPHPExcel->getActiveSheet()->getStyle("I".($r+1).":I".($r+4))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+            }
 
             $objPHPExcel->getActiveSheet()->getStyle("A".$row_detail.":J".($row-1))->getAlignment()->setWrapText(true);		   
 		
@@ -1679,32 +1764,84 @@ $table = $section->addTable(array("cellMargin"=>0));
 		                            ->from('contract_approve_history')
 		                            ->where("contract_id='$oc->oc_id' AND type=2")
 		                            ->queryAll();
-		            $row_ap = $row;
-		            $index3 = 1;                
-		            foreach ($approve as $key => $value) {
-				    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row_ap,$index3);
-				    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row_ap,$value["detail"]);
-						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row_ap,$value["approveBy"]."\r".$this->renderDate2($value["dateApprove"]));
-						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row_ap,number_format($value["cost"],2));
-						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row_ap,$value["timeSpend"]);
-						$index3++;
-				    	$row_ap++;
-		            }
-		                            
-		        
-			        $payment = Yii::app()->db->createCommand()
+
+		            $payment = Yii::app()->db->createCommand()
 			                            ->select('*')
 			                            ->from('payment_outsource_contract')
 			                            ->where("contract_id='$oc->oc_id'")
-		            	                ->queryAll();                
+		            	                ->queryAll();    
+		            $pay_index = 0;	                
+		            $row_ap = $row;
+		            $index3 = 1;                
+		            foreach ($approve as $key => $value) {
+
+		            	if( isset($payment[$pay_index]) && (!empty($payment[$pay_index]["fine_amount"]) || $payment[$pay_index]["fine_amount"]!=0) )
+		            	{
+		            		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$row_ap.':A'.($row_ap+4));
+		            		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row_ap,$index3);
+		            		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('B'.$row_ap.':B'.($row_ap+4));
+					    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row_ap,$value["detail"]);
+					    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('C'.$row_ap.':C'.($row_ap+4));
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row_ap,$value["approveBy"]."\r".$this->renderDate2($value["dateApprove"]));
+							$objPHPExcel->setActiveSheetIndex(0)->mergeCells('D'.$row_ap.':D'.($row_ap+4));
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row_ap,number_format($value["cost"],2));
+							$objPHPExcel->setActiveSheetIndex(0)->mergeCells('E'.$row_ap.':E'.($row_ap+4));
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row_ap,$value["timeSpend"]);
+							
+					    	$row_ap+= 5;
+		            	}
+		            	else
+		            	{
+
+					    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row_ap,$index3);
+					    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row_ap,$value["detail"]);
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row_ap,$value["approveBy"]."\r".$this->renderDate2($value["dateApprove"]));
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row_ap,number_format($value["cost"],2));
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row_ap,$value["timeSpend"]);
+							
+					    	$row_ap++;
+				    	}	
+
+				    	$pay_index++;
+				    	$index3++;
+		            }
+		                            
+		        
+			                    
 			        $sum_pay = 0;
 			        $row_pa = $row;
+			        $row_fine = array();
 			        foreach ($payment as $key => $value) {
-			        	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row_pa,$value["detail"]);
-						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row_pa,$value["approve_by"]);
-						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$row_pa,$this->renderDate2($value["approve_date"]));
-						$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$row_pa,number_format($value["money"],2));
-						$row_pa++;
+			        	if( (!empty($value["fine_amount"]) || $value["fine_amount"]!=0) )
+	                    {	
+	                    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('G'.$row_pa.':G'.($row_pa+4));
+	                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row_pa,$value["detail"]);
+	                    	
+	                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row_pa,$value["approve_by"]."\r");
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$row_pa,$this->renderDate2($value["approve_date"])."\r");
+
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($row_pa+1),'ภาษีมูลค่าเพิ่ม');
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($row_pa+1),number_format($value["money"]*0.07,2));
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($row_pa+2),'รวมเบิกจ่าย');
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($row_pa+2),number_format($value["money"]*1.07,2));
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($row_pa+3),'หักค่าปรับ');
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($row_pa+3),number_format($value["fine_amount"],2));
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.($row_pa+4),'รวมเบิกจ่ายทั้งสิ้น');
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.($row_pa+4),number_format($value["money"]*1.07-$value["fine_amount"],2));
+							
+							$row_fine[] = $row_pa;
+	                    	$objPHPExcel->setActiveSheetIndex(0)->mergeCells('J'.$row_pa.':J'.($row_pa+4));
+	                    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$row_pa,number_format($value["money"],2));
+	                    	$row_pa += 5;
+	                    }
+	                    else
+	                    {
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row_pa,$value["detail"]);
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row_pa,$value["approve_by"]);
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$row_pa,$this->renderDate2($value["approve_date"]));
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$row_pa,number_format($value["money"],2));
+							$row_pa++;
+						}
 
 						if($value["approve_date"]!=""){
 	               			$sum_pay += $value["money"];
@@ -1733,6 +1870,12 @@ $table = $section->addTable(array("cellMargin"=>0));
 
 		            $objPHPExcel->getActiveSheet()->getStyle("A".$row_detail.":J".($row-1))->getAlignment()->setWrapText(true);		   
 				
+					
+		            foreach ($row_fine as $key => $r) {
+
+		            	//$objPHPExcel->getActiveSheet()->setSharedStyle($detail_fine, "I".($r+1).":I".($r+4));
+		            	$objPHPExcel->getActiveSheet()->getStyle("I".($r+1).":I".($r+4))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+		            }
 				    //$row++;
 			}	   	
 
