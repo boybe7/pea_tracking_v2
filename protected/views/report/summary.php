@@ -242,16 +242,13 @@ $("#gentReport").click(function(e){
 Yii::app()->clientScript->registerScript('printReport', '
 $("#printReport").click(function(e){
     e.preventDefault();
-    //window.location.href = "printSummary?project="+$("#project").val();
-    //window.print();
+    filename = "summary"+$.now()+".pdf";
     $.ajax({
         url: "printSummary",
-        data: {project: $("#project").val()},
+        data: {project: $("#project").val(),filename:filename},
         success:function(response){
-            
-            //var success = new PDFObject({ url: "../summaryReport.pdf",height: "800px" }).embed("pdf");
-             window.open("../tempReport.pdf", "_blank", "fullscreen=yes");              
-            
+    
+             window.open("../report/temp/"+filename, "_blank", "fullscreen=yes");       
         }
 
     });

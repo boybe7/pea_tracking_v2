@@ -2580,7 +2580,7 @@ $table = $section->addTable(array("cellMargin"=>0));
     	$model = Project::model()->findByPk($_GET["project"]);
         $this->render('_formSummaryPDF', array(
             'model' => $model,
-            
+             'filename' => $_GET['filename'],
         ));
 
         

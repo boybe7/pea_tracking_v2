@@ -162,10 +162,10 @@ $html = "";
     ///$html .= "<table border='0' class='span12' style='margin-left:0px;'><tr><td>DDDDD</td></tr></table>";
 
     $html .= '<div style="text-align:center;font-size:18px;"><b>โครงการ'.$pcs[0]->pc_details.'<br>ให้ '.$pj->pj_name.'</b></div>';
-    $html .= '<br><table style="" border="0" cellpadding="0">';
+    $html .= '<br><table width="100%" border="0" cellpadding="0">';
     $html .=   '<tr><td colspan="4" style="background-color:#eeeeee;text-align:center">ส่วนผู้ว่าจ้าง : '.$pj->pj_name.'</td></tr>';
     foreach ($pcs as $key => $pc) {
-        $html .=   "<tr><td width='30%'>ใบสั่งจ้างเลขที่ : ".$pc->pc_code."</td><td width='30%'>วันที่เริ่มในสัญญา : ".renderDate($pc->pc_sign_date)."</td><td width='50%' colspan=2>วันที่สิ้นสุดในสัญญา : ".renderDate($pc->pc_end_date)."</td></tr>";
+        $html .=   '<tr><td width="30%">ใบสั่งจ้างเลขที่ : '.$pc->pc_code.'</td><td width="30%">วันที่เริ่มในสัญญา : '.renderDate($pc->pc_sign_date).'</td><td width="50%" colspan=2>วันที่สิ้นสุดในสัญญา : '.renderDate($pc->pc_end_date).'</td></tr>';
     
     }
     //workcode
@@ -275,54 +275,80 @@ $html = "";
 
 
         $sum_pay = 0;
+       
         for ($i=0; $i < 5; $i++) { 
             $html .= "<tr>";
+             $nrow_span = 0;
                 if(!empty($data_approve[$i])) 
                 {
-                    $html .= '<td style="text-align:center">'.($i+1).'</td>';
-                    $html .= '<td >'.$data_approve[$i]['detail'].'</td>';
-                    $html .= '<td style="text-align:center">'.$data_approve[$i]['approveBy'].'<br>'.renderDate2($data_approve[$i]['dateApprove']).'</td>';
-                    $html .= '<td style="text-align:right">'.number_format($data_approve[$i]['cost'],2).'</td>';
-                    $html .= '<td >'.$data_approve[$i]['timeSpend'].'</td>';
+                   
+                    if(!empty($data_payment[$i]) && (!empty($data_payment[$i]["fine_amount"]) || $data_payment[$i]["fine_amount"]!=0))
+                    {
+                        $nrow_span = 5;
+                         
+                        $html .= '<td valign="top" rowspan="5"  style="text-align:center">'.($i+1).'</td>';
+                        $html .= '<td valign="top" rowspan="5">'.$data_approve[$i]['detail'].'</td>';
+                        $html .= '<td valign="top" rowspan="5" style="text-align:center">'.$data_approve[$i]['approveBy'].'<br>'.renderDate2($data_approve[$i]['dateApprove']).'</td>';
+                        $html .= '<td valign="top" rowspan="5" style="text-align:right">'.number_format($data_approve[$i]['cost'],2).'</td>';
+                        $html .= '<td valign="top"  rowspan="5">'.$data_approve[$i]['timeSpend'].'</td>';
+
+                    }
+                    else{
+                        $html .= '<td valign="top" style="text-align:center">'.($i+1).'</td>';
+                        $html .= '<td valign="top" >'.$data_approve[$i]['detail'].'</td>';
+                        $html .= '<td valign="top" style="text-align:center">'.$data_approve[$i]['approveBy'].'<br>'.renderDate2($data_approve[$i]['dateApprove']).'</td>';
+                        $html .= '<td valign="top"  style="text-align:right">'.number_format($data_approve[$i]['cost'],2).'</td>';
+                        $html .= '<td valign="top" >'.$data_approve[$i]['timeSpend'].'</td>';
+                    }
+                       
                 }
                 else
                 {
-                    $html .= '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>';
+                    
+                    if($nrow_span>0)
+                      $html .= '<td rowspan="5">&nbsp;</td><td rowspan="5">&nbsp;</td><td rowspan="5">&nbsp;</td><td rowspan="5">&nbsp;</td><td rowspan="5">&nbsp;</td>';
+                    else
+                      $html .= '<td >&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td>';  
                 }   
 
 
                  if(!empty($data_payment[$i])) 
                 {
-                    
-                    $html .= '<td valign="top">'.$data_payment[$i]['detail'].'</td>';
-                    
-                    //if(empty($data_payment[$i]["fine_amount"]) || $data_payment[$i]["fine_amount"]==0) 
-                    //{
+                    if($nrow_span>0)
+                    {
+
+
+                        $html .= '<td rowspan="5" valign="top">'.$data_payment[$i]['detail'].'</td>';
+                        $html .= '<td style="text-align:center;border-bottom: 1px solid white;; border-right: 1px solid black;" valign="top">'.$data_payment[$i]['invoice_no'].'<br>'.renderDate2($data_payment[$i]['invoice_date']).'</td>';
+                        $html .= '<td style="text-align:center; border-bottom: 1px solid white;" valign="top">'.$data_payment[$i]['bill_no'].'<br>'.renderDate2($data_payment[$i]['bill_date']).'</td>';
+                        $html .= '<td rowspan="5" style="text-align:right" valign="top">'.number_format($data_payment[$i]['money'],2).'</td>';
+
+                                    $html .= '</tr><tr><td style="text-align:justify; border-top: 1px solid white;; border-right: 1px solid black;" valign="top"><br><br>ภาษีมูลค่าเพิ่ม</td>';
+                                    $html .= '<td style="text-align:right; border-top: 1px solid white;" valign="top"><br><br><u>'.number_format($data_payment[$i]["money"]*0.07,2).'</u></td></tr>';
+
+
+                                    $html .= '<tr><td style="text-align:justify" valign="top">รวมเบิกจ่าย</td><td style="text-align:right" valign="top">';
+                                    $html .= number_format($data_payment[$i]["money"]*1.07,2)."</td></tr>";
+
+
+                                    $html .= '<tr><td style="text-align:justify" valign="top"><u>หัก</u> ค่าปรับ</td><td style="text-align:right" valign="top">';
+                                    $html .= "<u>".number_format($data_payment[$i]["fine_amount"],2)."</u></td></tr>";
+
+                                    $html .= '<tr><td style="text-align:justify" valign="top">รวมเบิกจ่ายทั้งสิ้น</td><td style="text-align:right" valign="top">';
+                                                      
+                                    $html .= '<p style="text-decoration-line: underline;text-decoration-style: double;">'.number_format($data_payment[$i]["money"]*1.07-$data_payment[$i]["fine_amount"],2)."</p></td>";
+                       
+                    }
+                    else{
+                         $html .= '<td  valign="top">'.$data_payment[$i]['detail'].'</td>';
                         $html .= '<td style="text-align:center" valign="top">'.$data_payment[$i]['invoice_no'].'<br>'.renderDate2($data_payment[$i]['invoice_date']).'</td>';
                         $html .= '<td style="text-align:center" valign="top">'.$data_payment[$i]['bill_no'].'<br>'.renderDate2($data_payment[$i]['bill_date']).'</td>';
-                    //}
-                    //else
-                    //{
+                        $html .= '<td style="text-align:right" valign="top">'.number_format($data_payment[$i]['money'],2).'</td>';
 
-                        // $html .= '<td style="text-align:center;">'.$data_payment[$i]["invoice_no"]."<br>".renderDate2($data_payment[$i]["invoice_date"]);
-                        //             $html .= "<br><br><br><br>ภาษีมูลค่าเพิ่ม";
-                        //             $html .= "<br>รวมเบิกจ่าย";
-                        //             $html .= "<br><u>หัก</u> ค่าปรับส่งของล่าช้า";
-                        //             $html .= "<br>รวมเบิกจ่ายทั้งสิ้น";
-                        // $html .= "</td>";
-                        // $html .= "<td ><center>".($data_payment[$i]["bill_no"])."<br>".renderDate2($data_payment[$i]["bill_date"]);
-                        //         $html .= '</center><br><br><br><div style="text-align:right">';
-                                    
-                        //         $html .= "<u>".number_format($data_payment[$i]["money"]*0.07,2)."</u><br>";
-                                    
-                        //         $html .= number_format($data_payment[$i]["money"]*1.07,2)."<br>";
-                        //         $html .= "<u>".number_format($data_payment[$i]["fine_amount"],2)."</u><br><br>";
-                        //         $html .= '<p style="text-decoration-line: underline;text-decoration-style: double;">'.number_format($data_payment[$i]["money"]*1.07-$data_payment[$i]["fine_amount"],2)."</p></div>";
-                        // $html .= "</td>";
-                    //}
+                    }
 
 
-                    $html .= '<td style="text-align:right" valign="top">'.number_format($data_payment[$i]['money'],2).'</td>';
+                    
 
                     if($data_payment[$i]['bill_no']!=''){
                         $sum_pay += $data_payment[$i]['money'];
@@ -331,7 +357,12 @@ $html = "";
                 else
                 {
                     if($i!=4)
-                       $html .= '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>';
+                    {
+                       if($nrow_span>0) 
+                            $html .= '<td rowspan="5">&nbsp;</td><td rowspan="5">&nbsp;</td><td rowspan="5">&nbsp;</td><td rowspan="5">&nbsp;</td>';
+                        else
+                            $html .= '<td >&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td>'; 
+                    }
                     else
                     {
                         $remain = $sum_pc_cost - $sum_pay;
@@ -375,10 +406,11 @@ $html = "";
 
             $sum_oc_cost =$oc->oc_cost + $pp[0]["sum"];
 
-            $html .= '<br><br><table border="0"  style="margin-left:0px;margin-top:15px;">';
+            $html .= '<br><br><table width="100%"  border="0"  style="margin-left:0px;margin-top:15px;">';
             $html .=   '<tr><td colspan="4" style="background-color:#eeeeee;text-align:center">ส่วนผู้รับจ้าง รายที่ '.$index." : ".$vendor->v_name."</td></tr>";
             $html .=   "<tr><td width='30%'>สัญญาจ้างเลขที่ : ".$oc->oc_code."</td><td width='25%'>วันที่เริ่มในสัญญา : ".renderDate($oc->oc_sign_date).
-                            "</td><td width='25%'>วันที่สิ้นสุดในสัญญา : ".renderDate($oc->oc_end_date)."</td><td width='30%' style='text-align:right'>วงเงิน : ".number_format($sum_oc_cost,2)."</td></tr>";
+                            '</td><td width="25%">วันที่สิ้นสุดในสัญญา : '.renderDate($oc->oc_end_date).'</td><td width=
+                            "20%" style="text-align:right">วงเงิน : '.number_format($sum_oc_cost,2)."</td></tr>";
             
             //po
             $Criteria = new CDbCriteria();
@@ -392,7 +424,7 @@ $html = "";
             $html .= "<tr>";    
                 $html .= "<td>".$index2.". PO เลขที่ : ".$po->PO."</td>";
                 $html .= "<td colspan='2'> เลขที่ส่งแจ้งรับรองงบ กปง. : ".$po->letter."</td>";
-                $html .= "<td style='text-align:right'> เป็นเงิน : ".number_format($po->money,2)."</td>";
+                $html .= '<td style="text-align:right"> เป็นเงิน : '.number_format($po->money,2)."</td>";
             $html .= "</tr>";
                $index2++;
             }
@@ -440,13 +472,32 @@ $html = "";
                 $sum_pay = 0;
                 for ($i=0; $i < 5; $i++) { 
                     $html .= "<tr>";
+                    $nrow_span = 0;
                         if(!empty($data_approve[$i])) 
                         {
-                            $html .= "<td style='text-align:center'>".($i+1)."</td>";
-                            $html .= "<td >".$data_approve[$i]["detail"]."</td>";
-                            $html .= "<td style='text-align:center'>".$data_approve[$i]["approveBy"]."<br>".renderDate2($data_approve[$i]["dateApprove"])."</td>";
-                            $html .= "<td style='text-align:right'>".number_format($data_approve[$i]["cost"],2)."</td>";
-                            $html .= "<td >".$data_approve[$i]["timeSpend"]."</td>";
+
+
+                            if(!empty($data_payment[$i]) && (!empty($data_payment[$i]["fine_amount"]) || $data_payment[$i]["fine_amount"]!=0))
+                            {
+                                $nrow_span = 5;
+                                 
+                               
+                                $html .= '<td valign="top" rowspan="5" style="text-align:center">'.($i+1)."</td>";
+                                $html .= '<td valign="top" rowspan="5" >'.$data_approve[$i]["detail"]."</td>";
+                                $html .= '<td valign="top" rowspan="5" style="text-align:center">'.$data_approve[$i]["approveBy"]."<br>".renderDate2($data_approve[$i]["dateApprove"])."</td>";
+                                $html .= '<td valign="top" rowspan="5" style="text-align:right">'.number_format($data_approve[$i]["cost"],2)."</td>";
+                                $html .= '<td valign="top" rowspan="5" >'.$data_approve[$i]["timeSpend"]."</td>";
+
+
+                            }
+                            else{
+                                $html .= '<td valign="top" style="text-align:center">'.($i+1)."</td>";
+                                $html .= '<td valign="top" >'.$data_approve[$i]["detail"]."</td>";
+                                $html .= '<td valign="top" style="text-align:center">'.$data_approve[$i]["approveBy"]."<br>".renderDate2($data_approve[$i]["dateApprove"])."</td>";
+                                $html .= '<td valign="top" style="text-align:right">'.number_format($data_approve[$i]["cost"],2)."</td>";
+                                $html .= '<td valign="top" >'.$data_approve[$i]["timeSpend"]."</td>";
+                            }
+                            
                         }
                         else
                         {
@@ -457,11 +508,40 @@ $html = "";
                          if(!empty($data_payment[$i])) 
                         {
                             
-                            $html .= "<td >".$data_payment[$i]["detail"]."</td>";
+                            
 
-                            $html .= "<td style='text-align:center'>".$data_payment[$i]["approve_by"]."</td>";
-                            $html .= "<td style='text-align:center'>".renderDate2($data_payment[$i]["approve_date"])."</td>";
-                            $html .= "<td style='text-align:right'>".number_format($data_payment[$i]["money"],2)."</td>";
+                            if($nrow_span>0)
+                            {
+
+                                $html .= '<td rowspan="5" valign="top">'.$data_payment[$i]['detail'].'</td>';
+                                $html .= '<td valign="top" style="border-bottom: 1px solid white;; border-right: 1px solid black;">'.$data_payment[$i]['approve_by'].'</td>';
+                                $html .= '<td style="text-align:center;border-bottom: 1px solid white;" valign="top">'.renderDate2($data_payment[$i]["approve_date"]).'</td>';
+                                $html .= '<td rowspan="5" style="text-align:right" valign="top">'.number_format($data_payment[$i]['money'],2).'</td>';
+
+                                            $html .= '</tr><tr><td style="text-align:justify;border-top: 1px solid white;border-right: 1px solid black" valign="top"><br><br>ภาษีมูลค่าเพิ่ม</td>';
+                                            $html .= '<td style="text-align:right;border-top: 1px solid white;" valign="top"><br><br><u>'.number_format($data_payment[$i]["money"]*0.07,2).'</u></td></tr>';
+
+
+                                            $html .= '<tr><td style="text-align:justify" valign="top">รวมเบิกจ่าย</td><td style="text-align:right" valign="top">';
+                                            $html .= number_format($data_payment[$i]["money"]*1.07,2)."</td></tr>";
+
+
+                                            $html .= '<tr><td style="text-align:justify" valign="top"><u>หัก</u> ค่าปรับ</td><td style="text-align:right" valign="top">';
+                                            $html .= "<u>".number_format($data_payment[$i]["fine_amount"],2)."</u></td></tr>";
+
+                                            $html .= '<tr><td style="text-align:justify" valign="top">รวมเบิกจ่ายทั้งสิ้น</td><td style="text-align:right" valign="top">';
+                                                              
+                                            $html .= '<p style="text-decoration-line: underline;text-decoration-style: double;">'.number_format($data_payment[$i]["money"]*1.07-$data_payment[$i]["fine_amount"],2)."</p></td>";
+                               
+                            }
+                            else{
+                                $html .= '<td  valign="top">'.$data_payment[$i]['detail'].'</td>';
+                                $html .= '<td style="text-align:center" valign="top">'.$data_payment[$i]['approve_by'].'</td>';
+                                $html .= '<td style="text-align:center" valign="top">'.renderDate2($data_payment[$i]["approve_date"]).'</td>';
+                                $html .= '<td style="text-align:right" valign="top">'.number_format($data_payment[$i]['money'],2).'</td>';
+
+                            }    
+
 
                             if($data_payment[$i]["approve_date"]!=""){
                                 $sum_pay += $data_payment[$i]["money"];
@@ -475,7 +555,7 @@ $html = "";
                             {
                                 //$html .= $sum_oc_cost;
                                 $remain = $sum_oc_cost - $sum_pay;
-                                $html .= "<td colspan='3' style='text-align:center'>คงเหลือ</td><td style='text-align:right'>".number_format($remain,2)."</td>";
+                                $html .= '<td colspan="3" style="text-align:center">คงเหลือ</td><td style="text-align:right">'.number_format($remain,2).'</td>';
                             }
                         }   
                     $html .= "</tr>";
@@ -499,6 +579,8 @@ $html = "";
     //if($index!=0)
 $pdf->AddPage();
 $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+$pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/report/temp/'.$filename,'F');
+
 // Print text using writeHTMLCell()
 //echo $html;
 //$pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'summaryReport.pdf','F');
@@ -515,8 +597,8 @@ $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
 //    $pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport.pdf','F');
 // }
 
-$pdf->Output($_SERVER['DOCUMENT_ROOT'].'/pea_track/'.'tempReport2.pdf','F');
-ob_end_clean() ;
+
+//ob_end_clean() ;
 
 exit;
 ?>
