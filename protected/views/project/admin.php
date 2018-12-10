@@ -193,7 +193,31 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
-			'template' => '{view}  {update}'
+			'template' => '{view}  {update} {guarantee} {adv_guarantee}',
+			'buttons'=>array(
+                        'guarantee' => array
+                                    (
+                                                        
+                                        'icon'=>'icon-book',
+                                        'url'=>'Yii::app()->createUrl("formGuarantee/".$data["pj_id"])',
+                                        'options'=>array(
+                                        	                'title'=>'แบบฟอร์มคืนค้ำประกัน'
+                                                            //'id'=>'$data["id"]',
+                                                            //'new_attribute'=> '$data["your_key"]',
+                                                        ),
+                                    ),
+                        'adv_guarantee' => array
+                                    (
+                                                        
+                                        'icon'=>'icon-file',
+                                        'url'=>'Yii::app()->createUrl("formAdvGuarantee/".$data["pj_id"])',
+                                        'options'=>array(
+                                        					'title'=>'แบบฟอร์มคืนค้ำประกันล่วงหน้า'
+                                                            //'id'=>'$data["id"]',
+                                                            //'new_attribute'=> '$data["your_key"]',
+                                                        ),
+                                    ),            
+            )
 		),
 	),
 ));
