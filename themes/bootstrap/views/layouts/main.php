@@ -343,11 +343,12 @@ if(!Yii::app()->user->isGuest)
                      array('label'=>'project progress report', 'url'=>array('/report/progress')),
                      array('label'=>'project summary report', 'url'=>array('/report/summary')),
                      array('label'=>'BSC report', 'url'=>array('/report/bsc')),
+                     array('label'=>'หนังสือขอคืนค้ำประกันสัญญา', 'url'=>array('/report/guarantee'),'visible'=>!Yii::app()->user->isExecutive()),
                      array('label'=>'รายงานสรุปรายได้/ค่าใช้จ่าย', 'url'=>array('/report/cashflow'),'visible'=>Yii::app()->user->isExecutive()),
                      array('label'=>'รายงานสรุปรายได้ ค่าใช้จ่ายงานบริการวิศวกรรม', 'url'=>array('/report/service'),'visible'=>Yii::app()->user->isExecutive()),
                      array('label'=>'สรุปงานรายรับ-รายจ่ายงานโครงการ', 'url'=>array('/report/summaryCashflow'),'visible'=>Yii::app()->user->isExecutive()),
                       array('label'=>'รายงานงบกำไรขาดทุน', 'url'=>array('/report/statement'),'visible'=>Yii::app()->user->isExecutive()),
-                
+                    
                                                                  
 
                     ),

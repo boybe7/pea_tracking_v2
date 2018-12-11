@@ -83,6 +83,21 @@ class ReportController extends Controller
 		$this->render('bsc');
 	}
 
+	public function actionGuarantee()
+	{
+    	
+		$model=new OutsourceContract('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['OutsourceContract']))
+			$model->attributes=$_GET['OutsourceContract'];
+
+		$this->render('guarantee',array(
+			'model'=>$model,
+		));
+		
+	}
+
+
 	 public function actionGenProgress()
     {
         $user_dept = Yii::app()->user->userdept;
@@ -4948,4 +4963,255 @@ $table = $section->addTable(array("cellMargin"=>0));
 			 Yii::app()->end(); 
 
     }	
+
+
+
+    public function actionFormGuarantee()
+    {
+    	  
+		   Yii::import('ext.phpexcel.XPHPExcel');    
+		   $objPHPExcel= XPHPExcel::createPHPExcel();
+		   $objReader = PHPExcel_IOFactory::createReader('Excel5');
+           $objPHPExcel = $objReader->load("report/templateGuarantee.xls");
+
+		    $title = new PHPExcel_Style();
+		    $title->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 16,     
+			            'bold'=>true,         
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			          
+			            
+			    ));
+		    $header = new PHPExcel_Style();
+			$header->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'fill'  => array(
+			            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+			            'color' => array('rgb' =>'64ED74')
+			        ),
+			            
+			    ));
+
+			$header2 = new PHPExcel_Style();
+			$header2->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'fill'  => array(
+			            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+			            'color' => array('rgb' =>'F7E672')
+			        ),
+			            
+			    ));
+
+			$detail = new PHPExcel_Style();
+			$detail->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			             'borders' => array(
+				            'bottom'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'top'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'left'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'right'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	)             
+			        	)			            
+			    ));
+			$detail_tb = new PHPExcel_Style();
+			$detail_tb->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'borders' => array(
+				            'bottom'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'top'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'left'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'right'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	)             
+			        	)
+			    ));
+
+			$pj_id = $_GET["id"];
+			$Criteria = new CDbCriteria();
+			$Criteria->join = 'LEFT JOIN project ON pc_proj_id=pj_id'; 
+			$Criteria->condition = "pj_id=".$pj_id;
+			$projects = ProjectContract::model()->findAll($Criteria);
+
+
+
+			//draw title
+		   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2',$projects[0]['pc_details']);
+		   //$objPHPExcel->getActiveSheet()->setSharedStyle($title, 'A2');
+		   //$objPHPExcel->getActiveSheet()->getStyle("A2")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);		 
+
+		    
+		    /*$Criteria = new CDbCriteria();
+			$dateStr = explode("/", $date_start);
+			$date_start = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+			$dateStr = explode("/", $date_end);
+			$date_end = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+
+
+			$Criteria->join = 'LEFT JOIN project_contract ON pc_proj_id=pj_id'; 
+			$Criteria->condition = " (pc_end_date >= '$date_start' AND pc_sign_date<='$date_end') OR (pc_sign_date <= '$date_end' AND pc_end_date>='$date_start') AND (pc_sign_date!='0000-00-00' AND pc_end_date='0000-00-00') GROUP BY pj_id ";// AND pj_status=1";
+
+			//echo  " (pc_end_date >= '$date_start' AND pc_sign_date<='$date_end') OR (pc_sign_date <= '$date_end' AND pc_end_date>='$date_start') AND (pc_sign_date!='0000-00-00' AND pc_end_date='0000-00-00')  ";
+			$Criteria->order = 'pj_fiscalyear DESC, pj_date_approved DESC';
+			$projects = Project::model()->findAll($Criteria);
+
+		
+			$i=1;
+			$proj_cost_total = 0;
+			$income_total = 0;
+			$year = 0;
+			$row_start = 4;
+		    $row = 4;
+		   
+
+			foreach ($projects as $key => $proj) {
+				if($year!=$proj->pj_fiscalyear)
+				{
+					$year = $proj->pj_fiscalyear;
+					$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$row.':F'.$row);
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,"ปีงบประมาณ ".$year);
+					$objPHPExcel->getActiveSheet()->setSharedStyle($detail, 'A'.$row.':F'.$row);
+					$row++;
+		   
+					//echo "<tr><td colspan=6 height=30><b> ปีงบประมาณ ".$year."</b></td></tr>";
+				}
+
+				//project contract
+				$pcData=Yii::app()->db->createCommand("SELECT sum(pc_cost) as proj_cost,pc_details FROM project_contract WHERE pc_proj_id='$proj->pj_id'")->queryAll(); 
+					
+				$incomeData=Yii::app()->db->createCommand("SELECT sum(cost) as income FROM project_contract c LEFT JOIN contract_approve_history a ON pc_id=contract_id WHERE pc_proj_id='$proj->pj_id' AND type=1 AND detail LIKE '%กำไร%' AND dateApprove BETWEEN '$date_start' AND '$date_end' ")->queryAll();
+
+				$proj_cost_total += $pcData[0]['proj_cost'];
+				$income_total += $incomeData[0]['income'];
+				$percent = $pcData[0]['proj_cost']==0 ? 0: ($incomeData[0]['income']/$pcData[0]['proj_cost'])*100;
+
+
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$i);
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$proj->pj_name);
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$pcData[0]['pc_details']);
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,number_format($pcData[0]['proj_cost'],2));
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,number_format($incomeData[0]['income'],2));
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,number_format($percent,2));
+
+				
+				$objPHPExcel->getActiveSheet()->setSharedStyle($detail_tb, 'A'.$row.':F'.$row);						
+				$objPHPExcel->getActiveSheet()->getStyle("A".$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
+				$objPHPExcel->getActiveSheet()->getStyle("D".$row.":F".$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+
+					
+			    $row++;
+				$i++;
+			}
+
+			$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$row.':C'.$row);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,"รวมเป็นเงิน");
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,number_format($proj_cost_total,2));
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,number_format($income_total,2));
+			$percent = $proj_cost_total==0 ? 0: ($income_total/$proj_cost_total)*100;	 
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,number_format($percent,2));
+
+			$objPHPExcel->getActiveSheet()->setSharedStyle($detail, 'A'.$row.':F'.$row);
+			$objPHPExcel->getActiveSheet()->getStyle("A".$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
+			$objPHPExcel->getActiveSheet()->getStyle("D".$row.":F".$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+		
+			*/
+		    
+		    $objPHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
+
+
+		    ob_end_clean();
+			ob_start();
+
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="guarantee_form.xls"');
+			header('Cache-Control: max-age=0');
+			// If you're serving to IE 9, then the following may be needed
+			header('Cache-Control: max-age=1');
+
+			// If you're serving to IE over SSL, then the following may be needed
+			header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+			header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+			header ('Pragma: public'); // HTTP/1.0
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			$objWriter->save('php://output');  //
+			 Yii::app()->end(); 
+
+    }	
+
 }
