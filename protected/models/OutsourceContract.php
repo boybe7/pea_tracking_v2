@@ -30,6 +30,9 @@ class OutsourceContract extends CActiveRecord
 	 * @return string the associated database table name
 	 */
 	private $idCache;
+	public $sumpay = 0;
+	public $sumremain = 0;
+
 
 	private $_oldattributes = array();
 
@@ -180,8 +183,19 @@ class OutsourceContract extends CActiveRecord
         	$this->oc_insurance_end= $str_date[2]."/".$str_date[1]."/".$str_date[0];
         $str_date = explode("-", $this->oc_guarantee_date);
         if(count($str_date)>1)
-        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];        
+        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];    
 
+
+        $pp = Yii::app()->db->createCommand()
+                                            ->select('SUM(money) as sum')
+                                            ->from('payment_outsource_contract')
+                                            ->where("contract_id='$this->oc_id' AND approve_date!='0000-00-00' ")
+                                            ->queryAll();
+        $this->sumpay = $pp[0]["sum"];	
+
+        
+        $cost =  str_replace(",", "", $this->oc_cost);  
+        $this->sumremain = $cost - $this->sumpay;
 
 	    return parent::afterFind();
 	}

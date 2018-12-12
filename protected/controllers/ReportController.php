@@ -4966,8 +4966,11 @@ $table = $section->addTable(array("cellMargin"=>0));
 
 
 
-    public function actionFormGuarantee()
+    public function actionGentFormGuarantee()
     {
+
+
+
     	  
 		   Yii::import('ext.phpexcel.XPHPExcel');    
 		   $objPHPExcel= XPHPExcel::createPHPExcel();
@@ -5100,7 +5103,7 @@ $table = $section->addTable(array("cellMargin"=>0));
 			        	)
 			    ));
 
-			$pj_id = $_GET["id"];
+			$pj_id = $_POST["pj_id"];
 			$Criteria = new CDbCriteria();
 			$Criteria->join = 'LEFT JOIN project ON pc_proj_id=pj_id'; 
 			$Criteria->condition = "pj_id=".$pj_id;
@@ -5111,84 +5114,35 @@ $table = $section->addTable(array("cellMargin"=>0));
 			//draw title
 		   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2',$projects[0]['pc_details']);
 		   //$objPHPExcel->getActiveSheet()->setSharedStyle($title, 'A2');
-		   //$objPHPExcel->getActiveSheet()->getStyle("A2")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);		 
+		   //$objPHPExcel->getActiveSheet()->getStyle("A2")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
+
+		    $row = 6;
+		    $no = 1;
+		    $autoIdAll = $_POST['selectedID'];
+	        if(count($autoIdAll)>0)
+	        {
+	            foreach($autoIdAll as $autoId)
+	            {
+	                $model = OutsourceContract::model()->findByPk($autoId);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$model->oc_code);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$model->oc_cost);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$model->oc_code);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,$model->oc_code);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$model->oc_code);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,$model->oc_code);
+
+	        		$row++;
+	        		$no++;
+
+	            }
+	        }	
+
+	        $objPHPExcel->getActiveSheet()->setSharedStyle($detail, 'A6:H'.($row-1));
+		    $objPHPExcel->getActiveSheet()->getStyle('A6:H'.($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	 
 
 		    
-		    /*$Criteria = new CDbCriteria();
-			$dateStr = explode("/", $date_start);
-			$date_start = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
-			$dateStr = explode("/", $date_end);
-			$date_end = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
-
-
-			$Criteria->join = 'LEFT JOIN project_contract ON pc_proj_id=pj_id'; 
-			$Criteria->condition = " (pc_end_date >= '$date_start' AND pc_sign_date<='$date_end') OR (pc_sign_date <= '$date_end' AND pc_end_date>='$date_start') AND (pc_sign_date!='0000-00-00' AND pc_end_date='0000-00-00') GROUP BY pj_id ";// AND pj_status=1";
-
-			//echo  " (pc_end_date >= '$date_start' AND pc_sign_date<='$date_end') OR (pc_sign_date <= '$date_end' AND pc_end_date>='$date_start') AND (pc_sign_date!='0000-00-00' AND pc_end_date='0000-00-00')  ";
-			$Criteria->order = 'pj_fiscalyear DESC, pj_date_approved DESC';
-			$projects = Project::model()->findAll($Criteria);
-
-		
-			$i=1;
-			$proj_cost_total = 0;
-			$income_total = 0;
-			$year = 0;
-			$row_start = 4;
-		    $row = 4;
-		   
-
-			foreach ($projects as $key => $proj) {
-				if($year!=$proj->pj_fiscalyear)
-				{
-					$year = $proj->pj_fiscalyear;
-					$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$row.':F'.$row);
-					$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,"ปีงบประมาณ ".$year);
-					$objPHPExcel->getActiveSheet()->setSharedStyle($detail, 'A'.$row.':F'.$row);
-					$row++;
-		   
-					//echo "<tr><td colspan=6 height=30><b> ปีงบประมาณ ".$year."</b></td></tr>";
-				}
-
-				//project contract
-				$pcData=Yii::app()->db->createCommand("SELECT sum(pc_cost) as proj_cost,pc_details FROM project_contract WHERE pc_proj_id='$proj->pj_id'")->queryAll(); 
-					
-				$incomeData=Yii::app()->db->createCommand("SELECT sum(cost) as income FROM project_contract c LEFT JOIN contract_approve_history a ON pc_id=contract_id WHERE pc_proj_id='$proj->pj_id' AND type=1 AND detail LIKE '%กำไร%' AND dateApprove BETWEEN '$date_start' AND '$date_end' ")->queryAll();
-
-				$proj_cost_total += $pcData[0]['proj_cost'];
-				$income_total += $incomeData[0]['income'];
-				$percent = $pcData[0]['proj_cost']==0 ? 0: ($incomeData[0]['income']/$pcData[0]['proj_cost'])*100;
-
-
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$i);
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$proj->pj_name);
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$pcData[0]['pc_details']);
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,number_format($pcData[0]['proj_cost'],2));
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,number_format($incomeData[0]['income'],2));
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,number_format($percent,2));
-
-				
-				$objPHPExcel->getActiveSheet()->setSharedStyle($detail_tb, 'A'.$row.':F'.$row);						
-				$objPHPExcel->getActiveSheet()->getStyle("A".$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
-				$objPHPExcel->getActiveSheet()->getStyle("D".$row.":F".$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-
-					
-			    $row++;
-				$i++;
-			}
-
-			$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$row.':C'.$row);
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,"รวมเป็นเงิน");
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,number_format($proj_cost_total,2));
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,number_format($income_total,2));
-			$percent = $proj_cost_total==0 ? 0: ($income_total/$proj_cost_total)*100;	 
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,number_format($percent,2));
-
-			$objPHPExcel->getActiveSheet()->setSharedStyle($detail, 'A'.$row.':F'.$row);
-			$objPHPExcel->getActiveSheet()->getStyle("A".$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
-			$objPHPExcel->getActiveSheet()->getStyle("D".$row.":F".$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		
-			*/
+		  	
 		    
 		    $objPHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
 
@@ -5210,7 +5164,16 @@ $table = $section->addTable(array("cellMargin"=>0));
 
 			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 			$objWriter->save('php://output');  //
-			 Yii::app()->end(); 
+			// Yii::app()->end(); 
+
+			$xlsData = ob_get_contents();
+			ob_end_clean();
+			$response =  array(
+		        'op' => 'ok',
+		        'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+		    );
+
+		die(json_encode($response));
 
     }	
 

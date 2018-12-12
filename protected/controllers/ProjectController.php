@@ -52,7 +52,7 @@ class ProjectController extends Controller
             $Criteria = new CDbCriteria();
 			$user_dept = Yii::app()->user->userdept;
 			$Criteria->join = 'LEFT JOIN user ON pj_user_create=user.u_id';
-			$Criteria->condition = "pj_name like '$request%' AND pj_status=1 AND department_id='$user_dept'";
+			$Criteria->condition = "pj_name like '$request%' AND department_id='$user_dept'";
 			$models = Project::model()->findAll($Criteria);
             $data=array();
             foreach($models as $model){
