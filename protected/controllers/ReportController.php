@@ -1279,24 +1279,29 @@ $table = $section->addTable(array("cellMargin"=>0));
 	    $d=0;
 	    $mi = 0;
 	    $yi = 0;
-	    foreach ($dates as $key => $value) {
-	         $d++;
-	         if($d==2)
-	            $mi = $value;
-	         if($d==1)
-	            $yi = $value;
-	    }
-	    if(substr($mi, 0,1)==0)
-	        $mi = substr($mi, 1);
-	    if(substr($dates[2], 0,1)==0)
-	        $d = substr($dates[2], 1);
-	    else
-	    	$d = $dates[2];
 
-	    $renderDate = $d." ".$th_month[$mi]." ".$yi;
-	    if($renderDate==0)
-	        $renderDate = "";   
+	    $renderDate = "";
+	    if($value!="" && !empty($value))
+	    {
 
+			    foreach ($dates as $key => $value) {
+			         $d++;
+			         if($d==2)
+			            $mi = $value;
+			         if($d==1)
+			            $yi = $value;
+			    }
+			    if(substr($mi, 0,1)==0)
+			        $mi = substr($mi, 1);
+			    if(substr($dates[2], 0,1)==0)
+			        $d = substr($dates[2], 1);
+			    else
+			    	$d = $dates[2];
+
+			    $renderDate = $d." ".$th_month[$mi]." ".$yi;
+			    if($renderDate==0)
+			        $renderDate = "";   
+		}	    
 	    return $renderDate;             
 	}
 
@@ -5103,7 +5108,15 @@ $table = $section->addTable(array("cellMargin"=>0));
 			        	)
 			    ));
 
-			$pj_id = $_POST["pj_id"];
+			
+			if(isset($_POST["pj_id"]) && $_POST["pj_id"]!="")
+				 $pj_id = $_POST["pj_id"];
+			else{
+				 $id = $_POST['selectedID'];
+				 $m = OutsourceContract::model()->findByPk($id[0]);
+				 $pj_id = $m->oc_proj_id;
+			}	
+
 			$Criteria = new CDbCriteria();
 			$Criteria->join = 'LEFT JOIN project ON pc_proj_id=pj_id'; 
 			$Criteria->condition = "pj_id=".$pj_id;
@@ -5125,12 +5138,14 @@ $table = $section->addTable(array("cellMargin"=>0));
 	            {
 	                $model = OutsourceContract::model()->findByPk($autoId);
 	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$model->oc_code);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$model->oc_code."\r ลว. ".$this->renderDate($model->oc_sign_date));
 	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$model->oc_cost);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$model->oc_code);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,$model->oc_code);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$model->oc_code);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,$model->oc_code);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$this->renderDate($model->oc_end_date));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,$this->renderDate($model->oc_guarantee_date));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$model->oc_guarantee);
+
+	        		$cost = str_replace(",","",$model->oc_cost);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,number_format($cost*0.1,2));
 
 	        		$row++;
 	        		$no++;
@@ -5138,14 +5153,17 @@ $table = $section->addTable(array("cellMargin"=>0));
 	            }
 	        }	
 
-	        $objPHPExcel->getActiveSheet()->setSharedStyle($detail, 'A6:H'.($row-1));
+	        $objPHPExcel->getActiveSheet()->setSharedStyle($detail_tb, 'A6:H'.($row-1));
 		    $objPHPExcel->getActiveSheet()->getStyle('A6:H'.($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	 
-
+		    $objPHPExcel->getActiveSheet()->getStyle('A6:H'.($row-1))->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
+		     $objPHPExcel->getActiveSheet()->getStyle('A6:H'.($row-1))->getAlignment()->setWrapText(true);		
 		    
-		  	
-		    
-		    $objPHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
-
+		  	 $objPHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);	
+		    foreach($objPHPExcel->getActiveSheet()->getRowDimensions() as $rd) { 
+			    $rd->setRowHeight(-1); 
+			}
+		   
+			$objPHPExcel->getActiveSheet()->getRowDimension(32)->setRowHeight(95);
 
 		    ob_end_clean();
 			ob_start();
@@ -5173,7 +5191,7 @@ $table = $section->addTable(array("cellMargin"=>0));
 		        'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
 		    );
 
-		die(json_encode($response));
+		    die(json_encode($response));
 
     }	
 
