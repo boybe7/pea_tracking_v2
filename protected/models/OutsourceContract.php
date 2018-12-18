@@ -65,7 +65,7 @@ class OutsourceContract extends CActiveRecord
 			array('oc_detail', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('oc_id,oc_num_payment,oc_PO,oc_insurance_start,oc_insurance_end, oc_code, oc_proj_id, oc_vendor_id, oc_detail, oc_sign_date, oc_end_date, oc_approve_date, oc_cost, oc_T_percent, oc_A_percent, oc_guarantee, oc_guarantee_cf, oc_adv_guarantee, oc_adv_guarantee_cf, oc_insurance, oc_letter, oc_user_create, oc_user_update,notify_1000,oc_guarantee_date,oc_guarantee_end', 'safe', 'on'=>'search'),
+			array('oc_id,oc_num_payment,oc_PO,oc_insurance_start,oc_insurance_end, oc_code, oc_proj_id, oc_vendor_id, oc_detail, oc_sign_date, oc_end_date, oc_approve_date, oc_cost, oc_T_percent, oc_A_percent, oc_guarantee, oc_guarantee_cf, oc_adv_guarantee, oc_adv_guarantee_cf, oc_insurance, oc_letter, oc_user_create, oc_user_update,notify_1000,oc_guarantee_date,oc_guarantee_end,oc_guarantee_cost,oc_adv_guarantee_date,oc_adv_guarantee_cost', 'safe', 'on'=>'search'),
 		);
 		
 		// return array(
@@ -239,8 +239,8 @@ class OutsourceContract extends CActiveRecord
 			'oc_end_date' => 'วันที่ครบกำหนดสัญญา',
 			'oc_approve_date' => 'วันที่รับรองงบ',
 			'oc_cost' => 'วงเงิน',
-			'oc_T_percent' => '%ความก้าวหน้าด้านเทคนิค (T)',
-			'oc_A_percent' => '%ความก้าวหน้าการจ่ายเงิน (A)',
+			'oc_T_percent' => '%ความก้าวหน้าเทคนิค(T)',
+			'oc_A_percent' => '%ความก้าวหน้าจ่ายเงิน(A)',
 			'oc_guarantee' => 'หนังสือค้ำประกันสัญญา',
 			'oc_adv_guarantee' => 'หนังสือค้ำประกันล่วงหน้า',
 			'oc_guarantee_cf' => 'หนังสือยืนยันค้ำประกันสัญญา',
@@ -257,6 +257,9 @@ class OutsourceContract extends CActiveRecord
 			'oc_guarantee_date'=>'วันที่ครบกำหนดประกันสัญญา',
 			'oc_guarantee_end'=>'เลขที่บันทึกส่งคืนหนังสือค้ำประกันส่งกองการเงิน/วันที่',
 			'notify_1000_close'=>'เลขที่บันทึกของบ .1000',
+			'oc_guarantee_cost'=>'วงเงินค้ำประกัน',
+			'oc_adv_guarantee_date'=>'วันที่สิ้นสุดค้ำประกันล่วงหน้า',
+			'oc_adv_guarantee_cost'=>'วงเงินค้ำประกันล่วงหน้า'
 
 		);
 	}

@@ -5108,6 +5108,7 @@ $table = $section->addTable(array("cellMargin"=>0));
 			        	)
 			    ));
 
+			$autoIdAll = $_POST['selectedID'];
 			
 			if(isset($_POST["pj_id"]) && $_POST["pj_id"]!="")
 				 $pj_id = $_POST["pj_id"];
@@ -5122,16 +5123,24 @@ $table = $section->addTable(array("cellMargin"=>0));
 			$Criteria->condition = "pj_id=".$pj_id;
 			$projects = ProjectContract::model()->findAll($Criteria);
 
+			$Criteria = new CDbCriteria();
+			$Criteria->join = 'LEFT JOIN vendor ON oc_vendor_id=v_id'; 
+			$Criteria->condition = "oc_id=".$autoIdAll[0];
+			$oc = OutsourceContract::model()->findByPk($id[0]);
+			$vendor_name = Vendor::model()->findByPk($oc->oc_vendor_id)->v_name;  
 
 
 			//draw title
-		   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2',$projects[0]['pc_details']);
+		    // $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2',$projects[0]['pc_details']);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2',$oc->oc_detail);
+		    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A3',$vendor_name);  		   
+
 		   //$objPHPExcel->getActiveSheet()->setSharedStyle($title, 'A2');
 		   //$objPHPExcel->getActiveSheet()->getStyle("A2")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
 
-		    $row = 6;
+		    $row = 7;
 		    $no = 1;
-		    $autoIdAll = $_POST['selectedID'];
+		    
 	        if(count($autoIdAll)>0)
 	        {
 	            foreach($autoIdAll as $autoId)
@@ -5145,7 +5154,7 @@ $table = $section->addTable(array("cellMargin"=>0));
 	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$model->oc_guarantee);
 
 	        		$cost = str_replace(",","",$model->oc_cost);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,number_format($cost*0.1,2));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,number_format($model->oc_guarantee_cost,2));
 
 	        		$row++;
 	        		$no++;
@@ -5153,10 +5162,248 @@ $table = $section->addTable(array("cellMargin"=>0));
 	            }
 	        }	
 
-	        $objPHPExcel->getActiveSheet()->setSharedStyle($detail_tb, 'A6:H'.($row-1));
-		    $objPHPExcel->getActiveSheet()->getStyle('A6:H'.($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	 
-		    $objPHPExcel->getActiveSheet()->getStyle('A6:H'.($row-1))->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
-		     $objPHPExcel->getActiveSheet()->getStyle('A6:H'.($row-1))->getAlignment()->setWrapText(true);		
+	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,"รายละเอียดประกอบ");
+
+	        $objPHPExcel->getActiveSheet()->setSharedStyle($detail_tb, 'A7:H'.($row-1));
+		    $objPHPExcel->getActiveSheet()->getStyle('A7:H'.($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	 
+		    $objPHPExcel->getActiveSheet()->getStyle('A7:H'.($row-1))->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
+		     $objPHPExcel->getActiveSheet()->getStyle('A7:H'.($row-1))->getAlignment()->setWrapText(true);		
+		    
+		  	 $objPHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);	
+		    foreach($objPHPExcel->getActiveSheet()->getRowDimensions() as $rd) { 
+			    $rd->setRowHeight(-1); 
+			}
+		   
+			$objPHPExcel->getActiveSheet()->getRowDimension(32)->setRowHeight(95);
+
+		    ob_end_clean();
+			ob_start();
+
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="guarantee_form.xls"');
+			header('Cache-Control: max-age=0');
+			// If you're serving to IE 9, then the following may be needed
+			header('Cache-Control: max-age=1');
+
+			// If you're serving to IE over SSL, then the following may be needed
+			header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+			header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+			header ('Pragma: public'); // HTTP/1.0
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			$objWriter->save('php://output');  //
+			// Yii::app()->end(); 
+
+			$xlsData = ob_get_contents();
+			ob_end_clean();
+			$response =  array(
+		        'op' => 'ok',
+		        'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+		    );
+
+		    die(json_encode($response));
+
+    }
+
+
+    public function actionGentFormAdvGuarantee()
+    {
+
+
+
+    	  
+		   Yii::import('ext.phpexcel.XPHPExcel');    
+		   $objPHPExcel= XPHPExcel::createPHPExcel();
+		   $objReader = PHPExcel_IOFactory::createReader('Excel5');
+           $objPHPExcel = $objReader->load("report/templateAdvGuarantee.xls");
+
+		    $title = new PHPExcel_Style();
+		    $title->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 16,     
+			            'bold'=>true,         
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			          
+			            
+			    ));
+		    $header = new PHPExcel_Style();
+			$header->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'fill'  => array(
+			            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+			            'color' => array('rgb' =>'64ED74')
+			        ),
+			            
+			    ));
+
+			$header2 = new PHPExcel_Style();
+			$header2->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'fill'  => array(
+			            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+			            'color' => array('rgb' =>'F7E672')
+			        ),
+			            
+			    ));
+
+			$detail = new PHPExcel_Style();
+			$detail->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			             'borders' => array(
+				            'bottom'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'top'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'left'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'right'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	)             
+			        	)			            
+			    ));
+			$detail_tb = new PHPExcel_Style();
+			$detail_tb->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'borders' => array(
+				            'bottom'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'top'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'left'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'right'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	)             
+			        	)
+			    ));
+
+			$autoIdAll = $_POST['selectedID'];
+			
+			if(isset($_POST["pj_id"]) && $_POST["pj_id"]!="")
+				 $pj_id = $_POST["pj_id"];
+			else{
+				 $id = $_POST['selectedID'];
+				 $m = OutsourceContract::model()->findByPk($id[0]);
+				 $pj_id = $m->oc_proj_id;
+			}	
+
+			$Criteria = new CDbCriteria();
+			$Criteria->join = 'LEFT JOIN project ON pc_proj_id=pj_id'; 
+			$Criteria->condition = "pj_id=".$pj_id;
+			$projects = ProjectContract::model()->findAll($Criteria);
+
+			$Criteria = new CDbCriteria();
+			$Criteria->join = 'LEFT JOIN vendor ON oc_vendor_id=v_id'; 
+			$Criteria->condition = "oc_id=".$autoIdAll[0];
+			$oc = OutsourceContract::model()->findByPk($id[0]);
+			$vendor_name = Vendor::model()->findByPk($oc->oc_vendor_id)->v_name;  
+
+
+			//draw title
+		    // $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2',$projects[0]['pc_details']);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2',$oc->oc_detail);
+		    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A3',$vendor_name);  		   
+
+		   //$objPHPExcel->getActiveSheet()->setSharedStyle($title, 'A2');
+		   //$objPHPExcel->getActiveSheet()->getStyle("A2")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
+
+		    $row = 7;
+		    $no = 1;
+		    
+	        if(count($autoIdAll)>0)
+	        {
+	            foreach($autoIdAll as $autoId)
+	            {
+	                $model = OutsourceContract::model()->findByPk($autoId);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$model->oc_code."\r ลว. ".$this->renderDate($model->oc_sign_date));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$model->oc_cost);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$this->renderDate($model->oc_end_date));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row,$this->renderDate($model->oc_adv_guarantee_date));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$model->oc_adv_guarantee);
+
+	        		$cost = str_replace(",","",$model->oc_cost);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,number_format($model->oc_adv_guarantee_cost,2));
+
+	        		$row++;
+	        		$no++;
+
+	            }
+	        }	
+
+	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,"รายละเอียดประกอบ");
+
+	        $objPHPExcel->getActiveSheet()->setSharedStyle($detail_tb, 'A7:I'.($row-1));
+		    $objPHPExcel->getActiveSheet()->getStyle('A7:I'.($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	 
+		    $objPHPExcel->getActiveSheet()->getStyle('A7:I'.($row-1))->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
+		     $objPHPExcel->getActiveSheet()->getStyle('A7:I'.($row-1))->getAlignment()->setWrapText(true);		
 		    
 		  	 $objPHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);	
 		    foreach($objPHPExcel->getActiveSheet()->getRowDimensions() as $rd) { 

@@ -146,7 +146,7 @@ window.onload = function (){
                                     $a.attr("href",$.parseJSON(data).file);
                                     //console.log($.parseJSON(data).file)
                                     $("body").append($a);
-                                    $a.attr("download","download.xls");
+                                    $a.attr("download","guarantee.xls");
                                     $a[0].click();
                                     $a.remove();
                                   });
@@ -171,22 +171,26 @@ window.onload = function (){
                         //'data-toggle'=>'modal',
                         //'data-target'=>'#myModal',
                         'onclick'=>'      
-                                       if($.fn.yiiGridView.getSelection("management-cost-grid").length==0)
-                                          js:bootbox.alert("กรุณาเลือกแถวข้อมูลที่ต้องการลบ?","ตกลง");
-                                       else  
-                                          js:bootbox.confirm("คุณต้องการจะลบข้อมูล?","ยกเลิก","ตกลง",
-                                         function(confirmed){
-                                           
-                                                if(confirmed)
-                                           $.ajax({
-                                    type: "POST",
-                                    url: "deleteSelected",
-                                    data: { selectedID: $.fn.yiiGridView.getSelection("management-cost-grid")}
-                                    })
-                                    .done(function( msg ) {
-                                      $("#management-cost-grid").yiiGridView("update",{});
-                                    });
-                                        })',
+                                   if($.fn.yiiGridView.getSelection("vendor-grid").length==0)
+                                        js:bootbox.alert("กรุณาเลือกแถวข้อมูลที่ต้องการ?","ตกลง");
+                                    else  
+                                    {    
+                                         // window.location = page;
+                                          $.ajax({
+                                              type: "POST",
+                                              url: "gentFormAdvGuarantee",
+                                              data: { pj_id: $("#OutsourceContract_oc_proj_id").val(), selectedID: $.fn.yiiGridView.getSelection("vendor-grid")}
+                                          })
+                                          .done(function( data ) {
+                                             var $a = $("<a>");
+                                            $a.attr("href",$.parseJSON(data).file);
+                                            //console.log($.parseJSON(data).file)
+                                            $("body").append($a);
+                                            $a.attr("download","adv_guarantee.xls");
+                                            $a[0].click();
+                                            $a.remove();
+                                          });
+                                    }',
                         'class'=>'span12',
                         'style'=>'',
                     ),
