@@ -5126,7 +5126,7 @@ $table = $section->addTable(array("cellMargin"=>0));
 			$Criteria = new CDbCriteria();
 			$Criteria->join = 'LEFT JOIN vendor ON oc_vendor_id=v_id'; 
 			$Criteria->condition = "oc_id=".$autoIdAll[0];
-			$oc = OutsourceContract::model()->findByPk($id[0]);
+			$oc = OutsourceContract::model()->findByPk($autoIdAll[0]);
 			$vendor_name = Vendor::model()->findByPk($oc->oc_vendor_id)->v_name;  
 
 
@@ -5173,6 +5173,10 @@ $table = $section->addTable(array("cellMargin"=>0));
 		    foreach($objPHPExcel->getActiveSheet()->getRowDimensions() as $rd) { 
 			    $rd->setRowHeight(-1); 
 			}
+
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B31',"ให้".$vendor_name);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F31',"จากผู้ซื้อแล้ว");
+		   
 		   
 			$objPHPExcel->getActiveSheet()->getRowDimension(32)->setRowHeight(95);
 
@@ -5362,7 +5366,7 @@ $table = $section->addTable(array("cellMargin"=>0));
 			$Criteria = new CDbCriteria();
 			$Criteria->join = 'LEFT JOIN vendor ON oc_vendor_id=v_id'; 
 			$Criteria->condition = "oc_id=".$autoIdAll[0];
-			$oc = OutsourceContract::model()->findByPk($id[0]);
+			$oc = OutsourceContract::model()->findByPk($autoIdAll[0]);
 			$vendor_name = Vendor::model()->findByPk($oc->oc_vendor_id)->v_name;  
 
 
@@ -5409,6 +5413,9 @@ $table = $section->addTable(array("cellMargin"=>0));
 		    foreach($objPHPExcel->getActiveSheet()->getRowDimensions() as $rd) { 
 			    $rd->setRowHeight(-1); 
 			}
+
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B31',"ให้".$vendor_name);
+			//$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F31',"จากผู้ว่าจ้างแล้ว");
 		   
 			$objPHPExcel->getActiveSheet()->getRowDimension(32)->setRowHeight(95);
 

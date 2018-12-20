@@ -81,7 +81,7 @@ window.onload = function (){
                             'value'=>$pname,
                            'source'=>'js: function(request, response) {
                                 $.ajax({
-                                    url: "'.$this->createUrl('Project/GetProject').'",
+                                    url: "'.$this->createUrl('Project/GetMProject').'",
                                     dataType: "json",
                                     data: {
                                         term: request.term,

@@ -122,6 +122,10 @@ class OutsourceContract extends CActiveRecord
         if(count($str_date)>1)
         	$this->oc_guarantee_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
 
+        $str_date = explode("/", $this->oc_adv_guarantee_date);
+        if(count($str_date)>1)
+        	$this->oc_adv_guarantee_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+
         //check record is updated
         $newattributes = $this->Owner->getAttributes();
         $oldattributes = $this->getOldAttributes();
@@ -183,7 +187,11 @@ class OutsourceContract extends CActiveRecord
         	$this->oc_insurance_end= $str_date[2]."/".$str_date[1]."/".$str_date[0];
         $str_date = explode("-", $this->oc_guarantee_date);
         if(count($str_date)>1)
-        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];    
+        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];
+
+        $str_date = explode("-", $this->oc_adv_guarantee_date);
+        if(count($str_date)>1)
+        	$this->oc_adv_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];	    
 
 
         $pp = Yii::app()->db->createCommand()
@@ -218,7 +226,11 @@ class OutsourceContract extends CActiveRecord
         	$this->oc_insurance_end= $str_date[2]."/".$str_date[1]."/".$str_date[0];
         $str_date = explode("-", $this->oc_guarantee_date);
         if(count($str_date)>1)
-        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];        
+        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];
+
+        $str_date = explode("-", $this->oc_adv_guarantee_date);
+        if(count($str_date)>1)
+        	$this->oc_adv_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];	        
 
 	    return parent::afterSave();
 	}
