@@ -1346,6 +1346,7 @@ class ProjectController extends Controller
 												$modelOC = OutsourceContract::model()->FindByPk($value["oc_id"]);
 										
 												$modelOC->attributes = $value;
+												$modelOC->oc_end_date = $value["oc_end_date"];
 												$modelOC->oc_sign_date = $value["oc_sign_date"];
 												$modelOC->oc_approve_date = $value["oc_approve_date"];
 												$modelOC->oc_insurance_start = $value["oc_insurance_start"];

@@ -219,15 +219,86 @@ $('#search-form').submit(function(){
 
 <br>
 <ul class="nav nav-tabs">
-      <li  class="active"><a href="#garanteeTab" data-toggle="tab">ค้ำประกันสัญญา</a></li>
-      <li ><a href="#vendorTab" data-toggle="tab">ชำระเงินของ vendor</a></li>
-      <li ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ supplier</a></li>
-      <li ><a href="#manageTab" data-toggle="tab">บันทึกค่ารับรอง</a></li>
-      <li ><a href="#closeTab" data-toggle="tab">ปิดงาน</a></li>
-
+      
       <?php
+            $sql = "SELECT count(id) as amount,type  FROM notify  GROUP BY type ORDER BY type ASC";                  
+            $notifyData = Yii::app()->db->createCommand($sql)->queryAll();
+            $amount[1] = $amount[2] = $amount[3] = $amount[4] = $amount[5] = $amount[6] = '';
+            foreach ($notifyData as $key => $value) {
+                $amount[$value['type']] = $value['amount'];
+            }
+
+            $badge= '';
+            if($amount[1]>0) 
+              $badge=$this->widget('bootstrap.widgets.TbBadge', array(
+                'type'=>'warning',
+                'label'=>$amount[1],
+            ), true);
+
+            if(!isset($_GET['tab']) || (isset($_GET['tab']) && $_GET['tab']==1) )
+              echo '<li  class="active"><a href="#garanteeTab" data-toggle="tab">ค้ำประกันสัญญา '.$badge.'</a></li>';
+            else
+              echo '<li ><a href="#garanteeTab" data-toggle="tab">ค้ำประกันสัญญา '.$badge.'</a></li>';
+
+           $badge= '';
+            if($amount[2]>0) 
+              $badge=$this->widget('bootstrap.widgets.TbBadge', array(
+                'type'=>'warning',
+                'label'=>$amount[2],
+            ), true);
+            if(isset($_GET['tab']) && $_GET['tab']==2 )      
+              echo '<li class="active"><a href="#vendorTab" data-toggle="tab">ชำระเงินของ vendor '.$badge.'</a></li>';
+            else
+              echo '<li ><a href="#vendorTab" data-toggle="tab">ชำระเงินของ vendor '.$badge.'</a></li>';
+           
+
+            $badge= '';
+            if($amount[3]>0) 
+              $badge=$this->widget('bootstrap.widgets.TbBadge', array(
+                'type'=>'warning',
+                'label'=>$amount[3],
+            ), true); 
+            if(isset($_GET['tab']) && $_GET['tab']==3 )     
+              echo '<li class="active" ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ supplier '.$badge.'</a></li>';
+            else
+              echo '<li ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ supplier '.$badge.'</a></li>';
+            
+            $badge= '';
+            if($amount[4]>0) 
+              $badge=$this->widget('bootstrap.widgets.TbBadge', array(
+                'type'=>'warning',
+                'label'=>$amount[4],
+            ), true);    
+            if(isset($_GET['tab']) && $_GET['tab']==4 ) 
+              echo '<li class="active"><a href="#manageTab" data-toggle="tab">บันทึกค่ารับรอง '.$badge.'</a></li>';
+            else
+                 echo '<li ><a href="#manageTab" data-toggle="tab">บันทึกค่ารับรอง '.$badge.'</a></li>';                
+
+            $badge= '';
+            if($amount[5]>0) 
+              $badge=$this->widget('bootstrap.widgets.TbBadge', array(
+                'type'=>'warning',
+                'label'=>$amount[5],
+            ), true); 
+            if(isset($_GET['tab']) && $_GET['tab']==5 ) 
+              echo '<li class="active"><a href="#closeTab" data-toggle="tab">ปิดงาน '.$badge.'</a></li>';
+            else
+              echo '<li ><a href="#closeTab" data-toggle="tab">ปิดงาน '.$badge.'</a></li>';  
+
+
           if(Yii::app()->user->username=='tsd' || Yii::app()->user->username=='tsd02' || Yii::app()->user->username=='tsd03')  
-                echo  '<li ><a href="#1000Tab" data-toggle="tab">ของบ .1000</a></li>';
+          {
+            $badge= '';
+            if($amount[6]>0) 
+              $badge=$this->widget('bootstrap.widgets.TbBadge', array(
+                'type'=>'warning',
+                'label'=>$amount[6],
+            ), true);
+            if(isset($_GET['tab']) && $_GET['tab']==6 )
+                echo  '<li class="active"><a href="#1000Tab" data-toggle="tab">ของบ .1000 '.$badge.'</a></li>';
+            else
+                echo  '<li ><a href="#1000Tab" data-toggle="tab">ของบ .1000 '.$badge.'</a></li>';
+          }
 
        ?>     
         

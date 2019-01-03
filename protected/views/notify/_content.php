@@ -49,10 +49,10 @@ foreach ($records as $key => $value) {
     if(($value['type']==5  && (Yii::app()->user->username=='tsd01' ||Yii::app()->user->username=='tsd02' )) )
     {
 
-      echo "<div class='header'><font color=green>!!! ".$tpye_name[$value['type']]."</font> จำนวน <font color=red>".$value['amount'] ."</font> รายการ</div><br>";
+      echo "<div class='header'><font color=green>!!! ".$tpye_name[$value['type']]."</font> จำนวน <font color=red><a href='../notify/index?tab=".$value['type']."'>".$value['amount'] ."</a></font> รายการ</div><br>";
     }
     else{
-        echo "<div class='header'> ".$tpye_name[$value['type']]." จำนวน <font color=red>".$value['amount'] ."</font> รายการ</div><br>";
+        echo "<div class='header'> ".$tpye_name[$value['type']]." จำนวน <font color=red><a href='../notify/index?tab=".$value['type']."'>".$value['amount'] ."</a></font> รายการ</div><br>";
     }
 }
 
