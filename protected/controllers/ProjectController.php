@@ -32,7 +32,7 @@ class ProjectController extends Controller
 				'users'=>array('@'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','getProject','getMProject','createOutsource','update','loadOutsourceByAjax','loadContractByAjax','loadContractByAjaxTemp','loadOutsourceByAjaxTemp','DeleteSelected','closeSelected'),
+				'actions'=>array('create','getProject','getMProject','createOutsource','update','loadOutsourceByAjax','loadContractByAjax','loadContractByAjaxTemp','loadOutsourceByAjaxTemp','DeleteSelected','closeSelected','getManager','getDirector'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -44,6 +44,44 @@ class ProjectController extends Controller
 			),
 		);
 	}
+
+	public function actionGetManager(){
+            $request=trim($_GET['term']);
+
+            $Criteria = new CDbCriteria();
+            $Criteria->select = "DISTINCT pj_manager_name";
+            $Criteria->condition = "pj_manager_name like '$request%'";
+            $models = Project::model()->findAll($Criteria);
+            $data=array();
+            foreach($models as $model){
+            	 $data[] = array(
+                        'id'=>$model['pj_manager_name'],
+                        'label'=>$model['pj_manager_name'],
+                );
+
+            }
+            $this->layout='empty';
+            echo json_encode($data);  
+    }
+
+    public function actionGetDirector(){
+            $request=trim($_GET['term']);
+
+            $Criteria = new CDbCriteria();
+            $Criteria->select = "DISTINCT pj_director_name";
+            $Criteria->condition = "pj_director_name like '$request%'";
+            $models = Project::model()->findAll($Criteria);
+            $data=array();
+            foreach($models as $model){
+            	 $data[] = array(
+                        'id'=>$model['pj_director_name'],
+                        'label'=>$model['pj_director_name'],
+                );
+
+            }
+            $this->layout='empty';
+            echo json_encode($data);  
+    }
 
 	public function actionGetProject(){
             $request=trim($_GET['term']);
@@ -113,7 +151,7 @@ class ProjectController extends Controller
                	$workcat = WorkCategory::model()->FindByPk($model->pj_work_cat);
 
 
-               	$sql = "SELECT SUM(mc_cost) as sum FROM management_cost WHERE mc_proj_id='$model->pj_id' AND mc_type=0";
+               	$sql = "SELECT SUM(mc_cost) as sum FROM management_cost WHERE mc_proj_id='$model->pj_id' AND mc_in_project=3";
           		$command = Yii::app()->db->createCommand($sql);
           		$result = $command->queryAll();
 
@@ -124,7 +162,7 @@ class ProjectController extends Controller
                 $result = Yii::app()->db->createCommand()
                         ->select('SUM(mc_cost) as sum')
                         ->from('management_cost')
-                        ->where('mc_proj_id=:id AND mc_type!=0', array(':id'=>$model->pj_id))
+                        ->where('mc_proj_id=:id AND mc_type=1', array(':id'=>$model->pj_id))
                         ->queryAll();
                 $pay_total = 0;
           		if(count($result))
@@ -161,7 +199,20 @@ class ProjectController extends Controller
 	{
 		$modelOutsource = array();
 		$modelContract = array();
-		$modelContractOld = array();
+		$modelContractOld = array("","","");
+		$managementCost = array();
+
+		$modelTemps = Yii::app()->db->createCommand()
+					     ->select('*')
+			             ->from('management_cost')
+		                 ->where('mc_proj_id=:id', array(':id'=>$id))
+			             ->queryAll();
+		foreach ($modelTemps as $key => $value) {
+			  
+			  $managementCost[$value["mc_in_project"]-1] = $value["mc_cost"];
+	    }	             
+
+
 		$model = new OutsourceContract;
 		//$modelOutsource = new OutsourceContract;
 		$numContracts = 1;
@@ -204,21 +255,25 @@ class ProjectController extends Controller
 		 					
 		 					 
 		 				     $modelC = new OutsourceContract("search");
+		 				     $modelC->setScenario('create');
 		 				     $modelC->attributes = $outsource;
 		 				     $modelC->oc_sign_date = $outsource["oc_sign_date"];
+		 				     $modelC->oc_end_date = $outsource["oc_end_date"];
 		 				     $modelC->oc_approve_date = $outsource["oc_approve_date"];
 		 				     $modelC->oc_insurance_start = $outsource["oc_insurance_start"];
 		 				     $modelC->oc_insurance_end = $outsource["oc_insurance_end"];
+		 				     $modelC->oc_adv_guarantee_cost = $outsource["oc_adv_guarantee_cost"];
+		 				     $modelC->oc_adv_guarantee_date = $outsource["oc_adv_guarantee_date"];
 		 				    
 		 				     //$modelC->pc_id = "";
 		 				     $modelC->oc_proj_id = $id;
 
-		 				     $modelC->oc_last_update = (date("Y")+543).date("-m-d H:i:s");
+		 				     $modelC->oc_last_update = (date("Y")).date("-m-d H:i:s");
 				    		 $modelC->oc_user_update = Yii::app()->user->ID;
 				    		 $modelC->oc_user_create = Yii::app()->user->ID;
 				    		  
-				    		  //header('Content-type: text/plain');
-                              // print_r($modelC);                    
+				    		 // header('Content-type: text/plain');
+                              //print_r($modelC);                    
                            	  //exit;
 				    		 //array_push($modelOutsource, $modelC); 
 
@@ -238,6 +293,7 @@ class ProjectController extends Controller
               //             		print_r($modelC);                    
               //             	    exit;
                                         $modelApprove = new ContractChangeHistory("search");
+                                        $modelApprove->setScenario('create');
                                         $modelApprove->attributes = $mTemp;
                                         
                                         $modelApprove->id = "";
@@ -273,7 +329,7 @@ class ProjectController extends Controller
 					                                            $mt->delete();
 					                                        }	                                          
 					                                        else{
-					                                           $modelOutsourceVal->addError('contract', 'กรุณากรอกข้อมูล "สัญญาที่ "'.$index.' ในช่องที่มีเครื่องหมาย (*) ให้ครบถ้วน.');		
+					                                           //$modelOutsourceVal->addError('contract', 'กรุณากรอกข้อมูล "สัญญาที่ "'.$index.' ในช่องที่มีเครื่องหมาย (*) ให้ครบถ้วน.');		
 							 				            	   $saveOK = 0;
 
 					                                        }   	
@@ -306,6 +362,52 @@ class ProjectController extends Controller
                                         }   	
 						        }            
 		 				     	//$modelTemp = ContractApproveHistoryTemp::model()->findByAttributes(array('contract_id'=>$contract['pc_id']));
+
+//save guarantee
+													 $modelTemps = Yii::app()->db->createCommand()
+											                    ->select('*')
+											                    ->from('guarantee_temp')
+											                    ->where('contract_no=:id AND pj_id=:pj_id', array(':id'=>$index,':pj_id'=>$id))
+											                    ->queryAll();
+    	
+											    
+
+											        foreach ($modelTemps as $key => $mTemp) {
+											   
+
+											        	 $modelGuarantee = new Guarantee;
+											        	 $modelGuarantee->setScenario('create');
+											        	 $modelGuarantee->guarantee_no = $mTemp['guarantee_no'];
+											        	 $modelGuarantee->contract_id = $modelC->oc_id;
+											        	 $modelGuarantee->letter_confirm = $mTemp['letter_confirm'];
+											        	 $modelGuarantee->letter_return = $mTemp['letter_return'];
+											        	 $modelGuarantee->cost = $mTemp['cost'];
+											        	 $modelGuarantee->guarantee_date  = $mTemp['guarantee_date'];
+											   				   //  header('Content-type: text/plain');    	 
+											        	 // print_r($modelGuarantee);
+						                        
+						               //           exit; 
+											
+											        	 if($modelGuarantee->save())
+					                                           $msg =  "successful";
+					                                     else{
+					                                           //$modelOutsourceVal->addError('guarantee', 'กรุณากรอกข้อมูลค้ำประกันสัญญา "สัญญาที่ "'.$index.' ในช่องที่มีเครื่องหมาย (*) ให้ครบถ้วน.');	
+					                                            //header('Content-type: text/plain');    	 
+											        	        //print_r($modelGuarantee);
+						                        
+						                                        //exit; 	
+							 				            	   $saveOC = false;
+					                                     }	 
+
+											        }
+
+											        Yii::app()->db->createCommand('DELETE FROM guarantee_temp WHERE contract_no='.$index.' AND pj_id='.$id)->execute();	
+											        // $sql = "DELETE FROM guarantee_temp WHERE contract_no='$index' AND pj_id='$id'";
+									          // 		$command = Yii::app()->db->createCommand($sql);
+									          // 		$result = $command->queryAll();
+
+
+
 		 				     	
 		 				     }else{
 		 				     	$saveOK = 0;	
@@ -369,6 +471,7 @@ class ProjectController extends Controller
 			  Yii::app()->db->createCommand('DELETE FROM contract_approve_history_temp WHERE u_id='.Yii::app()->user->ID)->execute();
 			  Yii::app()->db->createCommand('DELETE FROM contract_change_history_temp WHERE u_id='.Yii::app()->user->ID)->execute();
 			  Yii::app()->db->createCommand('DELETE FROM work_code_outsource_temp WHERE u_id='.Yii::app()->user->ID)->execute();
+			  
 			 	
 			}
 			  // Yii::app()->db->createCommand('TRUNCATE contract_approve_history_temp')->execute();
@@ -376,7 +479,7 @@ class ProjectController extends Controller
         }
 
 		$this->render('create2',array(
-			'model'=>$this->loadModel($id),'outsource'=>$modelOutsource,'numContracts'=>$numContracts,'modelValidate'=>$model
+			'model'=>$this->loadModel($id),'outsource'=>$modelOutsource,'numContracts'=>$numContracts,'modelValidate'=>$model,'managementCost'=>$managementCost
 		));
 	}
 
@@ -410,6 +513,7 @@ class ProjectController extends Controller
 		
 		$model = new Project;
 		$workcodes = "";
+		$managementCost = array("","","");
 		$modelContract = array();
 		$modelContractOld = array();
 		$numContracts = 1;
@@ -422,9 +526,14 @@ class ProjectController extends Controller
 
 		if(isset($_POST['Project']))
 		{
-			
+			$model->setScenario('create');
 			$model->attributes = $_POST['Project'];
 			$model->pj_CA = $_POST['Project']['pj_CA'];
+
+			$managementCost[0] = isset($_POST["expect_cost1"]) ? $_POST["expect_cost1"] : "";
+			$managementCost[1] = isset($_POST["expect_cost2"]) ? $_POST["expect_cost2"] : "";
+			$managementCost[2] = isset($_POST["expect_cost3"]) ? $_POST["expect_cost3"] : "";
+
 
 			if (isset($_POST['ProjectContract']))
             {
@@ -447,15 +556,22 @@ class ProjectController extends Controller
 		 			{
 		 				     //print_r($contract);
 		 					 
-		 				     $modelC = new ProjectContract;
+		 				     $modelC = new ProjectContract("create");
+		 				     //$modelC->setScenario('create');
 		 				     $modelC->attributes = $contract;
 		 				     $modelC->pc_details = $contract["pc_details"];
 		 				     $modelC->pc_sign_date = $contract["pc_sign_date"];
+		 				     $modelC->pc_end_date = $contract["pc_end_date"];
+		 				     $modelC->pc_garantee_date = $contract["pc_garantee_date"];
 		 				     $modelC->pc_PO = $contract["pc_PO"];
 		 				     //$modelC->pc_vendor_id = $model->pj_vendor_id;
 
 		 				     array_push($modelContractOld, $modelC);
 		 			}	
+
+					      // header('Content-type: text/plain');
+           //                 		 print_r($modelContractOld);                    
+           //               	     exit;		 					
  				
  				//print_r($model->contract); 
 				    if ($model->save()) {
@@ -463,11 +579,12 @@ class ProjectController extends Controller
 
 				    	//save expect management cost
                         $modelMCost = new ManagementCost("search");
+                        $modelMCost->setScenario('create');
                         $modelMCost->mc_type = 0;
                         $modelMCost->mc_proj_id = $model->pj_id;
                         $modelMCost->mc_cost = $_POST["expect_cost1"];
                         $modelMCost->mc_detail = "เงินประมาณการค่าใช้จ่ายในการบริหารโครงการ";
-                        $modelMCost->mc_date = (date("Y")+543).date("-m-d");
+                        $modelMCost->mc_date = (date("Y")).date("-m-d");
 				        $modelMCost->mc_user_update = Yii::app()->user->ID; 
 				        $modelMCost->mc_in_project = 1;
                         
@@ -475,10 +592,12 @@ class ProjectController extends Controller
                         {
                         	
                         }
+
+                        	   
                         $modelMCost = new ManagementCost("search");
                         $modelMCost->mc_type = 0;
                         $modelMCost->mc_proj_id = $model->pj_id;
-                        $modelMCost->mc_date = (date("Y")+543).date("-m-d");
+                        $modelMCost->mc_date = (date("Y")).date("-m-d");
 				        $modelMCost->mc_user_update = Yii::app()->user->ID; 
                         $modelMCost->mc_cost = $_POST["expect_cost2"];
                         $modelMCost->mc_detail = "เงินประมาณการค่าใช้จ่ายด้านบุคลากร";
@@ -488,7 +607,7 @@ class ProjectController extends Controller
                         $modelMCost = new ManagementCost("search");
                         $modelMCost->mc_type = 0;
                         $modelMCost->mc_proj_id = $model->pj_id;
-                        $modelMCost->mc_date = (date("Y")+543).date("-m-d");
+                        $modelMCost->mc_date = (date("Y")).date("-m-d");
 				        $modelMCost->mc_user_update = Yii::app()->user->ID; 
                         $modelMCost->mc_cost = $_POST["expect_cost3"];
                         $modelMCost->mc_detail = "เงินประมาณการค่ารับรอง";
@@ -511,10 +630,13 @@ class ProjectController extends Controller
 		 				{
 		 				     //print_r($contract);
 		 					 
-		 				     $modelC = new ProjectContract;
+		 				     $modelC = new ProjectContract("create");
+		 				     $modelC->setScenario('create');
 		 				     $modelC->attributes = $contract;
 		 				     $modelC->pc_details = $contract["pc_details"];
 		 				     $modelC->pc_sign_date = $contract["pc_sign_date"];
+		 				     $modelC->pc_end_date = $contract["pc_end_date"];
+		 				     $modelC->pc_garantee_date = $contract["pc_garantee_date"];
 		 				     $modelC->pc_PO = $contract["pc_PO"];
 		 				     //$modelC->pc_vendor_id = $model->pj_vendor_id;
 
@@ -524,7 +646,7 @@ class ProjectController extends Controller
 
 		 				     
 
-		 				     $modelC->pc_last_update = (date("Y")+543).date("-m-d H:i:s");
+		 				     $modelC->pc_last_update = (date("Y")).date("-m-d H:i:s");
 				    		 $modelC->pc_user_update = Yii::app()->user->ID;
 
 		 				    
@@ -542,6 +664,7 @@ class ProjectController extends Controller
               //             		print_r($modelC);                    
               //             	    exit;
                                         $modelApprove = new ContractApproveHistory;
+                                        $modelApprove->setScenario('create');
                                         $modelApprove->attributes = $mTemp;
                                         $modelApprove->dateApprove = $mTemp['dateApprove'];
                                         $modelApprove->id = "";
@@ -565,6 +688,7 @@ class ProjectController extends Controller
 						        foreach ($modelTemps as $key => $mTemp) {
 
                                         $modelApprove = new ContractChangeHistory;
+
                                         $modelApprove->attributes = $mTemp;
                                         $modelApprove->id = '';
                                         $modelApprove->contract_id = $modelC->pc_id;
@@ -699,7 +823,7 @@ class ProjectController extends Controller
 
 		
 		 $this->render('create', array(
-            'model' => $model,'contract'=>$modelContract,'workcodes'=>$workcodes,'numContracts'=>$numContracts
+            'model' => $model,'contract'=>$modelContract,'workcodes'=>$workcodes,'numContracts'=>$numContracts,'managementCost'=>$managementCost
         ));
 	}
 
@@ -871,6 +995,7 @@ class ProjectController extends Controller
 	{
 		
 		$modelProj = $this->loadModel($id);
+		$project_id = $id;
 
 		$modelOutsourceVal = new OutsourceContract;
 
@@ -905,7 +1030,7 @@ class ProjectController extends Controller
              			if(!empty($modelMCost))
              			{
              				$modelMCost[0]->mc_cost = $_POST["expect_cost1"];                        
-	                        $modelMCost[0]->mc_date = (date("Y")+543).date("-m-d");
+	                        $modelMCost[0]->mc_date = date("Y-m-d");//(date("Y")).date("-m-d");
 
 	                        $modelMCost[0]->mc_type = 0;
 					        $modelMCost[0]->mc_user_update = Yii::app()->user->ID; 				        
@@ -914,7 +1039,7 @@ class ProjectController extends Controller
              			else{
              				$modelMCost = new ManagementCost("search");
              				$modelMCost->mc_cost = $_POST["expect_cost1"];                        
-	                        $modelMCost->mc_date = (date("Y")+543).date("-m-d");
+	                        $modelMCost->mc_date = date("Y-m-d");//(date("Y")).date("-m-d");
 	                        $modelMCost->mc_type = 0;
 	                        $modelMCost->mc_proj_id = $id;
 	                        $modelMCost->mc_in_project = 1;
@@ -938,7 +1063,7 @@ class ProjectController extends Controller
                         if(!empty($modelMCost))
              			{
              				$modelMCost[0]->mc_cost = $_POST["expect_cost2"];                        
-	                        $modelMCost[0]->mc_date = (date("Y")+543).date("-m-d");
+	                        $modelMCost[0]->mc_date = date("Y-m-d");//(date("Y")).date("-m-d");
 	                        $modelMCost[0]->mc_type = 0;
 					        $modelMCost[0]->mc_user_update = Yii::app()->user->ID; 				        
 	                        $modelMCost[0]->save();	
@@ -946,7 +1071,7 @@ class ProjectController extends Controller
              			else{
              				$modelMCost = new ManagementCost("search");
              				$modelMCost->mc_cost = $_POST["expect_cost2"];                        
-	                        $modelMCost->mc_date = (date("Y")+543).date("-m-d");
+	                        $modelMCost->mc_date = date("Y-m-d");//(date("Y")).date("-m-d");
 	                        $modelMCost->mc_type = 0;
 	                        $modelMCost->mc_proj_id = $id;
 	                        $modelMCost->mc_in_project = 2;
@@ -963,7 +1088,7 @@ class ProjectController extends Controller
                         if(!empty($modelMCost))
              			{
              				$modelMCost[0]->mc_cost = $_POST["expect_cost3"];                        
-	                        $modelMCost[0]->mc_date = (date("Y")+543).date("-m-d");
+	                        $modelMCost[0]->mc_date = date("Y-m-d");//(date("Y")).date("-m-d");
 	                        $modelMCost[0]->mc_type = 0;
 					        $modelMCost[0]->mc_user_update = Yii::app()->user->ID; 				        
 	                        $modelMCost[0]->save();	
@@ -971,7 +1096,7 @@ class ProjectController extends Controller
              			else{
              				$modelMCost = new ManagementCost("search");
              				$modelMCost->mc_cost = $_POST["expect_cost3"];                        
-	                        $modelMCost->mc_date = (date("Y")+543).date("-m-d");
+	                        $modelMCost->mc_date = date("Y-m-d");//(date("Y")).date("-m-d");
 	                        $modelMCost->mc_type = 0;
 	                        $modelMCost->mc_proj_id = $id;
 	                        $modelMCost->mc_in_project = 3;
@@ -1015,9 +1140,18 @@ class ProjectController extends Controller
 								 $modelPC = new ProjectContract("search");
 								 //$modelPC->attributes = $value;
 								 $modelPC->setAttributes($value);
-								 $modelPC->pc_last_update = (date("Y")+543).date("-m-d H:i:s");
+								 $modelPC->pc_last_update = (date("Y")).date("-m-d H:i:s");
 						    	 $modelPC->pc_user_update = Yii::app()->user->ID;
 						    	 $modelPC->pc_proj_id = $id;
+						    	 $modelPC->pc_garantee_date = $value["pc_garantee_date"];
+								 $modelPC->pc_garantee_end = $value["pc_garantee_end"];
+								 $modelPC->pc_sign_date = $value["pc_sign_date"];
+								 $modelPC->pc_end_date = $value["pc_end_date"];
+								 $modelPC->pc_details = $value["pc_details"];
+								 $modelPC->pc_PO = $value["pc_PO"];
+								 $modelPC->pc_name_request = $value["pc_name_request"];
+								 $modelPC->pc_code_request = $value["pc_code_request"];
+
 								        //header('Content-type: text/plain');
 		                          		//print_r($modelPC);                    
 		                          	    //exit;
@@ -1100,7 +1234,13 @@ class ProjectController extends Controller
 							{
 									$modelPC->attributes = $value;
 
-
+									$modelPC->pc_garantee_date = $value["pc_garantee_date"];
+									$modelPC->pc_garantee_end = $value["pc_garantee_end"];
+									$modelPC->pc_end_date = $value["pc_end_date"];
+									$modelPC->pc_details = $value["pc_details"];
+								 	$modelPC->pc_PO = $value["pc_PO"];
+								 	$modelPC->pc_name_request = $value["pc_name_request"];
+								 	$modelPC->pc_code_request = $value["pc_code_request"];
 
 									//check difference
 									//1.project contract
@@ -1149,15 +1289,15 @@ class ProjectController extends Controller
 
 									if($difference==1)
 									{
-										$modelPC->pc_last_update = (date("Y")+543).date("-m-d H:i:s");
+										$modelPC->pc_last_update = (date("Y")).date("-m-d H:i:s");
 						    			$modelPC->pc_user_update = Yii::app()->user->ID;
 									}
 
 									if($modelPC->save())
 									{
 									// header('Content-type: text/plain');
-	                        		// print_r($modelPC);
-	                         		//exit;
+	        //                 		print_r($modelPC);
+	        //                  		exit;
 									}	
 									else{
 										$modelProj->addError('contract', 'กรุณากรอกข้อมูล "สัญญาที่ '.$index.'" ในช่องที่มีเครื่องหมาย (*) ให้ครบถ้วน.');		
@@ -1232,16 +1372,20 @@ class ProjectController extends Controller
 											 $modelOC = new OutsourceContract("search");
 											 //$modelPC->attributes = $value;
 											 $modelOC->setAttributes($value);
-											 $modelOC->oc_last_update = (date("Y")+543).date("-m-d H:i:s");
+											 $modelOC->oc_last_update = (date("Y")).date("-m-d H:i:s");
 									    	 $modelOC->oc_user_create = Yii::app()->user->ID;
 									    	 $modelOC->oc_user_update = Yii::app()->user->ID;
 									    	 $modelOC->oc_proj_id = $id;
-											        //header('Content-type: text/plain');
-					                          		//print_r($modelOC);                    
-					                          	    //exit;
+											        // header('Content-type: text/plain');
+					              //             		print_r($modelOC);                    
+					              //             	    exit;
 					                         array_push($modelOutsource, $modelOC);
 									    	 if($modelOC->save())
 											{
+
+												// header('Content-type: text/plain');
+					       //                    		print_r($modelOC);                    
+					       //                    	    exit;
 
 													 //save contract change history
 								 	        		 $modelTemps = Yii::app()->db->createCommand()
@@ -1321,7 +1465,44 @@ class ProjectController extends Controller
 					                                           $modelOutsourceVal->addError('contract', 'กรุณากรอกข้อมูล "สัญญาที่ "'.$index.' ในช่องที่มีเครื่องหมาย (*) ให้ครบถ้วน.');		
 							 				            	   $saveOC = false;
 					                                        }   	
-											        }            
+											        }
+
+											        //save guarantee
+													 $modelTemps = Yii::app()->db->createCommand()
+											                    ->select('*')
+											                    ->from('guarantee_temp')
+											                    ->where('contract_no=:id AND pj_id=:pj_id', array(':id'=>$index,':pj_id'=>$project_id))
+											                    ->queryAll();
+    	
+											    
+
+											        foreach ($modelTemps as $key => $mTemp) {
+											   
+
+											        	 $modelGuarantee = new Guarantee;
+											        	
+											        	 $modelGuarantee->guarantee_no = $mTemp['guarantee_no'];
+											        	 $modelGuarantee->contract_id = $modelOC['oc_id'];
+											        	 $modelGuarantee->letter_confirm = $mTemp['letter_confirm'];
+											        	 $modelGuarantee->letter_return = $mTemp['letter_return'];
+											        	 $modelGuarantee->cost = $mTemp['cost'];
+											        	 $modelGuarantee->guarantee_date  = $mTemp['guarantee_date'];
+											   				  //  header('Content-type: text/plain');    	 
+											        	// print_r($modelGuarantee);
+						                        
+						              //           exit; 
+											
+											        	 if($modelGuarantee->save())
+					                                           $msg =  "successful";
+					                                     else{
+					                                           $modelOutsourceVal->addError('guarantee', 'กรุณากรอกข้อมูลค้ำประกันสัญญา "สัญญาที่ "'.$index.' ในช่องที่มีเครื่องหมาย (*) ให้ครบถ้วน.');		
+							 				            	   $saveOC = false;
+					                                     }	 
+
+											        }
+
+											        Yii::app()->db->createCommand('DELETE FROM guarantee_temp WHERE contract_no='.$index.' AND pj_id='.$id)->execute();	
+											       
 					 				     	
 
 											}	
@@ -1329,9 +1510,9 @@ class ProjectController extends Controller
 													$modelOutsourceVal->addError('contract', 'กรุณากรอกข้อมูล "สัญญาที่ '.$index.'" ในช่องที่มีเครื่องหมาย (*) ให้ครบถ้วน.');		
 													$saveOC = false;
 
-													 //header('Content-type: text/plain');
-					                          		 //print_r($modelOC);                    
-					                          	     //exit;	
+													 // header('Content-type: text/plain');
+					         //                  		 print_r($modelOC);                    
+					         //                  	     exit;	
 											}
 						 	        		
 						 	        		
@@ -1351,10 +1532,10 @@ class ProjectController extends Controller
 												$modelOC->oc_approve_date = $value["oc_approve_date"];
 												$modelOC->oc_insurance_start = $value["oc_insurance_start"];
 												$modelOC->oc_insurance_end = $value["oc_insurance_end"];
-												$modelOC->oc_guarantee_date = $value["oc_guarantee_date"];
-												$modelOC->oc_guarantee_end = $value["oc_guarantee_end"];
+												//$modelOC->oc_guarantee_date = $value["oc_guarantee_date"];
+												//$modelOC->oc_guarantee_end = $value["oc_guarantee_end"];
 
-												$modelOC->oc_guarantee_cost = $value["oc_guarantee_cost"];
+												//$modelOC->oc_guarantee_cost = $value["oc_guarantee_cost"];
 												$modelOC->oc_adv_guarantee_cost = $value["oc_adv_guarantee_cost"];
 												$modelOC->oc_adv_guarantee_date = $value["oc_adv_guarantee_date"];
 
@@ -1416,7 +1597,7 @@ class ProjectController extends Controller
 
 												if($difference==1)
 												{
-													$modelOC->oc_last_update = (date("Y")+543).date("-m-d H:i:s");
+													$modelOC->oc_last_update = (date("Y")).date("-m-d H:i:s");
 									    			$modelOC->oc_user_update = Yii::app()->user->ID;
 												}
 												array_push($modelOutsource, $modelOC);
@@ -1480,26 +1661,32 @@ class ProjectController extends Controller
                
                 foreach ($project_contract as $key => $value) {
 
-                    $modelPC =new ProjectContract("search");
-                    $modelPC->attributes = $value;
-                    $str_date = explode("-", $value["pc_sign_date"]);
-                    if(count($str_date)>1)
-                      $modelPC->pc_sign_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
-                    $str_date = explode("-", $value["pc_end_date"]);
-                    if(count($str_date)>1)
-                      $modelPC->pc_end_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
-                  $str_date = explode("-", $value["pc_garantee_date"]);
-                    if(count($str_date)>1)
-                      $modelPC->pc_garantee_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+      //               $modelPC =new ProjectContract("search");
+      //               $modelPC->attributes = $value;
+      //               $str_date = explode("-", $value["pc_sign_date"]);
+      //               if(count($str_date)>1)
+      //                 $modelPC->pc_sign_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+      //               $str_date = explode("-", $value["pc_end_date"]);
+      //               if(count($str_date)>1)
+      //                 $modelPC->pc_end_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+      //             $str_date = explode("-", $value["pc_garantee_date"]);
+      //               if(count($str_date)>1)
+      //                 $modelPC->pc_garantee_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
 
-						//header('Content-type: text/plain');
-					    //                      		 print_r($modelPC);                    
-					    //                      	     exit;
+						// //header('Content-type: text/plain');
+					 //    //                      		 print_r($modelPC);                    
+					 //    //                      	     exit;
 											
 
-                    $modelPC->pc_last_update = $value["pc_last_update"];
-                    $modelPC->pc_details = $value["pc_details"];
-                    $modelPC->pc_id = $value["pc_id"];
+      //               $modelPC->pc_last_update = $value["pc_last_update"];
+      //               $modelPC->pc_details = $value["pc_details"];
+      //               $modelPC->pc_id = $value["pc_id"];
+
+
+                	$modelPC = ProjectContract::model()->findByPk($value["pc_id"]);
+                    $str_date = explode("-", $value["pc_sign_date"]);
+                     if(count($str_date)>1)
+                       $modelPC->pc_sign_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
                     //cal %A
 					//sum income;
                     $data = Yii::app()->db->createCommand()
@@ -1546,40 +1733,44 @@ class ProjectController extends Controller
                
                 foreach ($outsource_contract as $key => $value) {
 
-                    $modelOC =new OutsourceContract("search");
-
-                    $modelOC->attributes = $value;
-                    $str_date = explode("-", $value["oc_sign_date"]);
-                    if(count($str_date)>1)
-                      $modelOC->oc_sign_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
-                  	if($value["oc_sign_date"]=="0000-00-00")
-                  	  $modelOC->oc_sign_date = "";		
-                    $str_date = explode("-", $value["oc_end_date"]);
-                    if(count($str_date)>1)
-                      $modelOC->oc_end_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
-                  	if($value["oc_end_date"]=="0000-00-00")
-                  	  $modelOC->oc_end_date = "";
-                    $modelOC->oc_last_update = $value["oc_last_update"];
+                    //$modelOC =new OutsourceContract("search");
+                	$modelOC = OutsourceContract::model()->findByPk($value["oc_id"]);	
+                   //  $modelOC->attributes = $value;
+                   //  $str_date = explode("-", $value["oc_sign_date"]);
+                   //  if(count($str_date)>1)
+                   //    $modelOC->oc_sign_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+                  	// if($value["oc_sign_date"]=="0000-00-00")
+                  	//   $modelOC->oc_sign_date = "";		
+                   //  $str_date = explode("-", $value["oc_end_date"]);
+                   //  if(count($str_date)>1)
+                   //    $modelOC->oc_end_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+                  	// if($value["oc_end_date"]=="0000-00-00")
+                  	//   $modelOC->oc_end_date = "";
+                   //  $modelOC->oc_last_update = $value["oc_last_update"];
 
                     
-                    $str_date = explode("-", $value["oc_approve_date"]);
-                    if(count($str_date)>1)
-                      $modelOC->oc_approve_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
-                  	$str_date = explode("-", $value["oc_insurance_start"]);
-                    if(count($str_date)>1)
-                      $modelOC->oc_insurance_start = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
-                  	$str_date = explode("-", $value["oc_insurance_end"]);
-                    if(count($str_date)>1)
-                      $modelOC->oc_insurance_end = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+                   //  $str_date = explode("-", $value["oc_approve_date"]);
+                   //  if(count($str_date)>1)
+                   //    $modelOC->oc_approve_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+                  	// $str_date = explode("-", $value["oc_insurance_start"]);
+                   //  if(count($str_date)>1)
+                   //    $modelOC->oc_insurance_start = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+                  	// $str_date = explode("-", $value["oc_insurance_end"]);
+                   //  if(count($str_date)>1)
+                   //    $modelOC->oc_insurance_end = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
                   	
-                    if($value["oc_insurance_end"]=="0000-00-00")
-                  	  $modelOC->oc_insurance_end = "";	
-                  	if($value["oc_insurance_start"]=="0000-00-00")
-                  	  $modelOC->oc_insurance_start = "";	
-                  	if($value["oc_approve_date"]=="0000-00-00")
-                  	  $modelOC->oc_approve_date = "";	
+                   //  if($value["oc_insurance_end"]=="0000-00-00")
+                  	//   $modelOC->oc_insurance_end = "";	
+                  	// if($value["oc_insurance_start"]=="0000-00-00")
+                  	//   $modelOC->oc_insurance_start = "";	
+                  	// if($value["oc_approve_date"]=="0000-00-00")
+                  	//   $modelOC->oc_approve_date = "";	
                    
                     $modelOC->oc_id = $value["oc_id"];
+
+                    //header('Content-type: text/plain');
+					//                      		 print_r($modelOC);                    
+					//                      	     exit;
 
                     //cal %A
 					//sum income;
@@ -1600,11 +1791,11 @@ class ProjectController extends Controller
 											                        
 					$sum_payment = $data[0]["sum"];  
 					$cost = $modelOC->oc_cost + $change;
-					$modelOC->oc_A_percent =number_format((1 - ($cost - $sum_payment)/$cost)*100,2);//number_format(($cost - $sum_income)*100/$cost,2);
+					$modelOC->oc_A_percent = number_format((1 - ($cost - $sum_payment)/$cost)*100);//number_format(($cost - $sum_income)*100/$cost,2);
 
 					//end cal 
 
-                    $modelOC->oc_cost = number_format($modelOC->oc_cost,2);
+                    $modelOC->oc_cost = ($modelOC->oc_cost);
 
 
                     array_push($modelOutsource, $modelOC);
@@ -1741,12 +1932,13 @@ class ProjectController extends Controller
 	public function actionLoadOutsourceByAjax($index)
     {
         $model = new OutsourceContract;
-
+        $pj_id = isset($_GET['pj_id']) ? $_GET['pj_id'] : "";
         Yii::app()->clientscript->scriptMap['jquery.js'] = false;
         Yii::app()->clientscript->scriptMap['jquery-ui.min.js'] = false;
         $this->renderPartial('//outsourceContract/_formUpdateTemp', array(
             'model' => $model,
             'index' => $index,
+            'pj_id' => $pj_id,
             'display' => 'block',
         ), false, true);
 
@@ -1785,12 +1977,14 @@ class ProjectController extends Controller
     public function actionLoadOutsourceByAjaxTemp($index)
     {
         $model = new OutsourceContract;
+        $pj_id = isset($_GET['pj_id']) ? $_GET['pj_id'] : "";
         //$model->pc_id = $index;
         Yii::app()->clientscript->scriptMap['jquery.js'] = false;
         Yii::app()->clientscript->scriptMap['jquery-ui.min.js'] = false;
         $this->renderPartial('//OutsourceContract/_formUpdateTemp', array(
             'model' => $model,
             'index' => $index,
+            'pj_id' => $pj_id,
             'display' => 'block',
         ), false, true);
 

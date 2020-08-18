@@ -214,7 +214,7 @@ window.onload = function (){
   'id'=>'vendor-grid',
   'type'=>'bordered condensed',
   'dataProvider'=>$model->search(),
-  //'filter'=>$model,
+  'filter'=>$model,
   'selectableRows' =>2,
   'htmlOptions'=>array('style'=>'padding-top:40px;width:100%'),
     'enablePagination' => true,
@@ -234,18 +234,22 @@ window.onload = function (){
         ),
      'code'=>array(
           'name' => 'oc_code',
+           'filter'=>CHtml::activeTextField($model, 'oc_code',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("oc_code"))),
           'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),                     
         'htmlOptions'=>array('style'=>'text-align:left')
       ),
     'detail'=>array(
           'name' => 'oc_detail',
+          'filter'=>CHtml::activeTextField($model, 'oc_detail',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("oc_detail"))),
           'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #f5f5f5'),                     
         'htmlOptions'=>array('style'=>'text-align:left')
       ),
     'guarantee_date'=>array(
           'name' => 'oc_guarantee_date',
+          'value'=>'$data->getGuaranteeDate()',
+          'filter'=>false,
           'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),                     
-        'htmlOptions'=>array('style'=>'text-align:center')
+           'htmlOptions'=>array('style'=>'text-align:center')
       ),
     // 'oc_cost'=>array(
     //       'name' => 'oc_cost',

@@ -335,7 +335,9 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 											'display' => 'js: function(value, sourceData) {
 												var selected = $.grep(sourceData, function(o){ return value == o.value; }),
 												colors = {1: "green", 2: "blue", 3: "purple", 4: "gray"};
-												$(this).text(selected[0].text).css("color", colors[value]);
+												//console.log(selected[0])
+												if(selected[0]!== undefined)
+												  $(this).text(selected[0].text).css("color", colors[value]);
 												//$(this).attr( "title", "คลิกเพื่อแก้ไข");
 												$(this).attr( "rel", "tooltip");
 					    						$(this).attr( "data-original-title", "คลิกเพื่อแก้ไข");

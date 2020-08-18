@@ -87,7 +87,7 @@ class PaymentOutsourceContractController extends Controller
 				// $modelPC->pc_T_percent = $t;
 				// $modelPC->pc_A_percent = $a;
 				// $modelPC->pc_user_update = Yii::app()->user->ID;
-				// $modelPC->pc_last_update =  (date("Y")+543).date("-m-d H:i:s");
+				// $modelPC->pc_last_update =  (date("Y")).date("-m-d H:i:s");
 				// $modelPC->save();
 				
 				$update = 0;
@@ -104,12 +104,12 @@ class PaymentOutsourceContractController extends Controller
 				if($update==1)
 				{
 					$modelOC->oc_user_update = Yii::app()->user->ID;
-				    $modelOC->oc_last_update =  (date("Y")+543).date("-m-d H:i:s");
+				    $modelOC->oc_last_update =  (date("Y")).date("-m-d H:i:s");
 				    $modelOC->save();
 						
 				}
 
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
 			}	
 			else
 				$model->money = $_POST['PaymentOutsourceContract']["money"];
@@ -150,7 +150,7 @@ class PaymentOutsourceContractController extends Controller
 				// $modelPC->pc_T_percent = $t;
 				// $modelPC->pc_A_percent = $a;
 				// $modelPC->pc_user_update = Yii::app()->user->ID;
-				// $modelPC->pc_last_update =  (date("Y")+543).date("-m-d H:i:s");
+				// $modelPC->pc_last_update =  (date("Y")).date("-m-d H:i:s");
 				// $modelPC->save();
 				
 				if($model->save())
@@ -160,7 +160,7 @@ class PaymentOutsourceContractController extends Controller
 					// $modelPC->pc_T_percent = $t;
 					// $modelPC->pc_A_percent = $a;
 					// $modelPC->pc_user_update = Yii::app()->user->ID;
-					// $modelPC->pc_last_update =  (date("Y")+543).date("-m-d H:i:s");
+					// $modelPC->pc_last_update =  (date("Y")).date("-m-d H:i:s");
 					// $modelPC->save();
 					
 					$update = 0;
@@ -177,11 +177,11 @@ class PaymentOutsourceContractController extends Controller
 					if($update==1)
 					{
 						$modelPC->oc_user_update = Yii::app()->user->ID;
-					    $modelPC->oc_last_update =  (date("Y")+543).date("-m-d H:i:s");
+					    $modelPC->oc_last_update =  (date("Y")).date("-m-d H:i:s");
 					    $modelPC->save();
 							
 					}
-					$this->redirect(array('admin'));
+					$this->redirect(array('index'));
 				}
 		}
 
@@ -204,7 +204,7 @@ class PaymentOutsourceContractController extends Controller
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('index'));
 		}
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');

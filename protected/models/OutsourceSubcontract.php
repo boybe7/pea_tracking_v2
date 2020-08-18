@@ -86,7 +86,7 @@ class OutsourceSubcontract extends CActiveRecord
 			'oc_sign_date' => 'วันที่ลงนาม',
 			'oc_end_date' => 'วันที่ครบกำหนด',
 			'oc_approve_date' => 'วันที่รับรองงบ',
-			'oc_cost' => 'วงเงิน',
+			'oc_cost' => 'วงเงิน(ไม่รวมภาษีมูลค่าเพิ่ม)',
 			'oc_T_percent' => 'เปอร์เซ็นต์ความก้าวหน้าของงาน',
 			'oc_A_percent' => 'เปอร์เซ็นต์ความก้าวหน้าของเงิน',
 			'oc_guarantee' => 'หนังสือค้ำประกัน',

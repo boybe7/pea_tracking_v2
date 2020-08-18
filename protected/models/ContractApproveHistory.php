@@ -116,7 +116,7 @@ class ContractApproveHistory extends CActiveRecord
             parent::afterFind();
             $str_date = explode("-", $this->dateApprove);
             if(count($str_date)>1)
-            	$this->dateApprove = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+            	$this->dateApprove = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
 
             if($this->dateApprove == "00/00/0000")
                 $this->dateApprove = '-';
@@ -136,7 +136,7 @@ class ContractApproveHistory extends CActiveRecord
 
             $str_date = explode("/", $this->dateApprove);
             if(count($str_date)>1)
-            $this->dateApprove= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+            $this->dateApprove= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
 
         }	
 

@@ -12,7 +12,8 @@
                 $(this).autocomplete("search");
                 //
       });
-
+      
+       $("#ManagementCost_mc_approve_cost,#ManagementCost_mc_cost").maskMoney({"symbolStay":true,"thousands":",","decimal":".","precision":2,"symbol":null})  
    
   });
 

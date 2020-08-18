@@ -178,7 +178,14 @@ Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/assets/7d883f12/
             </div>  
             <div class="span3">		  
         	  <?php echo CHtml::activeLabelEx($model, '[' . $index . ']pc_cost'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']pc_cost', array('size' => 20, 'maxlength' => 255,'class'=>'span12','style'=>'text-align:right')); ?>
+              <?php 
+
+              
+              echo CHtml::activeTextField($model, '[' . $index . ']pc_cost', array('size' => 20, 'maxlength' => 255,'class'=>'span12','style'=>'text-align:right')); 
+
+                
+
+              ?>
               <?php echo CHtml::error($model, '[' . $index . ']pc_cost',array('class'=>'help-block error')); ?>
             </div>  
             <div class="span2">		  
@@ -972,7 +979,10 @@ function createApprove(index2)
     }
 
    
-}', CClientScript::POS_END);
+}
+ $("input[name*=pc_cost]").maskMoney({"symbolStay":true,"thousands":",","decimal":".","precision":2,"symbol":null}) 
+
+', CClientScript::POS_END);
 
 
 ///Yii::app()->clientScript->registerCoreScript('jquery');
@@ -1015,6 +1025,10 @@ function deleteContract(elm, index)
 
     
 }", CClientScript::POS_END);
+
+
+
+
 ?>
 
-<script type="text/javascript" src="/pea_track/assets/7d883f12/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<!-- <script type="text/javascript" src="/pea_track/assets/7d883f12/bootstrap-datepicker/js/bootstrap-datepicker.js"></script> -->

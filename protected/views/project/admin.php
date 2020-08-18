@@ -23,6 +23,7 @@ $('.search-form form').submit(function(){
 
 <?php
 
+
 // $this->widget('bootstrap.widgets.TbButton', array(
 //     'buttonType'=>'link',
     
@@ -44,7 +45,8 @@ $('.search-form form').submit(function(){
 //         'class'=>'pull-right'
 //     ),
 // )); 
-if(!Yii::app()->user->isExecutive())
+
+if(Yii::app()->user->getAccess(Yii::app()->request->url))
 {
 $this->widget('bootstrap.widgets.TbButton', array(
     'buttonType'=>'link',
@@ -304,20 +306,5 @@ else
 
 
 }
- /*$this->widget('bootstrap.widgets.TbGridView',array(
-	'id'=>'project-grid',
-	'dataProvider'=>$model->search(),
-	'filter'=>$model,
-	'columns'=>array(
-		'pj_id',
-		'pj_name',
-		'pj_vendor_id',
-		'pj_work_cat',
-		'pj_fiscalyear',
-		
-		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
-		),
-	),
-));*/
+
  ?>

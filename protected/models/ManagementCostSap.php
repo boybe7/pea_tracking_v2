@@ -54,7 +54,7 @@ class ManagementCostSap extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'cost' => 'จำนวนเงิน',
+			'cost' => 'จำนวนเงิน(ไม่รวมภาษีมูลค่าเพิ่ม)',
 			'department_id' => 'กอง',
 			'year' => 'ปี',
 		);

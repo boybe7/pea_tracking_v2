@@ -83,6 +83,13 @@ class ReportController extends Controller
 		$this->render('bsc');
 	}
 
+	public function actionManagement()
+	{
+    	
+		// display the progress form
+		$this->render('management');
+	}
+
 	public function actionGuarantee()
 	{
     	
@@ -3560,8 +3567,51 @@ $table = $section->addTable(array("cellMargin"=>0));
 		Yii::app()->end(); 
     }       
 
-
     public function actionGenStatementExcel()
+    {
+
+    	//Yii::import('ext.phpspreadsheet.XPHPSpreadSheet');    
+		//$objPHPExcel= XPHPSpreadSheet::createPHPSpreadSheet();
+		Yii::import('ext.phpexcel.XPHPExcel');    
+		$objPHPExcel= XPHPExcel::createPHPExcel();
+
+
+		$objValidation = $objPHPExcel->getActiveSheet()->getCell('H3')->getDataValidation();
+				$objValidation->setType( PHPExcel_Cell_DataValidation::TYPE_WHOLE );
+				$objValidation->setErrorStyle( PHPExcel_Cell_DataValidation::STYLE_STOP );
+				$objValidation->setAllowBlank(true);
+				$objValidation->setShowInputMessage(true);
+				$objValidation->setShowErrorMessage(true);
+				$objValidation->setErrorTitle('Input error');
+				$objValidation->setError('Number is not allowed!');
+				$objValidation->setPromptTitle('Allowed input');
+				$objValidation->setPrompt('Only numbers between 10 and 20 are allowed.');
+				$objValidation->setFormula1(10);
+				$objValidation->setFormula2(20);
+				$objPHPExcel->getActiveSheet()->getCell('H3')->setDataValidation($objValidation);
+
+	    ob_end_clean();
+		ob_start();
+
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="statement_report.xlsx"');
+		header('Cache-Control: max-age=0');
+		// If you're serving to IE 9, then the following may be needed
+		header('Cache-Control: max-age=1');
+
+		// If you're serving to IE over SSL, then the following may be needed
+		header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+		header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+		header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+		header ('Pragma: public'); // HTTP/1.0
+        
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');  //
+		Yii::app()->end(); 			
+
+    }
+
+    public function actionGenStatementExcel2()
     {
 			
 
@@ -3980,6 +4030,22 @@ $table = $section->addTable(array("cellMargin"=>0));
 				$objPHPExcel->setActiveSheetIndex($sheet)->setCellValue('A'.$row, "กำไรสุทธิ :");
 				$objPHPExcel->setActiveSheetIndex($sheet)->setCellValue('D'.$row,"=D8-D".($row-1).")");//number_format($income - $outcome,2));
 				$objPHPExcel->setActiveSheetIndex($sheet)->setSharedStyle($cashsumAll, 'D'.$row);
+
+
+				// $objValidation = $objPHPExcel->getActiveSheet()->getCell('H3')->getDataValidation();
+				// $objValidation->setType( PHPExcel_Cell_DataValidation::TYPE_WHOLE );
+				// $objValidation->setErrorStyle( PHPExcel_Cell_DataValidation::STYLE_STOP );
+				// $objValidation->setAllowBlank(true);
+				// $objValidation->setShowInputMessage(true);
+				// $objValidation->setShowErrorMessage(true);
+				// $objValidation->setErrorTitle('Input error');
+				// $objValidation->setError('Number is not allowed!');
+				// $objValidation->setPromptTitle('Allowed input');
+				// $objValidation->setPrompt('Only numbers between 10 and 20 are allowed.');
+				// $objValidation->setFormula1(10);
+				// $objValidation->setFormula2(20);
+				// $objPHPExcel->getActiveSheet()->getCell('H3')->setDataValidation($objValidation);
+
 				//$row++;
 
 				$objPHPExcel->setActiveSheetIndex($sheet)->setSharedStyle($tableHead, 'A4:E5');
@@ -4002,7 +4068,7 @@ $table = $section->addTable(array("cellMargin"=>0));
 		ob_start();
 
 		header('Content-Type: application/vnd.ms-excel');
-		header('Content-Disposition: attachment;filename="statement_report.xls"');
+		header('Content-Disposition: attachment;filename="statement_report.xlsx"');
 		header('Cache-Control: max-age=0');
 		// If you're serving to IE 9, then the following may be needed
 		header('Cache-Control: max-age=1');
@@ -4013,7 +4079,7 @@ $table = $section->addTable(array("cellMargin"=>0));
 		header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 		header ('Pragma: public'); // HTTP/1.0
         
-		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 		$objWriter->save('php://output');  //
 		Yii::app()->end(); 
     }       
@@ -4872,9 +4938,9 @@ $table = $section->addTable(array("cellMargin"=>0));
 		    
 		    $Criteria = new CDbCriteria();
 			$dateStr = explode("/", $date_start);
-			$date_start = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+			$date_start = ($dateStr[2]-543)."-".$dateStr[1]."-".$dateStr[0];
 			$dateStr = explode("/", $date_end);
-			$date_end = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+			$date_end = ($dateStr[2]-543)."-".$dateStr[1]."-".$dateStr[0];
 
 
 			$Criteria->join = 'LEFT JOIN project_contract ON pc_proj_id=pj_id'; 
@@ -5146,34 +5212,45 @@ $table = $section->addTable(array("cellMargin"=>0));
 	            foreach($autoIdAll as $autoId)
 	            {
 	                $model = OutsourceContract::model()->findByPk($autoId);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$model->oc_code."\r ลว. ".$this->renderDate($model->oc_sign_date));
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$model->oc_cost);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$this->renderDate($model->oc_end_date));
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,$this->renderDate($model->oc_guarantee_date));
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$model->oc_guarantee);
 
-	        		$cost = str_replace(",","",$model->oc_cost);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,number_format($model->oc_guarantee_cost,2));
+	                $Criteria = new CDbCriteria(); 
+	                $Criteria->condition = 'contract_id = ' . $autoId;
+	                $Criteria->order = 'guarantee_date ASC'; 
+	                $guarantee_models = Guarantee::model()->findAll($Criteria);
 
-	        		$row++;
-	        		$no++;
+	                foreach ($guarantee_models as $key => $value) {
+	                	
+		        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
+		        		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('B'.$row.':C'.$row);
+		        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$model->oc_code."\r ลว. ".$this->renderDate($model->oc_sign_date));
+		        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$model->oc_cost);
+		        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,$this->renderDate($model->oc_end_date));
+		        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$this->renderDate($value->guarantee_date));
+		        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,$value->guarantee_no);
+
+		        		
+		        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row,number_format($value->cost,2));
+
+		        		$row++;
+		        		$no++;
+		        	}	
 
 	            }
 	        }	
 
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,"รายละเอียดประกอบ");
 
-	        $objPHPExcel->getActiveSheet()->setSharedStyle($detail_tb, 'A7:H'.($row-1));
-		    $objPHPExcel->getActiveSheet()->getStyle('A7:H'.($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	 
-		    $objPHPExcel->getActiveSheet()->getStyle('A7:H'.($row-1))->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
-		     $objPHPExcel->getActiveSheet()->getStyle('A7:H'.($row-1))->getAlignment()->setWrapText(true);		
+	        $objPHPExcel->getActiveSheet()->setSharedStyle($detail_tb, 'A7:I'.($row-1));
+		    $objPHPExcel->getActiveSheet()->getStyle('A7:I'.($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	 
+		    $objPHPExcel->getActiveSheet()->getStyle('A7:I'.($row-1))->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
+		     $objPHPExcel->getActiveSheet()->getStyle('A7:I'.($row-1))->getAlignment()->setWrapText(true);		
 		    
 		  	 $objPHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);	
 		    foreach($objPHPExcel->getActiveSheet()->getRowDimensions() as $rd) { 
 			    $rd->setRowHeight(-1); 
 			}
-
+			
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C30'," คืนหนังสือค้ำประกัน (หลักประกันสัญญา) จำนวน ".($no-1)." ฉบับ");
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B31',"ให้".$vendor_name);
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F31',"จากผู้ซื้อแล้ว");
 		   
@@ -5213,8 +5290,6 @@ $table = $section->addTable(array("cellMargin"=>0));
 
     public function actionGentFormAdvGuarantee()
     {
-
-
 
     	  
 		   Yii::import('ext.phpexcel.XPHPExcel');    
@@ -5387,14 +5462,15 @@ $table = $section->addTable(array("cellMargin"=>0));
 	            {
 	                $model = OutsourceContract::model()->findByPk($autoId);
 	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
+	        		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('B'.$row.':C'.$row);
 	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$model->oc_code."\r ลว. ".$this->renderDate($model->oc_sign_date));
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$model->oc_cost);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$this->renderDate($model->oc_end_date));
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row,$this->renderDate($model->oc_adv_guarantee_date));
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$model->oc_adv_guarantee);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$model->oc_cost);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,$this->renderDate($model->oc_end_date));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$this->renderDate($model->oc_adv_guarantee_date));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,$model->oc_adv_guarantee);
 
 	        		$cost = str_replace(",","",$model->oc_cost);
-	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,number_format($model->oc_adv_guarantee_cost,2));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row,number_format($model->oc_adv_guarantee_cost,2));
 
 	        		$row++;
 	        		$no++;
@@ -5413,9 +5489,11 @@ $table = $section->addTable(array("cellMargin"=>0));
 		    foreach($objPHPExcel->getActiveSheet()->getRowDimensions() as $rd) { 
 			    $rd->setRowHeight(-1); 
 			}
-
+			
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C30'," คืนหนังสือค้ำประกันการรับเงินค่าจ้างล่วงหน้า จำนวน ".($no-1)." ฉบับ");
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B31',"ให้".$vendor_name);
-			//$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F31',"จากผู้ว่าจ้างแล้ว");
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F31',"จากผู้ว่าจ้างแล้ว");
+		   
 		   
 			$objPHPExcel->getActiveSheet()->getRowDimension(32)->setRowHeight(95);
 
@@ -5446,6 +5524,375 @@ $table = $section->addTable(array("cellMargin"=>0));
 		    );
 
 		    die(json_encode($response));
+
+    }
+
+    public function actionGentManagementExcel()
+    {
+
+    	  
+		   Yii::import('ext.phpexcel.XPHPExcel');    
+		   $objPHPExcel= XPHPExcel::createPHPExcel();
+		   $objReader = PHPExcel_IOFactory::createReader('Excel5');
+           $objPHPExcel = $objReader->load("report/templateManagement.xls");
+
+		    $title = new PHPExcel_Style();
+		    $title->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 16,     
+			            'bold'=>true,         
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			          
+			            
+			    ));
+		    $header = new PHPExcel_Style();
+			$header->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'fill'  => array(
+			            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+			            'color' => array('rgb' =>'64ED74')
+			        ),
+			            
+			    ));
+
+			$header2 = new PHPExcel_Style();
+			$header2->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'fill'  => array(
+			            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+			            'color' => array('rgb' =>'F7E672')
+			        ),
+			            
+			    ));
+
+			$detail = new PHPExcel_Style();
+			$detail->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			             'borders' => array(
+				            'bottom'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'top'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'left'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'right'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	)             
+			        	)			            
+			    ));
+			$detail_tb = new PHPExcel_Style();
+			$detail_tb->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'borders' => array(
+				            'bottom'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'top'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'left'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'right'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	)             
+			        	)
+			    ));
+
+			$pj_id = $_REQUEST['pj_id'];
+			
+			
+			$Criteria = new CDbCriteria();
+			$Criteria->join = 'LEFT JOIN project ON mc_proj_id=pj_id'; 
+			$Criteria->condition = "mc_type=1 AND mc_proj_id=".$pj_id;
+			$Criteria->order = "mc_date ASC";
+			$model_cost = ManagementCost::model()->findAll($Criteria);
+
+			$Criteria = new CDbCriteria();
+			$Criteria->join = 'LEFT JOIN project ON pc_proj_id=pj_id'; 
+			$Criteria->condition = "pc_proj_id=".$pj_id;
+			$model_pc = ProjectContract::model()->findAll($Criteria);
+
+			$Criteria = new CDbCriteria();
+			$Criteria->join = 'LEFT JOIN project ON mc_proj_id=pj_id'; 
+			$Criteria->condition = "mc_in_project=3 AND mc_proj_id=".$pj_id;
+			$model_cost_pj = ManagementCost::model()->findAll($Criteria);
+
+			$management_cost_pj = empty($model_cost_pj) ? 0 : $model_cost_pj[0]->mc_cost;
+
+			
+			//draw title
+		    // $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2',$projects[0]['pc_details']);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1','ค่ารับรองโครงการ '.$model_pc[0]->pc_details);
+		    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2','ตามอนุมัติ รผก.(ย) อนุมัติหลักการค่ารับรองเป็นเงิน '.number_format($management_cost_pj,2).' บาท');  		   
+
+		   //$objPHPExcel->getActiveSheet()->setSharedStyle($title, 'A2');
+		   //$objPHPExcel->getActiveSheet()->getStyle("A2")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	
+
+		    $row = 6;
+		    $no = 1;
+
+		    $remain_cost = $management_cost_pj;
+		    
+	        foreach($model_cost as $model)
+	        {
+                    //print_r($model);	             
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$model->mc_requester);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$model->mc_letter_request);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$model->mc_letter_approve);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,$model->mc_approver);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,number_format($model->mc_approve_cost,2));
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,number_format($model->mc_cost,2));
+	        		 if($model->mc_cost!=0)
+		              $remain_cost -= $model->mc_cost;
+		        	else
+		        	  $remain_cost -= $model->mc_approve_cost; 	
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$row,number_format($remain_cost,2));
+	        		$row++;
+	        		$no++;
+
+	        }
+	        	
+
+	        
+	        $objPHPExcel->getActiveSheet()->setSharedStyle($detail_tb, 'A6:I'.($row-1));
+		    $objPHPExcel->getActiveSheet()->getStyle('A6:I'.($row-1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);	 
+		    $objPHPExcel->getActiveSheet()->getStyle('A6:I'.($row-1))->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
+		     $objPHPExcel->getActiveSheet()->getStyle('A6:I'.($row-1))->getAlignment()->setWrapText(true);		
+		    
+		  	 $objPHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);	
+		    foreach($objPHPExcel->getActiveSheet()->getRowDimensions() as $rd) { 
+			    $rd->setRowHeight(-1); 
+			}
+			
+		  
+
+		    ob_end_clean();
+			ob_start();
+
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="management_report.xls"');
+			header('Cache-Control: max-age=0');
+			// If you're serving to IE 9, then the following may be needed
+			header('Cache-Control: max-age=1');
+
+			// If you're serving to IE over SSL, then the following may be needed
+			header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+			header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+			header ('Pragma: public'); // HTTP/1.0
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			$objWriter->save('php://output');  //
+			// Yii::app()->end(); 
+
+			$xlsData = ob_get_contents();
+			ob_end_clean();
+			$response =  array(
+		        'op' => 'ok',
+		        'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+		    );
+
+		    die(json_encode($response)); 
+
+			
+    }
+
+     public function actionGenManagement()
+    {
+        
+    	$pj_id = $_GET["project"];
+
+		
+        $this->renderPartial('_formManagement', array(
+            'pj_id'=>$pj_id,
+            'display' => 'block',
+        ), false, true);
+
+        
+    }	
+
+
+    public function actionTest()
+    {
+
+    	  
+		   Yii::import('ext.phpexcel.XPHPExcel');    
+		   $objPHPExcel= XPHPExcel::createPHPExcel();
+		   $objReader = PHPExcel_IOFactory::createReader('Excel5');
+           $objPHPExcel = new PHPExcel();
+
+           $objPHPExcel->setActiveSheetIndex(0);
+			$objPHPExcel->getActiveSheet()->setCellValue('A1', "Cell B3 and B5 contain data validation...")
+			    ->setCellValue('A3', "Number:")
+			    ->setCellValue('B3', "10")
+			    ->setCellValue('A5', "List:")
+			    ->setCellValue('B5', "Item A")
+			    ->setCellValue('A7', "List #2:")
+			    ->setCellValue('B7', "Item #2")
+			    ->setCellValue('D2', "Item #1")
+			    ->setCellValue('D3', "Item #2")
+			    ->setCellValue('D4', "Item #3")
+			    ->setCellValue('D5', "Item #4")
+			    ->setCellValue('D6', "Item #5")
+			    ->setCellValue('A9', 'Text:')
+			    ;
+
+
+			// Set data validation
+			echo date('H:i:s') , " Set data validation";
+			$objValidation = $objPHPExcel->getActiveSheet()->getCell('B3')->getDataValidation();
+			$objValidation->setType( PHPExcel_Cell_DataValidation::TYPE_WHOLE );
+			$objValidation->setErrorStyle( PHPExcel_Cell_DataValidation::STYLE_STOP );
+			$objValidation->setAllowBlank(true);
+			$objValidation->setShowInputMessage(true);
+			$objValidation->setShowErrorMessage(true);
+			$objValidation->setErrorTitle('Input error');
+			$objValidation->setError('Only numbers between 10 and 20 are allowed!');
+			$objValidation->setPromptTitle('Allowed input');
+			$objValidation->setPrompt('Only numbers between 10 and 20 are allowed.');
+			$objValidation->setFormula1(10);
+			$objValidation->setFormula2(20);
+
+			$objValidation = $objPHPExcel->getActiveSheet()->getCell('B5')->getDataValidation();
+			$objValidation->setType( PHPExcel_Cell_DataValidation::TYPE_LIST );
+			$objValidation->setErrorStyle( PHPExcel_Cell_DataValidation::STYLE_INFORMATION );
+			$objValidation->setAllowBlank(false);
+			$objValidation->setShowInputMessage(true);
+			$objValidation->setShowErrorMessage(true);
+			$objValidation->setShowDropDown(true);
+			$objValidation->setErrorTitle('Input error');
+			$objValidation->setError('Value is not in list.');
+			$objValidation->setPromptTitle('Pick from list');
+			$objValidation->setPrompt('Please pick a value from the drop-down list.');
+			$objValidation->setFormula1('"Item A,Item B,Item C"');	// Make sure to put the list items between " and " if your list is simply a comma-separated list of values !!!
+
+
+			$objValidation = $objPHPExcel->getActiveSheet()->getCell('B7')->getDataValidation();
+			$objValidation->setType( PHPExcel_Cell_DataValidation::TYPE_LIST );
+			$objValidation->setErrorStyle( PHPExcel_Cell_DataValidation::STYLE_INFORMATION );
+			$objValidation->setAllowBlank(false);
+			$objValidation->setShowInputMessage(true);
+			$objValidation->setShowErrorMessage(true);
+			$objValidation->setShowDropDown(true);
+			$objValidation->setErrorTitle('Input error');
+			$objValidation->setError('Value is not in list.');
+			$objValidation->setPromptTitle('Pick from list');
+			$objValidation->setPrompt('Please pick a value from the drop-down list.');
+			$objValidation->setFormula1('$D$2:$D$6');	// Make sure NOT to put a range of cells or a formula between " and "  !!!
+
+			$objValidation = $objPHPExcel->getActiveSheet()->getCell('B9')->getDataValidation();
+			$objValidation->setType( PHPExcel_Cell_DataValidation::TYPE_TEXTLENGTH );
+			$objValidation->setErrorStyle( PHPExcel_Cell_DataValidation::STYLE_STOP );
+			$objValidation->setAllowBlank(true);
+			$objValidation->setShowInputMessage(true);
+			$objValidation->setShowErrorMessage(true);
+			$objValidation->setErrorTitle('Input error');
+			$objValidation->setError('Text exceeds maximum length');
+			$objValidation->setPromptTitle('Allowed input');
+			$objValidation->setPrompt('Maximum text length is 6 characters.');
+			$objValidation->setFormula1(6);
+
+
+			// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+			$objPHPExcel->setActiveSheetIndex(0);
+
+
+			// Save Excel 2007 file
+			
+			//$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+			//$objWriter->save(str_replace('.php', '.xlsx', __FILE__));
+
+			ob_end_clean();
+			ob_start();
+
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="test.xlsx"');
+			header('Cache-Control: max-age=0');
+			// If you're serving to IE 9, then the following may be needed
+			header('Cache-Control: max-age=1');
+
+			// If you're serving to IE over SSL, then the following may be needed
+			header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+			header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+			header ('Pragma: public'); // HTTP/1.0
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,  'Excel2007');
+			$objWriter->save('php://output');  //
+			// Yii::app()->end(); 
+
+			$xlsData = ob_get_contents();
+			//ob_end_clean();
+			$response =  array(
+		        'op' => 'ok',
+		        'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+		    );
+
 
     }	
 

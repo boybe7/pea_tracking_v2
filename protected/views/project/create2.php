@@ -9,4 +9,4 @@ $this->breadcrumbs=array(
 
 <h3>เพิ่มข้อมูลโครงการ</h3>
 
-<?php echo $this->renderPartial('_form2', array('model'=>$model,'outsource'=>$outsource,'numContracts'=>$numContracts,'modelValidate'=>$modelValidate)); ?>
+<?php echo $this->renderPartial('_form2', array('model'=>$model,'outsource'=>$outsource,'numContracts'=>$numContracts,'modelValidate'=>$modelValidate,'managementCost'=>$managementCost)); ?>

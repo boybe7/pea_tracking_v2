@@ -32,6 +32,7 @@ class OutsourceContract extends CActiveRecord
 	private $idCache;
 	public $sumpay = 0;
 	public $sumremain = 0;
+	public $guarantee_date = 0;
 
 
 	private $_oldattributes = array();
@@ -92,6 +93,7 @@ class OutsourceContract extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'guarantee' => array(self::HAS_MANY, 'Guarantee', 'contract_id'),
 		);
 	}
 	public function beforeSave()
@@ -102,29 +104,30 @@ class OutsourceContract extends CActiveRecord
 		 // }
 		//$this->oc_cost = str_replace(",", "", $this->oc_cost);
 		 $this->oc_cost = Yii::app()->format->unformatNumber($this->oc_cost); 
+		 $this->oc_adv_guarantee_cost = Yii::app()->format->unformatNumber($this->oc_adv_guarantee_cost); 
 
         $str_date = explode("/", $this->oc_sign_date);
         if(count($str_date)>1)
-        	$this->oc_sign_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->oc_sign_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         $str_date = explode("/", $this->oc_end_date);
         if(count($str_date)>1)
-        	$this->oc_end_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->oc_end_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         $str_date = explode("/", $this->oc_approve_date);
         if(count($str_date)>1)
-        	$this->oc_approve_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->oc_approve_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         $str_date = explode("/", $this->oc_insurance_start);
         if(count($str_date)>1)
-        	$this->oc_insurance_start= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->oc_insurance_start= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         $str_date = explode("/", $this->oc_insurance_end);
         if(count($str_date)>1)
-        	$this->oc_insurance_end= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->oc_insurance_end= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         $str_date = explode("/", $this->oc_guarantee_date);
         if(count($str_date)>1)
-        	$this->oc_guarantee_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->oc_guarantee_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
 
         $str_date = explode("/", $this->oc_adv_guarantee_date);
         if(count($str_date)>1)
-        	$this->oc_adv_guarantee_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->oc_adv_guarantee_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
 
         //check record is updated
         $newattributes = $this->Owner->getAttributes();
@@ -171,27 +174,47 @@ class OutsourceContract extends CActiveRecord
 
 	    $this->oc_cost = Yii::app()->format->number($this->oc_cost);
 	    $str_date = explode("-", $this->oc_sign_date);
-        if(count($str_date)>1)
-        	$this->oc_sign_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];
+	    if($this->oc_sign_date == "0000-00-00")
+        	$this->oc_sign_date = ""; 
+        else if(count($str_date)>1)
+        	$this->oc_sign_date= $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
+        
         $str_date = explode("-", $this->oc_end_date);
-        if(count($str_date)>1)
-        	$this->oc_end_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];
+        if($this->oc_end_date == "0000-00-00")
+        	$this->oc_end_date = "";
+        else if(count($str_date)>1)
+        	$this->oc_end_date= $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
         $str_date = explode("-", $this->oc_approve_date);
-        if(count($str_date)>1)
-        	$this->oc_approve_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];
+        
+        if($this->oc_approve_date == "0000-00-00")
+        	$this->oc_approve_date = "";
+        else if(count($str_date)>1)
+        	$this->oc_approve_date= $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
+        
         $str_date = explode("-", $this->oc_insurance_start);
-        if(count($str_date)>1)
-        	$this->oc_insurance_start= $str_date[2]."/".$str_date[1]."/".$str_date[0];
+        if($this->oc_insurance_start == "0000-00-00")
+        	$this->oc_insurance_start = "";
+        else if(count($str_date)>1)
+        	$this->oc_insurance_start= $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
+        
+
         $str_date = explode("-", $this->oc_insurance_end);
-        if(count($str_date)>1)
-        	$this->oc_insurance_end= $str_date[2]."/".$str_date[1]."/".$str_date[0];
+        if($this->oc_insurance_end == "0000-00-00")
+        	$this->oc_insurance_end = "";
+        else if(count($str_date)>1)
+        	$this->oc_insurance_end= $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
+        
         $str_date = explode("-", $this->oc_guarantee_date);
-        if(count($str_date)>1)
-        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];
+        if($this->oc_guarantee_date == "0000-00-00")
+        	$this->oc_guarantee_date = "";
+        else if(count($str_date)>1)
+        	$this->oc_guarantee_date= $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
 
         $str_date = explode("-", $this->oc_adv_guarantee_date);
-        if(count($str_date)>1)
-        	$this->oc_adv_guarantee_date= $str_date[2]."/".$str_date[1]."/".$str_date[0];	    
+        if($this->oc_adv_guarantee_date == "0000-00-00")
+        	$this->oc_adv_guarantee_date = "";
+        else if(count($str_date)>1)
+        	$this->oc_adv_guarantee_date= $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);	    
 
 
         $pp = Yii::app()->db->createCommand()
@@ -250,7 +273,7 @@ class OutsourceContract extends CActiveRecord
 			'oc_sign_date' => 'วันที่ลงนาม',
 			'oc_end_date' => 'วันที่ครบกำหนดสัญญา',
 			'oc_approve_date' => 'วันที่รับรองงบ',
-			'oc_cost' => 'วงเงิน',
+			'oc_cost' => 'วงเงิน(ไม่รวมภาษีมูลค่าเพิ่ม)',
 			'oc_T_percent' => '%ความก้าวหน้าเทคนิค(T)',
 			'oc_A_percent' => '%ความก้าวหน้าจ่ายเงิน(A)',
 			'oc_guarantee' => 'หนังสือค้ำประกันสัญญา',
@@ -269,9 +292,9 @@ class OutsourceContract extends CActiveRecord
 			'oc_guarantee_date'=>'วันที่ครบกำหนดประกันสัญญา',
 			'oc_guarantee_end'=>'เลขที่บันทึกส่งคืนหนังสือค้ำประกันส่งกองการเงิน/วันที่',
 			'notify_1000_close'=>'เลขที่บันทึกของบ .1000',
-			'oc_guarantee_cost'=>'วงเงินค้ำประกัน',
+			'oc_guarantee_cost'=>'วงเงินค้ำประกัน(ไม่รวมภาษีมูลค่าเพิ่ม)',
 			'oc_adv_guarantee_date'=>'วันที่สิ้นสุดค้ำประกันล่วงหน้า',
-			'oc_adv_guarantee_cost'=>'วงเงินค้ำประกันล่วงหน้า'
+			'oc_adv_guarantee_cost'=>'วงเงินค้ำประกันล่วงหน้า(ไม่รวมภาษีมูลค่าเพิ่ม)'
 
 		);
 	}
@@ -329,14 +352,35 @@ class OutsourceContract extends CActiveRecord
 		$criteria->compare('oc_guarantee_cf',$this->oc_guarantee_cf,true);
 		$criteria->compare('oc_adv_guarantee',$this->oc_adv_guarantee,true);
 		$criteria->compare('oc_adv_guarantee_cf',$this->oc_adv_guarantee_cf,true);
+		$criteria->compare('oc_adv_guarantee_date',$this->oc_adv_guarantee_date,true);
 		$criteria->compare('oc_insurance',$this->oc_insurance,true);
 		$criteria->compare('oc_letter',$this->oc_letter,true);
 		$criteria->compare('oc_user_create',$this->oc_user_create);
 		$criteria->compare('oc_user_update',$this->oc_user_update);
 		$criteria->compare('notify_1000',$this->notify_1000);
+
+
+		$criteria->join = 'LEFT JOIN guarantee ON contract_id=oc_id';
+
+		$criteria->distinct=true;
+		$criteria->order = 'guarantee.guarantee_date IS NULL, guarantee.guarantee_date ASC'; 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+
+	public function getGuaranteeDate()
+	{
+		
+		$model = Yii::app()->db->createCommand()
+                    ->select('guarantee_date')
+                    ->from('guarantee')
+                    ->limit(1)
+                    ->where("contract_id=".$this->oc_id)
+                    ->order('guarantee_date asc')
+                    ->queryAll();
+		$date = empty($model) ? "":$model[0]['guarantee_date'] ;
+		return $date;
 	}
 
 	/**

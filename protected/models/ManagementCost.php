@@ -30,13 +30,13 @@ class ManagementCost extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('mc_proj_id, mc_type, mc_cost, mc_date, mc_user_update', 'required'),
+			array('mc_proj_id', 'required'),
 			array('mc_proj_id, mc_type, mc_user_update', 'numerical', 'integerOnly'=>true),
-			array('mc_cost', 'numerical'),
+			array('mc_approve_cost,mc_cost', 'numerical'),
 			array('mc_detail', 'length', 'max'=>400),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('mc_id,mc_in_project, mc_proj_id, mc_type, mc_detail, mc_cost, mc_date, mc_user_update', 'safe', 'on'=>'search'),
+			array('mc_id,mc_in_project, mc_proj_id, mc_type, mc_detail, mc_cost, mc_date, mc_user_update,mc_requester,mc_letter_approve,mc_letter_request,mc_approve_cost,mc_approver', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -61,9 +61,15 @@ class ManagementCost extends CActiveRecord
 			'mc_proj_id' => 'โครงการ',
 			'mc_type' => 'ประเภท',//' [1 ประมาณการ, 2 ค่ารับรอง, 3 ใช้จริง]',
 			'mc_detail' => 'รายการ',
-			'mc_cost' => 'ค่าใช้จ่าย(บาท)',
+			'mc_cost' => 'ค่าใช้จ่าย(ไม่รวมภาษีมูลค่าเพิ่ม)',
 			'mc_date' => 'วันที่ใช้จ่าย',
 			'mc_user_update' => 'ผู้บันทึก',
+
+			'mc_requester' => 'ผู้ขออนุมัติเบิก',//' [1 ประมาณการ, 2 ค่ารับรอง, 3 ใช้จริง]',
+			'mc_letter_request' => 'บันทึกขออนุมัติค่ารับรอง',
+			'mc_letter_approve' => 'บันทึกขออนุมัติเบิกค่าใช้จ่ายรับรอง',
+			'mc_approver' => 'ผู้อนุมัติ',
+			'mc_approve_cost' => 'วงเงินอนุมัติ',
 		);
 	}
 
@@ -92,6 +98,12 @@ class ManagementCost extends CActiveRecord
 		$criteria->compare('mc_cost',$this->mc_cost);
 		$criteria->compare('mc_date',$this->mc_date,true);
 		$criteria->compare('mc_user_update',$this->mc_user_update);
+
+		$criteria->compare('mc_requester',$this->mc_requester,true);
+		$criteria->compare('mc_letter_request',$this->mc_letter_request,true);
+		$criteria->compare('mc_letter_approve',$this->mc_letter_approve,true);
+		$criteria->compare('mc_approver',$this->mc_approver,true);
+		$criteria->compare('mc_approve_cost',$this->mc_approve_cost);
 		$user_dept = Yii::app()->user->userdept;
 		if(!Yii::app()->user->isExecutive())
 		{
@@ -117,6 +129,12 @@ class ManagementCost extends CActiveRecord
 		$criteria->compare('mc_cost',$this->mc_cost);
 		$criteria->compare('mc_date',$this->mc_date,true);
 		$criteria->compare('mc_user_update',$this->mc_user_update);
+
+		$criteria->compare('mc_requester',$this->mc_requester,true);
+		$criteria->compare('mc_letter_request',$this->mc_letter_request,true);
+		$criteria->compare('mc_letter_approve',$this->mc_letter_approve,true);
+		$criteria->compare('mc_approver',$this->mc_approver,true);
+		$criteria->compare('mc_approve_cost',$this->mc_approve_cost);
 		$user_dept = Yii::app()->user->userdept;
 		if(!Yii::app()->user->isExecutive())
 		{
@@ -133,25 +151,73 @@ class ManagementCost extends CActiveRecord
 	protected function afterFind(){
             parent::afterFind();
 
-            switch ($this->mc_type) {
-            	case 0:
-            		$this->mc_type = "ประมาณการ";
-            		break;
-            	case 1:
-            		$this->mc_type = "ค่ารับรอง";
-            		break;
-            	case 2:
-            		$this->mc_type = "ค่าใช้จ่ายบริหารโครงการ";
-            		break;	
-            	case 3:
-            		$this->mc_type = "ค่าใช้จ่ายด้านบุคลากร";
-            		break;	
-            	default:
-            		# code...
-            		break;
-            }
+            // switch ($this->mc_type) {
+            // 	case 0:
+            // 		$this->mc_type = "ประมาณการ";
+            // 		break;
+            // 	case 1:
+            // 		$this->mc_type = "ค่ารับรอง";
+            // 		break;
+            // 	case 2:
+            // 		$this->mc_type = "ค่าใช้จ่ายบริหารโครงการ";
+            // 		break;	
+            // 	case 3:
+            // 		$this->mc_type = "ค่าใช้จ่ายด้านบุคลากร";
+            // 		break;	
+            // 	default:
+            // 		# code...
+            // 		break;
+            // }
 
+            $str_date = explode("-", $this->mc_date);
+            if(count($str_date)>1)
+            	$this->mc_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543); //convert to cristian year
+            	//$this->mc_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+
+            if($this->mc_date == "00/00/0000")
+                $this->mc_date = '-';
+   
     }
+    protected function afterSave(){
+            parent::afterSave();
+            $str_date = explode("-", $this->mc_date);
+            if(count($str_date)>1)
+            	$this->mc_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+            
+    }
+
+
+    public function beforeSave()
+    {
+        if($this->mc_date!="")
+        {
+
+            $str_date = explode("/", $this->mc_date);
+            if(count($str_date)>1)
+            $this->mc_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];   //convert to cristian year
+
+        }	
+
+        //check money value
+      
+        $this->mc_cost = Yii::app()->format->unformatNumber($this->mc_cost); 
+		$this->mc_approve_cost = Yii::app()->format->unformatNumber($this->mc_approve_cost); 
+        
+
+        return parent::beforeSave();
+   }
+
+    public function beforeValidate()
+    {
+       
+        //check money value
+      
+        $this->mc_cost = Yii::app()->format->unformatNumber($this->mc_cost); 
+		$this->mc_approve_cost = Yii::app()->format->unformatNumber($this->mc_approve_cost); 
+        
+
+        return parent::beforeValidate();
+   }
 
 	/**
 	 * Returns the static model of the specified AR class.

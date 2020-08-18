@@ -45,14 +45,22 @@ hr {
 	
 	$(function(){
         //autocomplete search on focus    	
-	    $("#pj_vendor_id").autocomplete({
+	    $("#pj_vendor_id,#pj_manager_name,#pj_director_name").autocomplete({
        
                 minLength: 0
             }).bind('focus', function () {
                 $(this).autocomplete("search");
       });
 
-      
+      $( "input[name*='pj_manager_name']" ).autocomplete({
+       
+                minLength: 0
+      }).bind('focus', function () {
+             //console.log("focus");
+                $(this).autocomplete("search");
+      });
+
+       $("#expect_cost1,#expect_cost2,#expect_cost3").maskMoney({"symbolStay":true,"thousands":",","decimal":".","precision":2,"symbol":null})  
       
         // Check browser support
       if (typeof(Storage) != "undefined") {
@@ -151,6 +159,8 @@ hr {
     <div class="tab-content">
         
       <?php 
+
+        echo "<input type='hidden' name='pj_id' id='pj_id' value=".$model->pj_id.">";
 
         if($tab==1)
           echo '<div class="tab-pane  active" id="projTab">';
@@ -344,65 +354,68 @@ hr {
             
         ?>
           </div>
-          <div class="row-fluid">
-            <div class="span12">
-             <?php 
-               $mc = Yii::app()->db->createCommand()
-                      ->select('mc_cost')
-                      ->from('management_cost')
-                      ->where('mc_proj_id=:id AND mc_in_project=1 AND mc_type=0', array(':id'=>$model->pj_id))
-                      ->queryAll();
+          
+          <div class="row-fluid">  
+            <div class="span7">
+            <?php 
+              //echo $form->textFieldRow($model,'pj_manager_name',array('class'=>'span12')); 
 
-               $value = '';
-               if(!empty($mc))
-                 $value = number_format($mc[0]["mc_cost"],2);   
+              //echo CHtml::activeHiddenField($model, 'pj_manager_name'); 
+              echo CHtml::activeLabelEx($model, 'pj_manager_name'); 
+                    
+                    $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+                            //'name'=>'pj_manager_name',
+                            //'id'=>'pj_manager_name',
+                          'model' => $model,
+                          'attribute' => 'pj_manager_name',
+                          'value'=> $model->pj_manager_name,
+                          'source'=>'js: function(request, response) {
+                                $.ajax({
+                                    url: "'.$this->createUrl('Project/GetManager').'",
+                                    dataType: "json",
+                                    data: {
+                                        term: request.term,
+                                       
+                                    },
+                                    success: function (data) {
+                                            response(data);
 
-       
-               echo CHtml::label('เงินประมาณการค่าใช้จ่ายในการบริหารโครงการ (บาท)','expect_cost1');        
-               echo "<input type='text' id='expect_cost1' name='expect_cost1' class='span6' style='text-align:right' value='$value' >"; 
+                                    }
+                                })
+                             }',
+                            'options'=>array(
+                                     'showAnim'=>'fold',
+                                     'minLength'=>0,
+                                     'select'=>'js: function(event, ui) {
+                                        
+                                           $("#Project_pj_manager_name").val(ui.item.id);
+                                        
+                                     }'
+                                    
+                                     
+                            ),
+                           'htmlOptions'=>array(
+
+                                'class'=>$model->hasErrors('pj_manager_name')?'span12 error ':'span12 '
+                            ),
+                                  
+                        ));
             ?>
             </div>
-          </div>
-          <div class="row-fluid">   
-            <div class="span12">
-             <?php 
-               $mc = Yii::app()->db->createCommand()
-                      ->select('mc_cost')
-                      ->from('management_cost')
-                      ->where('mc_proj_id=:id AND mc_in_project=2 AND mc_type=0', array(':id'=>$model->pj_id))
-                      ->queryAll();
-
-                $value = '';
-               if(!empty($mc))
-                 $value = number_format($mc[0]["mc_cost"],2);       
-        
-               echo CHtml::label('เงินประมาณการค่าใช้จ่ายด้านบุคลากร (บาท)','expect_cost2');        
-               echo "<input type='text' id='expect_cost2' name='expect_cost2' class='span6' style='text-align:right' value='$value'>";
-
-            ?>
+            <div class="span5">
+            <?php echo $form->textFieldRow($model,'pj_manager_position',array('class'=>'span12')); ?>
             </div>
           </div>
-           <div class="row-fluid">   
-            <div class="span12">
-             <?php 
-               $mc = Yii::app()->db->createCommand()
-                      ->select('mc_cost')
-                      ->from('management_cost')
-                      ->where('mc_proj_id=:id AND mc_in_project=3 AND mc_type=0', array(':id'=>$model->pj_id))
-                      ->queryAll();
-
-                $value = '';
-               if(!empty($mc))
-                 $value = number_format($mc[0]["mc_cost"],2);       
-        
-               echo CHtml::label('เงินประมาณการค่ารับรอง (บาท)','expect_cost3');        
-               echo "<input type='text' id='expect_cost3' name='expect_cost3' class='span6' style='text-align:right' value='$value'>";
-
-            ?>
+          <div class="row-fluid">  
+            <div class="span7">
+            <?php echo $form->textFieldRow($model,'pj_director_name',array('class'=>'span12')); ?>
+            </div>
+            <div class="span5">
+            <?php echo $form->textFieldRow($model,'pj_director_position',array('class'=>'span12')); ?>
             </div>
           </div>
 
-           <div class="row-fluid">  
+          <div class="row-fluid">  
             <div class="span12">
             <?php echo $form->textFieldRow($model,'pj_close',array('class'=>'span6')); ?>
             </div>
@@ -410,7 +423,8 @@ hr {
 
 
         </div>  
-      <div class="well-blue span4">
+        <div class="span4">
+          <div class="well-blue">
       			<?php 
       			
            
@@ -453,9 +467,68 @@ hr {
                         
             </table>
              <?php echo $form->textFieldRow($model,'pj_CA',array('class'=>'span12','maxlength'=>200)); ?>
-            
+            </div>
+            <div class="well-blue">
+            <div class="row-fluid">
+            <div class="span12">
+             <?php 
+               $mc = Yii::app()->db->createCommand()
+                      ->select('mc_cost')
+                      ->from('management_cost')
+                      ->where('mc_proj_id=:id AND mc_in_project=1 AND mc_type=0', array(':id'=>$model->pj_id))
+                      ->queryAll();
+
+               $value = '';
+               if(!empty($mc))
+                 $value = number_format($mc[0]["mc_cost"],2);   
+
+       
+               echo CHtml::label('เงินประมาณการค่าใช้จ่ายในการบริหารโครงการ(ไม่รวมภาษีมูลค่าเพิ่ม)','expect_cost1');        
+               echo "<input type='text' id='expect_cost1' name='expect_cost1' class='span12' style='text-align:right' value='$value' >"; 
+            ?>
+            </div>
+          </div>
+          <div class="row-fluid">   
+            <div class="span12">
+             <?php 
+               $mc = Yii::app()->db->createCommand()
+                      ->select('mc_cost')
+                      ->from('management_cost')
+                      ->where('mc_proj_id=:id AND mc_in_project=2 AND mc_type=0', array(':id'=>$model->pj_id))
+                      ->queryAll();
+
+                $value = '';
+               if(!empty($mc))
+                 $value = number_format($mc[0]["mc_cost"],2);       
+        
+               echo CHtml::label('เงินประมาณการค่าใช้จ่ายด้านบุคลากร(ไม่รวมภาษีมูลค่าเพิ่ม)','expect_cost2');        
+               echo "<input type='text' id='expect_cost2' name='expect_cost2' class='span12' style='text-align:right' value='$value'>";
+
+            ?>
+            </div>
+          </div>
+           <div class="row-fluid">   
+            <div class="span12">
+             <?php 
+               $mc = Yii::app()->db->createCommand()
+                      ->select('mc_cost')
+                      ->from('management_cost')
+                      ->where('mc_proj_id=:id AND mc_in_project=3 AND mc_type=0', array(':id'=>$model->pj_id))
+                      ->queryAll();
+
+                $value = '';
+               if(!empty($mc))
+                 $value = number_format($mc[0]["mc_cost"],2);       
+        
+               echo CHtml::label('เงินประมาณการค่ารับรอง(ไม่รวมภาษีมูลค่าเพิ่ม)','expect_cost3');        
+               echo "<input type='text' id='expect_cost3' name='expect_cost3' class='span12' style='text-align:right' value='$value'>";
+
+            ?>
+            </div>
+          </div>
+
     		</div>
-    		
+    	</div>	
     		
   		</div>
       <h4>สัญญาหลัก</h4>
@@ -862,6 +935,20 @@ hr {
     </div>
 </div>
 
+<div id="modalGuarantee"  class="modal hide fade">
+    <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>แก้ไขข้อมูลรายการ ค้ำประกันสัญญา</h3>
+    </div>
+    <div class="modal-body" id="bodyGuarantee">
+     
+    </div>
+    <div class="modal-footer">
+    <a href="#" class="btn btn-danger" id="modalGuaranteeCancel">ยกเลิก</a>
+    <a href="#" class="btn btn-primary" id="modalGuaranteeSubmit">บันทึก</a>
+    </div>
+</div>
+
 
 <div id="modalApproveOc"  class="modal hide fade">
     <div class="modal-header">
@@ -944,6 +1031,15 @@ hr {
        $model4=new ContractChangeHistoryTemp;
       
       $this->renderPartial('/contractChangeHistory/_form',array('model'=>$model4),false); 
+
+      ?>
+    </div>
+    <div id="modal-body-guarantee">
+<!-- put whatever you want to show up on bootbox here -->
+      <?php 
+       $model4=new Guarantee;
+      
+      $this->renderPartial('/guarantee/_form',array('model'=>$model4),false); 
 
       ?>
     </div>
@@ -1036,10 +1132,11 @@ Yii::app()->clientScript->registerScript('loadoutsource', '
 var _index = ' . $index2 . ';
 $("#loadOutsourceByAjax").click(function(e){
      var _index = $("#num").val();
+     var _pj_id = $("#pj_id").val();
      _index++;
      console.log(_index);
     e.preventDefault();
-    var _url = "' . Yii::app()->controller->createUrl("loadOutsourceByAjaxTemp", array("load_for" => $this->action->id)) . '&index="+_index;
+    var _url = "' . Yii::app()->controller->createUrl("loadOutsourceByAjaxTemp", array("load_for" => $this->action->id)) . '&index="+_index+"&pj_id="+_pj_id;
     $.ajax({
                               url: _url,
                               success:function(response){

@@ -158,10 +158,10 @@ class PaymentProjectContract extends CActiveRecord
 
         $str_date = explode("/", $this->invoice_date);
         if(count($str_date)>1)
-        	$this->invoice_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->invoice_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         $str_date = explode("/", $this->bill_date);
         if(count($str_date)>1)
-        	$this->bill_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->bill_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         return parent::beforeSave();
    }
 
@@ -197,12 +197,12 @@ class PaymentProjectContract extends CActiveRecord
             if($this->invoice_date=='0000-00-00')
             	$this->invoice_date = '';
             else if(count($str_date)>1)
-            	$this->invoice_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+            	$this->invoice_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
             
             $str_date = explode("-", $this->bill_date);
             if($this->bill_date=='0000-00-00')
             	$this->bill_date = '';
             else if(count($str_date)>1)
-            	$this->bill_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+            	$this->bill_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
      }
 }

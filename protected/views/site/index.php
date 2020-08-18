@@ -28,7 +28,7 @@ $cs->registerScriptFile( $theme->getBaseUrl() . '/js/highcharts.js' );
 
 <?php
 
-if(!Yii::app()->user->isExecutive())
+if(Yii::app()->user->isAccess('/notify/index'))
 {
 
 	Yii::app()->clientScript->registerScript('loadnotify', '

@@ -7,6 +7,6 @@ $this->breadcrumbs=array(
 
 ?>
 
-<h3>เพิ่มรายการจ่ายเงินค่าบริหารโครงการ</h3>
+<h3>เพิ่มรายการจ่ายเงินค่ารับรองโครงการ</h3>
 
 <?php echo $this->renderPartial('_form', array('model'=>$model,'id'=>$id)); ?>

@@ -23,7 +23,8 @@ class Notify extends CActiveRecord
 
 	public function getNotify()
 	{
-		$current_date = (date("Y")+543).date("-m-d");
+		//$current_date = (date("Y")+543).date("-m-d");
+		$current_date = date("Y-m-d");
 
 		$user_dept = Yii::app()->user->userdept;
 	    $projectContractData=Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,pc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญา' as alarm_detail,pc_garantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, pc_id as update_id FROM project_contract pc LEFT JOIN project p ON pc.pc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(pc_garantee_date,'".$current_date."')<=7  AND (pc_garantee_end='')  AND user.department_id='$user_dept'")->queryAll(); 

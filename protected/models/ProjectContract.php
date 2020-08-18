@@ -53,7 +53,7 @@ class ProjectContract extends CActiveRecord
 			array('pc_A_percent', 'application.extensions.numericRangeValidator', 'min'=>0, 'max'=>100),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('pc_id,pc_code_request,pc_name_request,pc_num_payment,pc_garantee_end,pc_garantee_date, pc_code, pc_proj_id, pc_vendor_id,pc_PO, pc_details, pc_sign_date, pc_end_date, pc_cost, pc_T_percent, pc_A_percent, pc_guarantee, pc_last_update, pc_user_update', 'safe', 'on'=>'search,create,update'),
+			array('pc_id,pc_code_request,pc_name_request,pc_num_payment,pc_garantee_end,pc_garantee_date, pc_code, pc_proj_id, pc_vendor_id,pc_PO, pc_details, pc_sign_date, pc_end_date, pc_cost, pc_T_percent, pc_A_percent, pc_guarantee, pc_last_update, pc_user_update', 'safe', 'on'=>'search|create|update'),
 		);
 	}
 
@@ -82,7 +82,7 @@ class ProjectContract extends CActiveRecord
 			'pc_details' => 'รายละเอียดสัญญา',
 			'pc_sign_date' => 'วันที่ลงนาม',
 			'pc_end_date' => 'วันที่ครบกำหนดสัญญา',
-			'pc_cost' => 'วงเงิน',
+			'pc_cost' => 'วงเงิน(ไม่รวมภาษีมูลค่าเพิ่ม)',
 			'pc_T_percent' => '%ความก้าวหน้าด้านเทคนิค (T)',
 			'pc_A_percent' => '%ความก้าวหน้าการเรียกเก็บเงิน (A)',
 			'pc_guarantee' => 'หนังสือค้ำประกันสัญญา',
@@ -117,13 +117,13 @@ class ProjectContract extends CActiveRecord
 
         $str_date = explode("/", $this->pc_sign_date);
         if(count($str_date)>1)
-        	$this->pc_sign_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->pc_sign_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         $str_date = explode("/", $this->pc_end_date);
         if(count($str_date)>1)
-        	$this->pc_end_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->pc_end_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         $str_date = explode("/", $this->pc_garantee_date);
         if(count($str_date)>1)
-        	$this->pc_garantee_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->pc_garantee_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         return parent::beforeSave();
    }
      protected function afterSave(){
@@ -143,24 +143,24 @@ class ProjectContract extends CActiveRecord
     protected function afterFind(){
             parent::afterFind();
             $str_date = explode("-", $this->pc_sign_date);
-            if(count($str_date)>1)
-            	$this->pc_sign_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
-            $str_date = explode("-", $this->pc_end_date);
-            if(count($str_date)>1)
-            	$this->pc_end_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
-            $str_date = explode("-", $this->pc_garantee_date);
-            if(count($str_date)>1)
-            	$this->pc_garantee_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
-
-            //$this->pc_A_percent = 10;
-
-            if($this->pc_sign_date == "00/00/0000")
+            if($this->pc_sign_date == "0000-00-00")
                 $this->pc_sign_date = '';
-            if($this->pc_end_date == "00/00/0000")
+            else if(count($str_date)>1)
+            	$this->pc_sign_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
+            
+            $str_date = explode("-", $this->pc_end_date);
+            if($this->pc_end_date == "0000-00-00")
                 $this->pc_end_date = '';
-            if($this->pc_garantee_date == "00/00/0000")
+            else if(count($str_date)>1)
+            	$this->pc_end_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
+            
+            $str_date = explode("-", $this->pc_garantee_date);
+            if($this->pc_garantee_date == "0000-00-00")
                 $this->pc_garantee_date = '';
-            //$this->visit_date=date('Y/m/d', strtotime(str_replace("-", "", $this->visit_date)));       
+            else if(count($str_date)>1)
+            	$this->pc_garantee_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
+
+                  
     }
 
     public function beforeDelete()

@@ -1,6 +1,6 @@
 <?php
 $this->breadcrumbs=array(
-	'ค่าบริหารโครงการ'=>array('index')
+	'ค่ารับรองโครงการ'=>array('index')
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -9,7 +9,7 @@ $('.search-button').click(function(){
 	return false;
 });
 $('.search-form form').submit(function(){
-
+   console.log('submit')
 	$.fn.yiiGridView.update('management-cost-grid', {
 		data: $(this).serialize()
 	});
@@ -19,7 +19,7 @@ $('.search-form form').submit(function(){
 
 Yii::app()->clientScript->registerScript('search', "
 $('#search-form').submit(function(){
-   
+     console.log('submit')
     $.fn.yiiGridView.update('management-cost-grid', {
         data: $(this).serialize()
     });
@@ -45,7 +45,7 @@ $('#search-form').submit(function(){
 
 </script>  
 
-<h1>รายการค่าบริหารโครงการ</h1>
+<h1>รายการค่ารับรองโครงการ</h1>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
     'id'=>'search-form',
@@ -102,7 +102,7 @@ $('#search-form').submit(function(){
                                            $("#pid").val(ui.item.id);
                                            $("#pj_cost").val(ui.item.cost);
                                            $("#cost").val(ui.item.cost);
-                                          //  $("#rm_cost").val(ui.item.remain);
+                                          $("#rm_cost").val(ui.item.remain);
                                            $("#ManagementCost_mc_proj_id").val(ui.item.id);
                                            $("#search-form").submit();
 
@@ -130,12 +130,13 @@ $('#search-form').submit(function(){
        </div>
         <div class="span3"> 
         <?php 
-        echo CHtml::label('คงเหลือค่าบริหารโครงการ','rm_cost');
+        echo CHtml::label('คงเหลือค่ารับรองโครงการ','rm_cost');
 
         $rm_cost = "";
         $pid = isset($_GET["pid"])?$_GET["pid"]:'';
          echo "<input type='hidden' id='pid' name='pid' value='$pid'>";
 
+       
         if($pid !="")
         {
         	$pc = Yii::app()->db->createCommand()
@@ -143,8 +144,7 @@ $('#search-form').submit(function(){
                         ->from('management_cost')
                         ->where('mc_proj_id=:id AND mc_type!=0', array(':id'=>$pid))
                         ->queryAll();
-            //echo ($pc[0]["sum"]);
-
+         
             $cost = str_replace(",", "", $cost);
             $diff = $cost - $pc[0]["sum"]; 
             $rm_cost = number_format($diff,2);
@@ -162,7 +162,8 @@ $('#search-form').submit(function(){
 
 <?php 
 
-
+if(Yii::app()->user->getAccess(Yii::app()->request->url))
+{
 			$this->widget('bootstrap.widgets.TbButton', array(
 			    'buttonType'=>'link',
 			    
@@ -206,63 +207,128 @@ $('#search-form').submit(function(){
 			    ),
 			)); 
 
- $this->widget('bootstrap.widgets.TbGridView',array(
-	'id'=>'management-cost-grid',
-	'type'=>'bordered condensed',
-	'dataProvider'=>$model->search2(),
-	'filter'=>$model,
-	'selectableRows' =>2,
-	'htmlOptions'=>array('style'=>'padding-top:40px;width:100%'),
-    'enablePagination' => true,
-    'enableSorting'=>true,
-    'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
-    'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
-	'columns'=>array(
-		'checkbox'=> array(
-        	    'id'=>'selectedID',
-            	'class'=>'CCheckBoxColumn',
-            	//'selectableRows' => 2, 
-        		 'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
-	  	         'htmlOptions'=>array(
-	  	            	  			'style'=>'text-align:center'
 
-	  	            	  		)   	  		
-        ),
-	
-		'detail'=>array(
-			    'name' => 'mc_detail',
-			    'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #f5f5f5'),  	            	  	
-				'htmlOptions'=>array('style'=>'text-align:left')
-	  	),
-		'money'=>array(
-			    'name' => 'mc_cost',
-          'value'=>'number_format($data->mc_cost,2)',
-			    //'filter'=>CHtml::activeTextField($model, 'pj_fiscalyear',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("pj_fiscalyear"))),
-				'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),  	            	  	
-				'htmlOptions'=>array('style'=>'text-align:right')
-	  	),
-		'type'=>array(
-			    'name' => 'mc_type',
-			    'filter'=>CHtml::activeDropDownList($model,'mc_type',array(1=>'ค่ารับรอง',2=>'ค่าใช้จ่ายบริหารโครงการ',3=>'ค่าใช้จ่ายด้านบุคลากร'),array('empty'=>'','style'=>'height:30px')),
-				'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),  	            	  	
-				'htmlOptions'=>array('style'=>'text-align:right')
-	  	),
-	  	// 'date'=>array(
-			    
-			 //    'name'=>'mc_date',
-			 //    'headerHtmlOptions'=>array(),
-			 //   'headerHtmlOptions' => array('style' => 'width:15%;text-align:center;background-color: #f5f5f5'),  	            	  	
-				// 'htmlOptions'=>array('style'=>'text-align:center')
-	  	// ),
-		array(
-			'header' => '<a class="sort-link">ดู/แก้ไข</a>',
-			'class'=>'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
-			'template' => '{update}'
-		),
-	),
-));
+     $this->widget('bootstrap.widgets.TbGridView',array(
+    	'id'=>'management-cost-grid',
+    	'type'=>'bordered condensed',
+    	'dataProvider'=>$model->search2(),
+    	//'filter'=>$model,
+    	//'selectableRows' =>2,
+    	'htmlOptions'=>array('style'=>'padding-top:40px;width:100%'),
+        'enablePagination' => true,
+        'enableSorting'=>true,
+        'summaryText'=>'xสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+        'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+    	'columns'=>array(
+    		'checkbox'=> array(
+            	    'id'=>'selectedID',
+                	'class'=>'CCheckBoxColumn',
+                	//'selectableRows' => 2, 
+            		 'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
+    	  	         'htmlOptions'=>array(
+    	  	            	  			'style'=>'text-align:center'
 
+    	  	            	  		)   	  		
+            ),
+    	
+    		'detail'=>array(
+    			    'name' => 'mc_detail',
+    			    'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #f5f5f5'),  	            	  	
+    				'htmlOptions'=>array('style'=>'text-align:left')
+    	  	),
+        'money_app'=>array(
+              'name' => 'mc_approve_cost',
+              'value'=>'number_format($data->mc_approve_cost,2)',
+              //'filter'=>CHtml::activeTextField($model, 'pj_fiscalyear',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("pj_fiscalyear"))),
+            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),                     
+            'htmlOptions'=>array('style'=>'text-align:right')
+          ),
+        'money'=>array(
+              'name' => 'mc_cost',
+              'value'=>'number_format($data->mc_cost,2)',
+              //'filter'=>CHtml::activeTextField($model, 'pj_fiscalyear',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("pj_fiscalyear"))),
+            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),                     
+            'htmlOptions'=>array('style'=>'text-align:right')
+          ),
+    		
+    		// 'type'=>array(
+    		// 	    'name' => 'mc_type',
+    		// 	    'filter'=>CHtml::activeDropDownList($model,'mc_type',array(1=>'ค่ารับรอง',2=>'ค่าใช้จ่ายบริหารโครงการ',3=>'ค่าใช้จ่ายด้านบุคลากร'),array('empty'=>'','style'=>'height:30px')),
+    		// 		'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),  	            	  	
+    		// 		'htmlOptions'=>array('style'=>'text-align:right')
+    	 //  	),
+    	  	// 'date'=>array(
+    			    
+    			 //    'name'=>'mc_date',
+    			 //    'headerHtmlOptions'=>array(),
+    			 //   'headerHtmlOptions' => array('style' => 'width:15%;text-align:center;background-color: #f5f5f5'),  	            	  	
+    				// 'htmlOptions'=>array('style'=>'text-align:center')
+    	  	// ),
+    		array(
+    			'header' => '<a class="sort-link">ดู/แก้ไข</a>',
+    			'class'=>'bootstrap.widgets.TbButtonColumn',
+    			'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
+    			'template' => '{update}'
+    		),
+    	),
+    ));
 
+}
+else
+{
+
+         $this->widget('bootstrap.widgets.TbGridView',array(
+      'id'=>'management-cost-grid',
+      'type'=>'bordered condensed',
+      'dataProvider'=>$model->search2(),
+      'filter'=>$model,
+      'selectableRows' =>2,
+      'htmlOptions'=>array('style'=>'padding-top:40px;width:100%'),
+        'enablePagination' => true,
+        'enableSorting'=>true,
+        'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+        'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+      'columns'=>array(
+        'checkbox'=> array(
+                  'id'=>'selectedID',
+                  'class'=>'CCheckBoxColumn',
+                  //'selectableRows' => 2, 
+                 'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
+                   'htmlOptions'=>array(
+                                'style'=>'text-align:center'
+
+                              )           
+            ),
+      
+        'detail'=>array(
+              'name' => 'mc_detail',
+              'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #f5f5f5'),                     
+            'htmlOptions'=>array('style'=>'text-align:left')
+          ),
+        'money_app'=>array(
+              'name' => 'mc_approve_cost',
+              'value'=>'number_format($data->mc_approve_cost,2)',
+              //'filter'=>CHtml::activeTextField($model, 'pj_fiscalyear',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("pj_fiscalyear"))),
+            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),                     
+            'htmlOptions'=>array('style'=>'text-align:right')
+          ),
+        'money'=>array(
+              'name' => 'mc_cost',
+              'value'=>'number_format($data->mc_cost,2)',
+              //'filter'=>CHtml::activeTextField($model, 'pj_fiscalyear',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("pj_fiscalyear"))),
+            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),                     
+            'htmlOptions'=>array('style'=>'text-align:right')
+          ),
+        'type'=>array(
+              'name' => 'mc_type',
+              'filter'=>CHtml::activeDropDownList($model,'mc_type',array(1=>'ค่ารับรอง',2=>'ค่าใช้จ่ายบริหารโครงการ',3=>'ค่าใช้จ่ายด้านบุคลากร'),array('empty'=>'','style'=>'height:30px')),
+            'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),                     
+            'htmlOptions'=>array('style'=>'text-align:right')
+          ),
+         
+      ),
+    ));
+
+}
 
  ?>

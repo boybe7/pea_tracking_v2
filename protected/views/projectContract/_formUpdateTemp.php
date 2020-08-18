@@ -836,7 +836,12 @@ function createApprove(index2)
     }
 
    
-}', CClientScript::POS_END);
+}
+
+ $("input[name*=pc_cost]").maskMoney({"symbolStay":true,"thousands":",","decimal":".","precision":2,"symbol":null}) 
+
+
+', CClientScript::POS_END);
 
 
 ///Yii::app()->clientScript->registerCoreScript('jquery');
@@ -881,4 +886,4 @@ function deleteContract(elm, index)
 }", CClientScript::POS_END);
 ?>
 
-<script type="text/javascript" src="/pea_track/assets/7d883f12/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<!-- <script type="text/javascript" src="/pea_track/assets/7d883f12/bootstrap-datepicker/js/bootstrap-datepicker.js"></script> -->

@@ -73,11 +73,14 @@ class ManagementCostController extends Controller
 		{
 			$model->attributes=$_POST['ManagementCost'];
 
-			$model->mc_date = (date("Y")+543).date("-m-d");
+			
 			$model->mc_user_update = Yii::app()->user->ID;
+			if(empty($_POST['ManagementCost']['mc_date']))
+			     $model->mc_date = (date("Y")).date("-m-d");	
+			$model->mc_type = 1;
 
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
 		}
 
 		$this->render('create',array(
@@ -98,11 +101,11 @@ class ManagementCostController extends Controller
 		{
 			$model->attributes=$_POST['ManagementCost'];
 
-			$model->mc_date = (date("Y")+543).date("-m-d");
+			$model->mc_date = (date("Y")).date("-m-d");
 			$model->mc_user_update = Yii::app()->user->ID;
 
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
 		}
 
 		$this->render('createByNotify',array(
@@ -123,7 +126,7 @@ class ManagementCostController extends Controller
 		{
 			$model->attributes=$_POST['ManagementCost'];
 
-			$model->mc_date = (date("Y")+543).date("-m-d");
+			$model->mc_date = (date("Y")).date("-m-d");
 			$model->mc_user_update = Yii::app()->user->ID;
 
 			if($model->save())
@@ -143,6 +146,7 @@ class ManagementCostController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		//$model2=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -150,8 +154,19 @@ class ManagementCostController extends Controller
 		if(isset($_POST['ManagementCost']))
 		{
 			$model->attributes=$_POST['ManagementCost'];
+			
+			$model->mc_requester = $_POST['ManagementCost']['mc_requester'];
+			$model->mc_letter_approve = $_POST['ManagementCost']['mc_letter_approve'];
+			$model->mc_letter_request = $_POST['ManagementCost']['mc_letter_request'];
+			$model->mc_approve_cost = $_POST['ManagementCost']['mc_approve_cost'];
+			$model->mc_approver = $_POST['ManagementCost']['mc_approver'];
+		
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
+		}
+		else{
+			$model->mc_approve_cost = number_format($model->mc_approve_cost,2);
+			$model->mc_cost = number_format($model->mc_cost,2);
 		}
 
 		$this->render('update',array(
@@ -173,7 +188,7 @@ class ManagementCostController extends Controller
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('index'));
 		}
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');

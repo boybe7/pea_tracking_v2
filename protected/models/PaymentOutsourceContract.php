@@ -63,7 +63,7 @@ class PaymentOutsourceContract extends CActiveRecord
 			'id' => 'id',
 			'contract_id' => 'สัญญา',
 			'detail' => 'รายการ',
-			'money' => 'จ่ายเงิน',
+			'money' => 'จ่ายเงิน(ไม่รวมภาษีมูลค่าเพิ่ม)',
 			'invoice_no' => 'เลขที่ใบแจ้งหนี้',
 			'invoice_receive_date' => 'วันที่ได้รับใบแจ้งหนี้',
 			'invoice_send_date' => 'วันที่ออกใบแจ้งหนี้',
@@ -154,14 +154,14 @@ class PaymentOutsourceContract extends CActiveRecord
 
         $str_date = explode("/", $this->invoice_send_date);
         if(count($str_date)>1)
-        	$this->invoice_send_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->invoice_send_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         $str_date = explode("/", $this->invoice_receive_date);
         if(count($str_date)>1)
-        	$this->invoice_receive_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->invoice_receive_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
 
         $str_date = explode("/", $this->approve_date);
         if(count($str_date)>1)
-        	$this->approve_date= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+        	$this->approve_date= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
         return parent::beforeSave();
    }
 
@@ -204,17 +204,17 @@ class PaymentOutsourceContract extends CActiveRecord
             if($this->invoice_send_date=='0000-00-00')
             	$this->invoice_send_date = '';
             else if(count($str_date)>1)
-            	$this->invoice_send_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+            	$this->invoice_send_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
             $str_date = explode("-", $this->invoice_receive_date);
             if($this->invoice_receive_date=='0000-00-00')
             	$this->invoice_receive_date = '';
             else if(count($str_date)>1)
-            	$this->invoice_receive_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+            	$this->invoice_receive_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
             $str_date = explode("-", $this->approve_date);
             if($this->approve_date=='0000-00-00')
             	$this->approve_date = '';
             else if(count($str_date)>1)
-            	$this->approve_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+            	$this->approve_date = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
      }
 
     public function getInvoiceDate()

@@ -66,7 +66,7 @@ class ContractChangeHistoryController extends Controller
 			$model->attributes=$_POST['ContractChangeHistory'];
 			$model->contract_id = $id;			
 			$model->type = 1;
-			$model->last_update =  (date("Y")+543).date("-m-d H:i:s");
+			$model->last_update =  (date("Y")).date("-m-d H:i:s");
 			if (Yii::app()->request->isAjaxRequest)
 	        {
 	           
@@ -107,7 +107,7 @@ class ContractChangeHistoryController extends Controller
 			$model->attributes=$_POST['ContractChangeHistory'];
 			$model->contract_id = $id;			
 			$model->type = 2;
-			$model->last_update =  (date("Y")+543).date("-m-d H:i:s");
+			$model->last_update =  (date("Y")).date("-m-d H:i:s");
 			if (Yii::app()->request->isAjaxRequest)
 	        {
 	           
@@ -168,7 +168,7 @@ class ContractChangeHistoryController extends Controller
 	        }		
 			else
 			  if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
 
 		}
 
@@ -213,7 +213,7 @@ class ContractChangeHistoryController extends Controller
 	        }		
 			else
 			  if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
 
 		}
 
@@ -243,7 +243,7 @@ class ContractChangeHistoryController extends Controller
 		if(isset($_POST['ContractChangeHistory']))
 		{
 			$model->attributes=$_POST['ContractChangeHistory'];
-			$model->last_update =  (date("Y")+543).date("-m-d H:i:s");
+			$model->last_update =  (date("Y")).date("-m-d H:i:s");
 			if (Yii::app()->request->isAjaxRequest)
 	         {
 	           
@@ -312,7 +312,7 @@ class ContractChangeHistoryController extends Controller
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('index'));
 		}
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');

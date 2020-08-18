@@ -39,14 +39,14 @@ class Project extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('pj_name,pj_status, pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_user_create, pj_user_update', 'required'),
+			array('pj_name,pj_status, pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_user_create, pj_user_update,pj_manager_name,pj_manager_position,pj_director_name,pj_director_position', 'required'),
 			array('pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_user_create, pj_user_update', 'numerical', 'integerOnly'=>true),
-			array('pj_name', 'length', 'max'=>400),
+			array('pj_name,pj_manager_name,pj_manager_position,pj_director_name,pj_director_position', 'length', 'max'=>400),
 			array('pj_date_approved', 'safe'),
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('pj_id,pj_status,cost, pj_name,pj_CA, pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_date_approved, pj_user_create, pj_user_update,workcat_search,pj_close', 'safe', 'on'=>'search,create,update'),
+			array('pj_id,pj_status,cost, pj_name,pj_CA, pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_date_approved, pj_user_create, pj_user_update,workcat_search,pj_close,pj_manager_name,pj_manager_position,pj_director_name,pj_director_position', 'safe', 'on'=>'search,create,update'),
 		);
 	}
 
@@ -88,9 +88,13 @@ class Project extends CActiveRecord
 			'pj_user_create' => 'ผู้สร้างโครงการ',
 			'pj_user_update' => 'ผู้บันทึก',
 			'pj_CA' => 'หมายเลข CA',
-			'cost'=> 'วงเงินรวม',
+			'cost'=> 'วงเงินรวม(ไม่รวมภาษีมูลค่าเพิ่ม)',
 			'pj_status'=>'แล้วเสร็จ',
-			'pj_close'=>'เลขที่หนังสือปิดโครงการ/วันที่'
+			'pj_close'=>'เลขที่หนังสือปิดโครงการ/วันที่',
+			'pj_manager_name'=>'ผู้จัดการโครงการ',
+			'pj_manager_position'=>'ตำแหน่ง',
+			'pj_director_name'=>'ผู้อำนวยการโครงการ',
+			'pj_director_position'=>'ตำแหน่ง'
 		);
 	}
 
@@ -140,7 +144,7 @@ class Project extends CActiveRecord
                                 'desc'=>'cost ASC',
                         ),
                 );
-        $criteria->order = 'pj_fiscalyear DESC';        
+        $criteria->order = 'pj_fiscalyear DESC,pj_id DESC';        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>$sort
@@ -218,9 +222,9 @@ class Project extends CActiveRecord
             parent::afterFind();
             $str_date = explode("-", $this->pj_date_approved);
             if(count($str_date)>1)
-            	$this->pj_date_approved = $str_date[2]."/".$str_date[1]."/".($str_date[0]);
+            	$this->pj_date_approved = $str_date[2]."/".$str_date[1]."/".($str_date[0]+543);
             
-            if($this->pj_date_approved == "00/00/0000")
+            if($this->pj_date_approved == "00/00/543")
                 $this->pj_date_approved = '';
 
             $this->pj_status =  $this->pj_status==1 ? "อยู่ระหว่างดำเนินการ" : "แล้วเสร็จ";
@@ -259,7 +263,7 @@ class Project extends CActiveRecord
 
             $str_date = explode("/", $this->pj_date_approved);
             if(count($str_date)>1)
-            $this->pj_date_approved= $str_date[2]."-".$str_date[1]."-".$str_date[0];
+            $this->pj_date_approved= ($str_date[2]-543)."-".$str_date[1]."-".$str_date[0];
 
         }	
 

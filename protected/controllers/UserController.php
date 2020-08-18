@@ -31,11 +31,11 @@ class UserController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','password'),
+				'actions'=>array('create','update','password','getusergroup'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','updateuser','getusergroup','deleteSelected','resetPassword'),
+				'actions'=>array('admin','delete','updateuser','deleteSelected','resetPassword'),
 				//'expression'=>'Yii::app()->user->isAdmin()',
 				'expression'=>'Yii::app()->user->isAdmin()',
 			),
@@ -228,8 +228,17 @@ class UserController extends Controller
 
     public function actionGetUserGroup()
     {
-    	$data = array(array("value"=>"1","text"=>"Admin"),array("value"=>"2","text"=>"SuperUser"),array("value"=>"3","text"=>"User"),array("value"=>"4","text"=>"Executive"));
-        echo CJSON::encode($data);
+    	//$list = array(array("value"=>"1","text"=>"Admin"),array("value"=>"2","text"=>"SuperUser"),array("value"=>"3","text"=>"User"),array("value"=>"4","text"=>"Executive"));
+    	$models = UserGroup::model()->findAll();
+
+     	// format models resulting using listData     
+     	//$list = CHtml::listData($models,'id', 'group_name');   
+        $list = array();
+     	foreach ($models as $key => $value) {
+     	 	$list[] = array("value"=>$value->id,"text"=>$value->group_name);
+     	 } 
+
+        echo CJSON::encode($list);
     }
 
     public function actionDeleteSelected()

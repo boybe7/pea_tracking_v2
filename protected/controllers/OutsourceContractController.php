@@ -170,10 +170,17 @@ class OutsourceContractController extends Controller
 	    {
 	           
 	            if($this->loadModel($id)->delete())
-	            	 echo CJSON::encode(array(
-	                'status'=>'success'
-	                ));
-	            else
+	            {	 
+	            	Yii::app()->db->createCommand('DELETE FROM guarantee WHERE contract_id='.$id)->execute();
+	            	Yii::app()->db->createCommand('DELETE FROM work_code_outsource WHERE contract_id='.$id)->execute();
+	            	Yii::app()->db->createCommand('DELETE FROM payment_outsource_contract WHERE contract_id='.$id)->execute();
+	            	Yii::app()->db->createCommand('DELETE FROM contract_approve_history WHERE contract_id='.$id.' AND type=2')->execute();
+
+				
+
+
+	            	echo CJSON::encode(array('status'=>'success'));
+	            }else
 	                echo CJSON::encode(array(
 	                'status'=>'failure'));
 	                
@@ -184,7 +191,14 @@ class OutsourceContractController extends Controller
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
+			if($this->loadModel($id)->delete())
+			{	
+				Yii::app()->db->createCommand('DELETE FROM guarantee WHERE contract_id='.$id)->execute();
+				Yii::app()->db->createCommand('DELETE FROM work_code_outsource WHERE contract_id='.$id)->execute();
+				Yii::app()->db->createCommand('DELETE FROM payment_outsource_contract WHERE contract_id='.$id)->execute();
+	            Yii::app()->db->createCommand('DELETE FROM contract_approve_history WHERE contract_id='.$id.' AND type=2')->execute();
+
+			}
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))

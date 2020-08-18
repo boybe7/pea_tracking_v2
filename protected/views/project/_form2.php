@@ -86,7 +86,7 @@ hr {
 
 		
 		<div class="row-fluid">
-			<div class="well span8">
+			<div class="well-blue span8">
       			
       				<!-- <span style='display: block;margin-bottom: 5px;'>คู่สัญญา</span>  -->
       				
@@ -137,24 +137,31 @@ hr {
 						
 				      ?>
     			</div>
-
-          <div class="row-fluid">
-          <div class="span6">
-           <?php 
-             echo CHtml::label('เงินประมาณการใช้ได้จริง (บาท)','expect_cost1');        
-             echo "<input type='text' id='expect_cost1' name='expect_cost1' class='span12' style='text-align:right' >"; 
-          ?>
+          <div class="row-fluid">  
+            <div class="span7">
+            <?php echo $form->textFieldRow($model,'pj_manager_name',array('class'=>'span12','readonly'=>true)); ?>
+            </div>
+            <div class="span5">
+            <?php echo $form->textFieldRow($model,'pj_manager_position',array('class'=>'span12','readonly'=>true)); ?>
+            </div>
           </div>
-          <div class="span6">
-           <?php 
-             echo CHtml::label('เงินประมาณการบุคลากร (บาท)','expect_cost2');        
-             echo "<input type='text' id='expect_cost2' name='expect_cost2' class='span12' style='text-align:right' >";
-
-          ?>
+          <div class="row-fluid">  
+            <div class="span7">
+            <?php echo $form->textFieldRow($model,'pj_director_name',array('class'=>'span12','readonly'=>true)); ?>
+            </div>
+            <div class="span5">
+            <?php echo $form->textFieldRow($model,'pj_director_position',array('class'=>'span12','readonly'=>true)); ?>
+            </div>
           </div>
+          
+          <div class="row-fluid">  
+            <div class="span12">
+            <?php echo $form->textFieldRow($model,'pj_close',array('class'=>'span12','readonly'=>true)); ?>
+            </div>
           </div>
     	</div>	
-			<div class="well span4">
+      <div class="span4">
+			    <div class="well-blue">
       			<?php 
       			//echo $form->textFieldRow($model,'pj_code',array('class'=>'span10','maxlength'=>100)); 
       			echo "<span style='display: block;'>หมายเลขงาน</span>"; 
@@ -183,7 +190,39 @@ hr {
             </table>
              <?php echo $form->textFieldRow($model,'pj_CA',array('class'=>'span12','maxlength'=>200,'readonly'=>true)); ?>
             
-    		</div>
+    		  </div>
+          <div class="well-blue">
+            <div class="row-fluid">
+            <div class="span12">
+             <?php 
+               echo CHtml::label('เงินประมาณการค่าใช้จ่ายในการบริหารโครงการ (บาท)','expect_cost1');        
+               echo "<input type='text' id='expect_cost1' name='expect_cost1' class='span12' readonly='readonly' style='text-align:right' value='".number_format($managementCost[0],2)."'>"; 
+
+              
+            ?>
+            </div>
+          </div>
+          <div class="row-fluid">  
+            <div class="span12">
+             <?php 
+               echo CHtml::label('เงินประมาณการค่าใช้จ่ายด้านบุคลากร (บาท)','expect_cost2');        
+               echo "<input type='text' id='expect_cost2' name='expect_cost2' class='span12' readonly='readonly' style='text-align:right' readonly='readonly' value='".number_format($managementCost[1],2)."'>"; 
+
+            ?>
+            </div>
+          </div>
+
+          <div class="row-fluid">  
+            <div class="span12">
+             <?php 
+               echo CHtml::label('เงินประมาณการค่ารับรอง (บาท)','expect_cost3');        
+               echo "<input type='text' id='expect_cost3' name='expect_cost3' class='span12' style='text-align:right' value='".number_format($managementCost[2],2)."' readonly='readonly'>"; 
+
+            ?>
+            </div>
+          </div>
+          </div>
+      </div>    
     		
     		
   		</div>
@@ -428,6 +467,7 @@ hr {
 	            $this->renderPartial('//outsourceContract/_formUpdateTemp', array(
 	                'model' => $child,
 	                'index' => $index,
+                  'pj_id' => $model->pj_id,
                   //'form' => $form,
 	                'display' => 'block'
 	            ));
@@ -522,7 +562,19 @@ hr {
     <a href="#" class="btn btn-primary" id="modalSubmitOc">บันทึก</a>
     </div>
 </div>
-
+<div id="modalGuarantee"  class="modal hide fade">
+    <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>แก้ไขข้อมูลรายการ ค้ำประกันสัญญา</h3>
+    </div>
+    <div class="modal-body" id="bodyGuarantee">
+     
+    </div>
+    <div class="modal-footer">
+    <a href="#" class="btn btn-danger" id="modalGuaranteeCancel">ยกเลิก</a>
+    <a href="#" class="btn btn-primary" id="modalGuaranteeSubmit">บันทึก</a>
+    </div>
+</div>
 
 <div id="modal-content" class="hide">
     <div id="modal-body">
@@ -600,7 +652,15 @@ hr {
 
       ?>
     </div>
+         <div id="modal-body-guarantee">
+<!-- put whatever you want to show up on bootbox here -->
+      <?php 
+       $model4=new Guarantee;
       
+      $this->renderPartial('/guarantee/_form',array('model'=>$model4),false); 
+
+      ?>
+    </div> 
     </div>
 </div>
 

@@ -39,7 +39,7 @@ class NotifyController extends Controller
 
 	public static function gnotify($type=0)
 	{
-		$current_date = (date("Y")+543).date("-m-d");
+		$current_date = (date("Y")).date("-m-d");
 		$user_dept = Yii::app()->user->userdept;
 
 		//set flag_del = 1
@@ -52,7 +52,11 @@ class NotifyController extends Controller
 		//Alert before 7 days, until 90 days
         $projectContractData=Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,pc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญาหลัก' as alarm_detail,pc_garantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, pc_id as update_id FROM project_contract pc LEFT JOIN project p ON pc.pc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(pc_garantee_date,'".$current_date."')<=7 AND DATEDIFF(pc_garantee_date,'".$current_date."')>-90  AND (pc_garantee_end='')  AND user.department_id='$user_dept'")->queryAll(); 
 
-        $projectContractData2 =Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,oc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญาจ้างช่วง' as alarm_detail,oc_guarantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, oc_id as update_id FROM outsource_contract oc LEFT JOIN project p ON oc.oc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(oc_guarantee_date,'".$current_date."')<=7 AND DATEDIFF(oc_guarantee_date,'".$current_date."')>-90  AND (oc_guarantee_end='')  AND user.department_id='$user_dept'")->queryAll(); 
+        // $projectContractData2 =Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,oc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญาจ้างช่วง' as alarm_detail,oc_guarantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, oc_id as update_id FROM outsource_contract oc LEFT JOIN project p ON oc.oc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(oc_guarantee_date,'".$current_date."')<=7 AND DATEDIFF(oc_guarantee_date,'".$current_date."')>-90  AND (oc_guarantee_end='')  AND user.department_id='$user_dept'")->queryAll(); 
+
+        $projectContractData2 =Yii::app()->db->createCommand("SELECT pj_id, pj_name as project,oc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญาจ้างช่วง' as alarm_detail, guarantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, oc_id as update_id FROM guarantee g LEFT JOIN outsource_contract oc ON g.contract_id=oc.oc_id LEFT JOIN project p ON oc.oc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(guarantee_date,'".$current_date."')<=7 AND DATEDIFF(guarantee_date,'".$current_date."')>-90  AND (letter_return='') AND pj_id IS NOT NULL  AND user.department_id='$user_dept'")->queryAll(); 
+
+        //echo "SELECT pj_id, pj_name as project,oc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญาจ้างช่วง' as alarm_detail, guarantee_date as date_end, CONCAT('project/update/',pj_id) as url,'1' as type, oc_id as update_id FROM guarantee g LEFT JOIN outsource_contract oc ON g.contract_id=oc.oc_id LEFT JOIN project p ON oc.oc_proj_id=p.pj_id LEFT JOIN user ON p.pj_user_create=user.u_id WHERE DATEDIFF(guarantee_date,'".$current_date."')<=7 AND DATEDIFF(guarantee_date,'".$current_date."')>-90  AND (letter_return='') AND pj_id IS NOT NULL  AND user.department_id='$user_dept'";
 
         //2.แจ้งเตือนครบกำหนดชำระเงินของ vendor
         //Alert before 7 days, until 90 days
@@ -86,7 +90,7 @@ class NotifyController extends Controller
                 $month = date("n");
                 $number = cal_days_in_month(CAL_GREGORIAN, $month, date("Y"));
 
-                $lastDay = $number."/".$month."/".(date("Y")+543);
+                $lastDay = $number."/".$month."/".(date("Y"));
 
                 $Criteria = new CDbCriteria();
                 $Criteria->join = 'LEFT JOIN user ON pj_user_create=user.u_id'; 
@@ -259,7 +263,7 @@ class NotifyController extends Controller
         		$new_rec->update_id = $value['update_id'];
         		$new_rec->alarm_detail = $value['alarm_detail'];
         		$new_rec->date_end = $value['date_end'];
-        		$new_rec->update_date = (date("Y")+543).date("-m-d H:i:s");
+        		$new_rec->update_date = (date("Y")).date("-m-d H:i:s");
         		$new_rec->status = 1;
         		$new_rec->flag_del = 0;
 
@@ -298,7 +302,7 @@ class NotifyController extends Controller
 
 	public static function gnotify3($type=0)
 	{
-		$current_date = (date("Y")+543).date("-m-d");
+		$current_date = (date("Y")).date("-m-d");
 
 		//delete old data
 		Yii::app()->db->createCommand("TRUNCATE TABLE notify")->execute(); 

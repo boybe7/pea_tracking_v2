@@ -63,9 +63,9 @@ function renderDate2($value)
 	
 	$Criteria = new CDbCriteria();
 	$dateStr = explode("/", $date_start);
-	$date_start = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+	$date_start = ($dateStr[2]-543)."-".$dateStr[1]."-".$dateStr[0];
 	$dateStr = explode("/", $date_end);
-	$date_end = $dateStr[2]."-".$dateStr[1]."-".$dateStr[0];
+	$date_end = ($dateStr[2]-543)."-".$dateStr[1]."-".$dateStr[0];
 
 
 	$Criteria->join = 'LEFT JOIN project_contract ON pc_proj_id=pj_id'; 

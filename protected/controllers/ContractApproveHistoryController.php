@@ -73,7 +73,7 @@ class ContractApproveHistoryController extends Controller
 			$model->attributes=$_POST['ContractApproveHistory'];
 			$model->dateApprove = $_POST['ContractApproveHistory']['dateApprove']; 
 			$model->contract_id = $id;
-			$model->last_update =  (date("Y")+543).date("-m-d H:i:s");
+			$model->last_update =  (date("Y")).date("-m-d H:i:s");
 			
 			$model->type = 1;
 			if (Yii::app()->request->isAjaxRequest)
@@ -92,7 +92,7 @@ class ContractApproveHistoryController extends Controller
 	        }		
 			else
 			  if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
 
 		}
 
@@ -121,7 +121,7 @@ class ContractApproveHistoryController extends Controller
 			$model->attributes=$_POST['ContractApproveHistory'];
 			$model->dateApprove = $_POST['ContractApproveHistory']['dateApprove']; 
 			$model->contract_id = $id;
-			$model->last_update =  (date("Y")+543).date("-m-d H:i:s");
+			$model->last_update =  (date("Y")).date("-m-d H:i:s");
 			
 			$model->type = 2;
 			if (Yii::app()->request->isAjaxRequest)
@@ -140,7 +140,7 @@ class ContractApproveHistoryController extends Controller
 	        }		
 			else
 			  if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
 
 		}
 
@@ -185,7 +185,7 @@ class ContractApproveHistoryController extends Controller
 	        }		
 			else
 			  if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
 
 		}
 
@@ -230,7 +230,7 @@ class ContractApproveHistoryController extends Controller
 	        }		
 			else
 			  if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('index'));
 
 		}
 
@@ -260,7 +260,7 @@ class ContractApproveHistoryController extends Controller
 		if(isset($_POST['ContractApproveHistory']))
 		{
 			$model->attributes=$_POST['ContractApproveHistory'];
-			$model->last_update =  (date("Y")+543).date("-m-d H:i:s");
+			$model->last_update =  (date("Y")).date("-m-d H:i:s");
 
 
 			if (Yii::app()->request->isAjaxRequest)
@@ -360,7 +360,7 @@ class ContractApproveHistoryController extends Controller
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('index'));
 		}
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');

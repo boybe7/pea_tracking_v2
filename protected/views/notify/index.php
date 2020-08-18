@@ -286,7 +286,7 @@ $('#search-form').submit(function(){
               echo '<li ><a href="#closeTab" data-toggle="tab">ปิดงาน '.$badge.'</a></li>';  
 
 
-          if(Yii::app()->user->username=='tsd' || Yii::app()->user->username=='tsd02' || Yii::app()->user->username=='tsd03')  
+          if(Yii::app()->user->username=='tsd' || Yii::app()->user->username=='tsd01' || Yii::app()->user->username=='tsd02' || Yii::app()->user->username=='tsd03')  
           {
             $badge= '';
             if($amount[6]>0) 
@@ -304,8 +304,12 @@ $('#search-form').submit(function(){
         
 </ul>
 <div class="tab-content">
-    <div class="tab-pane active " id="garanteeTab">
-         
+    <?php
+        if(!isset($_GET['tab']) || (isset($_GET['tab']) && $_GET['tab']==1) )  
+          echo '<div class="tab-pane active " id="garanteeTab">';
+        else
+          echo '<div class="tab-pane " id="garanteeTab">';   
+    ?>     
          <center><h4>แจ้งเตือนครบกำหนดค้ำประกันสัญญา</h4></center>
         <?php
             $this->widget('bootstrap.widgets.TbGridView',array(
@@ -366,7 +370,13 @@ $('#search-form').submit(function(){
 
         ?>
     </div>  
-    <div class="tab-pane " id="vendorTab">
+    
+    <?php
+       if(isset($_GET['tab']) && $_GET['tab']==2 ) 
+            echo '<div class="tab-pane active" id="vendorTab">';
+       else 
+            echo '<div class="tab-pane " id="vendorTab">';
+    ?>   
          <center><h4>แจ้งเตือนครบกำหนดชำระเงินของ vendor</h4></center>
          <?php
 
@@ -434,7 +444,14 @@ $('#search-form').submit(function(){
 
         ?>
     </div> 
-    <div class="tab-pane " id="supplierTab">
+    
+
+    <?php
+       if(isset($_GET['tab']) && $_GET['tab']==3 ) 
+            echo '<div class="tab-pane active" id="supplierTab">';
+       else 
+            echo '<div class="tab-pane " id="supplierTab">';
+    ?>       
          <center><h4>แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier</h4></center>
          <?php
             $this->widget('bootstrap.widgets.TbGridView',array(
@@ -495,7 +512,15 @@ $('#search-form').submit(function(){
 
         ?>
     </div> 
-    <div class="tab-pane " id="manageTab">
+ 
+
+     <?php
+       if(isset($_GET['tab']) && $_GET['tab']==4 ) 
+            echo '<div class="tab-pane active" id="manageTab">';
+       else 
+            echo '<div class="tab-pane " id="manageTab">';
+    ?>        
+
         <center><h4>แจ้งเตือนบันทึกค่ารับรองประจำเดือน</h4></center>
          <?php
             $this->widget('bootstrap.widgets.TbGridView',array(
@@ -555,7 +580,13 @@ $('#search-form').submit(function(){
 
         ?>
     </div> 
-    <div class="tab-pane " id="closeTab">
+   
+      <?php
+       if(isset($_GET['tab']) && $_GET['tab']==5 ) 
+            echo '<div class="tab-pane active" id="closeTab">';
+       else 
+            echo '<div class="tab-pane " id="closeTab">';
+    ?>           
         <center><h4>แจ้งเตือนปิดโครงการ</h4></center>
          <?php
                         
@@ -618,8 +649,13 @@ $('#search-form').submit(function(){
     <?php
     if(Yii::app()->user->username=='tsd' || Yii::app()->user->username=='tsd01' || Yii::app()->user->username=='tsd02' || Yii::app()->user->username=='tsd03') 
     { 
-    ?>
-    <div class="tab-pane " id="1000Tab">
+
+       if(isset($_GET['tab']) && $_GET['tab']==6 ) 
+            echo '<div class="tab-pane active" id="1000Tab">';
+       else 
+            echo '<div class="tab-pane " id="1000Tab">';
+    ?>      
+   
         <center><h4>แจ้งเตือนของบประมาณ .1000</h4></center>
          <?php
            

@@ -174,20 +174,33 @@
           </div>  
         </div>
 
-        <div class="row-fluid">
+         <div class="row-fluid">
             <div class="span3">     
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_PO'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_PO', array('size' => 200, 'maxlength' => 255,'class'=>'span12  sessionStore')); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_PO', array('size' => 200, 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_PO',array('class'=>'help-block error')); ?>
             </div>
             <div class="span7">     
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_detail'); ?>
-              <?php echo CHtml::activeTextArea($model, '[' . $index . ']oc_detail', array('rows' => 2, 'maxlength' => 255,'class'=>'span12  sessionStore')); ?>
+              <?php echo CHtml::activeTextArea($model, '[' . $index . ']oc_detail', array('rows' => 2, 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_detail',array('class'=>'help-block error')); ?>          
             </div>
             <div class="span2">
-
-               <?php 
+               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_num_payment'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_num_payment', array( 'maxlength' => 2,'class'=>'span6')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_num_payment',array('class'=>'help-block error')); ?>
+              
+            </div>  
+        </div>    
+        <div class="row-fluid">
+          
+          <div class="span4">     
+              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_letter'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_letter', array( 'maxlength' => 255,'class'=>'span12')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_letter',array('class'=>'help-block error')); ?>          
+          </div>
+          <div class="span2">
+             <?php 
                    
                     echo CHtml::activeLabelEx($model, '[' . $index . ']oc_sign_date'); 
                     echo '<div class="input-append" style="margin-top:0px;">'; //ใส่ icon ลงไป
@@ -204,30 +217,15 @@
                                               'format'=>'dd/mm/yyyy', //กำหนด date Format
                                               'showAnim' => 'slideDown',
                                               ),
-                            'htmlOptions'=>array('class'=>'span8  sessionStore'),  // ใส่ค่าเดิม ในเหตุการ Update 
+                            'htmlOptions'=>array('class'=>'span10'),  // ใส่ค่าเดิม ในเหตุการ Update 
                          )
                     );
                     echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
 
                ?> 
-            </div>  
-        </div>    
-        
-        <div class="row-fluid">
-          <div class="span5">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_guarantee'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_guarantee', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_guarantee',array('class'=>'help-block error')); ?>          
-          </div>  
-       
-          <div class="span5">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee', array( 'maxlength' => 255,'class'=>'span12')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee',array('class'=>'help-block error')); ?>          
           </div>
           <div class="span2">
-
-               <?php 
+            <?php 
                    
                     echo CHtml::activeLabelEx($model, '[' . $index . ']oc_end_date'); 
                     echo '<div class="input-append" style="">'; //ใส่ icon ลงไป
@@ -244,53 +242,16 @@
                                               'format'=>'dd/mm/yyyy', //กำหนด date Format
                                               'showAnim' => 'slideDown',
                                               ),
-                            'htmlOptions'=>array('class'=>'span8'),  // ใส่ค่าเดิม ในเหตุการ Update 
+                            'htmlOptions'=>array('class'=>'span10'),  // ใส่ค่าเดิม ในเหตุการ Update 
                          )
                     );
                     echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
                     echo CHtml::error($model, '[' . $index . ']oc_end_date',array('class'=>'help-block error'));
 
                ?> 
-          </div> 
-           
-        </div>
-
-        <div class="row-fluid">
-         
-          <div class="span2">     
-              <?php 
-                   
-                    echo CHtml::activeLabelEx($model, '[' . $index . ']oc_guarantee_date'); 
-                    echo '<div class="input-append" style="">'; //ใส่ icon ลงไป
-                        $this->widget('zii.widgets.jui.CJuiDatePicker',
-
-                        array(
-                            'name'=>'OutsourceContract[' . $index . '][oc_guarantee_date]',
-                            'id'=>$index.'oc_guarantee_date',
-                            'model'=>$model,
-                            'value'=>$model->oc_guarantee_date,
-                            'options' => array(
-                                              'mode'=>'focus',
-                                              //'language' => 'th',
-                                              'format'=>'dd/mm/yyyy', //กำหนด date Format
-                                              'showAnim' => 'slideDown',
-                                              ),
-                            'htmlOptions'=>array('class'=>'span9'),  // ใส่ค่าเดิม ในเหตุการ Update 
-                         )
-                    );
-                    echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
-                    echo CHtml::error($model, '[' . $index . ']oc_guarantee_date',array('class'=>'help-block error'));
-
-               ?>           
-          </div> 
-           <div class="span8">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_guarantee_end'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_guarantee_end', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_guarantee_end',array('class'=>'help-block error')); ?>          
-          </div>  
+          </div>
           <div class="span2">
-
-               <?php 
+            <?php 
 
                     echo CHtml::activeLabelEx($model, '[' . $index . ']oc_approve_date'); 
                     echo '<div class="input-append" style="margin-top:0px;margin-left:0px;">'; //ใส่ icon ลงไป
@@ -307,45 +268,81 @@
                                               'format'=>'dd/mm/yyyy', //กำหนด date Format
                                               'showAnim' => 'slideDown',
                                               ),
-                            'htmlOptions'=>array('class'=>'span8'),  // ใส่ค่าเดิม ในเหตุการ Update 
+                            'htmlOptions'=>array('class'=>'span10'),  // ใส่ค่าเดิม ในเหตุการ Update 
                          )
                     );
                     echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
 
-               ?> 
+               ?>
+          </div>
+          <div class="span2">     
+              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_T_percent'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_T_percent', array( 'maxlength' => 3,'class'=>'span6')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_T_percent',array('class'=>'help-block error')); ?>          
           </div> 
         </div>
+
+        
         <div class="row-fluid">
-          <div class="span5">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_guarantee_cf'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_guarantee_cf', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_guarantee_cf',array('class'=>'help-block error')); ?>          
-          </div>  
-          <div class="span5">     
+          
+          <div class="span4">     
+              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee', array( 'maxlength' => 255,'class'=>'span12')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee',array('class'=>'help-block error')); ?>          
+          </div>
+          <div class="span4">
+            <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee_cost'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee_cost',array('class'=>'span12','style'=>'text-align:right')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee_cost',array('class'=>'help-block error')); ?>       
+          </div>
+          <div class="span2">     
+              <?php 
+                   
+                    echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee_date'); 
+                    echo '<div class="input-append" style="">'; //ใส่ icon ลงไป
+                        $this->widget('zii.widgets.jui.CJuiDatePicker',
+
+                        array(
+                            'name'=>'OutsourceContract[' . $index . '][oc_adv_guarantee_date]',
+                            'id'=>$index.'oc_adv_guarantee_date',
+                            'model'=>$model,
+                            'value'=>$model->oc_adv_guarantee_date,
+                            'options' => array(
+                                              'mode'=>'focus',
+                                              //'language' => 'th',
+                                              'format'=>'dd/mm/yyyy', //กำหนด date Format
+                                              'showAnim' => 'slideDown',
+                                              ),
+                            'htmlOptions'=>array('class'=>'span10'),  // ใส่ค่าเดิม ในเหตุการ Update 
+                         )
+                    );
+                    echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
+                    echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee_date',array('class'=>'help-block error'));
+
+               ?>           
+          </div> 
+            <div class="span2">     
+              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_A_percent'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_A_percent', array( 'maxlength' => 3,'class'=>'span6','disabled'=>true)); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_A_percent',array('class'=>'help-block error')); ?>          
+          </div> 
+           
+        </div>
+
+        
+        <div class="row-fluid">
+          
+          <div class="span4">     
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee_cf'); ?>
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee_cf', array( 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee_cf',array('class'=>'help-block error')); ?>          
           </div> 
-          <div class="span2">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_num_payment'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_num_payment', array( 'maxlength' => 2,'class'=>'span6')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_num_payment',array('class'=>'help-block error')); ?>          
-          </div>  
-        </div>
-        <div class="row-fluid">
-          <div class="span5">     
+         
+           <div class="span3">     
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_insurance'); ?>
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_insurance', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_insurance',array('class'=>'help-block error')); ?>          
-          </div>  
-          <div class="span5">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_letter'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_letter', array( 'maxlength' => 255,'class'=>'span12')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_letter',array('class'=>'help-block error')); ?>          
-          </div>
-           
-        </div>
-        <div class="row-fluid">
+          </div> 
           <div class="span2">
 
                <?php 
@@ -365,7 +362,7 @@
                                               'format'=>'dd/mm/yyyy', //กำหนด date Format
                                               'showAnim' => 'slideDown',
                                               ),
-                            'htmlOptions'=>array('class'=>'span8  sessionStore'),  // ใส่ค่าเดิม ในเหตุการ Update 
+                            'htmlOptions'=>array('class'=>'span10'),  // ใส่ค่าเดิม ในเหตุการ Update 
                          )
                     );
                     echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
@@ -390,29 +387,263 @@
                                               //'language' => 'th',
                                               'format'=>'dd/mm/yyyy', //กำหนด date Format
                                               'showAnim' => 'slideDown',
-                                              
                                               ),
-                            'htmlOptions'=>array('class'=>'span8  sessionStore'),  // ใส่ค่าเดิม ในเหตุการ Update 
+                            'htmlOptions'=>array('class'=>'span10'),  // ใส่ค่าเดิม ในเหตุการ Update 
                          )
                     );
                     echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
 
                ?> 
           </div>
-          <div class="span3  offset1">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_T_percent'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_T_percent', array( 'maxlength' => 3,'class'=>'span6  sessionStore')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_T_percent',array('class'=>'help-block error')); ?>          
-          </div> 
-          <div class="span3">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_A_percent'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_A_percent', array( 'maxlength' => 3,'class'=>'span6  sessionStore','disabled'=>true)); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_A_percent',array('class'=>'help-block error')); ?>          
-          </div> 
           
+        
+           
            
         </div>
 
+        <fieldset class="well the-fieldset">
+            <legend class="the-legend">รายละเอียด ค้ำประกันสัญญา</legend>
+            <div class="row-fluid"> 
+            <?php 
+          $this->widget('bootstrap.widgets.TbButton', array(
+                  'buttonType'=>'link',
+                  
+                  'type'=>'',
+                  'label'=>'เพิ่มรายการ',
+                  'icon'=>'plus-sign green',
+                  
+                  'htmlOptions'=>array(
+                    'class'=>'pull-right',
+                    'style'=>'margin:-25px 10px 10px 10px;',
+                    //'onclick'=>'createApprove(' . $index . ')'
+                 
+               'onclick'=>'
+                     
+                    js:bootbox.confirm($("#modal-body-guarantee").html(),"ยกเลิก","ตกลง",
+                        function(confirmed){
+                                   
+                            if(confirmed)
+                            {
+
+                                $.ajax({
+                                  type: "POST",
+                                  url: "../../guarantee/createTemp/' . $index . '",
+                                  dataType:"json",
+                                  data: $(".modal-body #guarantee-form").serialize()+"&pj_id='.$pj_id.'"
+                                })                  
+                                .done(function( msg ) {
+                              
+                                  jQuery.fn.yiiGridView.update("guarantee-grid'.$index.'");
+                              
+                                  if(msg.status=="failure")
+                                  {
+                                    $("#modal-body-guarantee").html(msg.div);
+                                    js:bootbox.confirm($("#modal-body-guarantee").html(),"ยกเลิก","ตกลง",
+                                          function(confirmed){
+                                                
+                                            
+                                                if(confirmed)
+                                                {
+                                                          $.ajax({
+                                                              type: "POST",
+                                                              url: "../../guarantee/createTemp/' . $index . '",
+                                                              dataType:"json",
+                                                              data: $(".modal-body #guarantee-form").serialize()+"&pj_id='.$pj_id.'"
+                                                            })
+                                                            .done(function( msg ) {
+                                                              if(msg.status=="failure")
+                                                              {
+                                                                js:bootbox.alert("<font color=red>!!!!บันทึกไม่สำเร็จ</font>","ตกลง");
+                                                              }
+                                                              else{
+                                                                //js:bootbox.alert("บันทึกสำเร็จ","ตกลง");
+                                                              }
+                                                            });
+                                              }
+                                   })
+                                }
+                                else{
+                                  //js:bootbox.alert("บันทึกสำเร็จ","ตกลง");
+
+                                }
+                              });
+                        
+                            }
+                        })
+                        
+                      ',
+                        
+                  ),
+              ));
+
+                    
+          $this->widget('bootstrap.widgets.TbGridView',array(
+            'id'=>'guarantee-grid'.$index,
+            
+            'type'=>'bordered condensed',
+            'dataProvider'=>GuaranteeTemp::model()->searchByUser($index,$pj_id),
+            //'filter'=>$model,
+            'selectableRows' => 2,
+            'enableSorting' => false,
+            'rowCssClassExpression'=>'"tr_white"',
+
+              // 'template'=>"{summary}{items}{pager}",
+              'htmlOptions'=>array('style'=>'padding-top:10px;'),
+              'enablePagination' => true,
+              'summaryText'=>'',//'Displaying {start}-{end} of {count} results.',
+            'columns'=>array(
+                  'No.'=>array(
+                      'header'=>'ลำดับ',
+                      'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),                        
+                  'htmlOptions'=>array(
+                              'style'=>'text-align:center'
+
+                        ),
+                      'value'=>'$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
+                    ),
+                  'no'=>array(
+                      // 'header'=>'', 
+                  
+                    'name' => 'guarantee_no',
+                    'headerHtmlOptions' => array('style' => 'width:25%;text-align:center;background-color: #eeeeee'),
+                    'htmlOptions'=>array(
+                                        'style'=>'text-align:left'
+
+                          )
+                    ),
+                    'cost'=>array(
+                      
+                      'name' => 'cost',
+                      // 'type'=>'raw', //to use html tag
+                      'value'=> function($data){
+                              return number_format($data->cost, 2);
+                          },  
+                      'headerHtmlOptions' => array('style' => 'width:15%;text-align:center;background-color: #eeeeee'),                       
+                      'htmlOptions'=>array(
+                                          'style'=>'text-align:right'
+
+                            )
+                    ),
+                    'date'=>array(
+                      
+                      'name' => 'guarantee_date',
+                      
+                      'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #eeeeee'),                       
+                      'htmlOptions'=>array(
+                                          'style'=>'text-align:center'
+
+                            )
+                    ),
+
+
+                    'letter_confirm'=>array(
+            
+                      'name' => 'letter_confirm',
+                      'headerHtmlOptions' => array('style' => 'width:15%;text-align:center;background-color: #eeeeee'),
+                      'htmlOptions'=>array(
+                                          'style'=>'text-align:center'
+
+                            )
+                    ),
+                    'return'=>array(
+                      
+                      'name' => 'letter_return',
+                    
+                      'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #eeeeee'),                       
+                      'htmlOptions'=>array(
+                                          'style'=>'text-align:left'
+
+                            )
+                    ),
+                   
+                    array(
+                  'class'=>'bootstrap.widgets.TbButtonColumn',
+                  'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                  'template' => '{update2}   {delete}',
+                  // 'deleteConfirmation'=>'js:bootbox.confirm("Are you sure to want to delete")',
+                  'buttons'=>array(
+                      'delete'=>array(
+                        'url'=>'Yii::app()->createUrl("guarantee/deleteTemp", array("id"=>$data->id))', 
+
+                      ),
+                      'update2'=>array(
+
+                        'url'=>'Yii::app()->createUrl("guarantee/updateTemp", array("id"=>$data->id))',
+                        'options'=>array(
+                                      //'class'=>'updatechange',
+                                  ),  
+                                  'icon' => 'icon-pencil',
+                                  'click'=>'function(){
+                                    
+                                link = $(this).attr("href");
+                               // console.log("but:"+link)
+                                    
+                                $.ajax({
+                                         type:"GET",
+                                         cache: false,
+                                         url:$(this).attr("href"),
+                                         success:function(data){
+                                              
+                                               $("#bodyGuarantee").html(data);
+                                            
+                                               $("#modalGuarantee").modal("show");
+
+                                    
+                                         },
+
+                                        });
+
+
+                                $("#modalGuaranteeSubmit").click(function(e){
+       
+                                     $.ajax( {
+                                        type: "POST",
+                                        url: link,
+                                        dataType:"json",
+                                        data: $("#guarantee-form").serialize(),
+                                        success: function( msg ) {
+                                        
+                                          if(msg.status=="failure")                 
+                                          {
+                                    
+                                        $("#guarantee-form").html(msg.div);
+                                      }
+                                      else{
+                                        $("#modalGuarantee").modal("hide");
+                                          $("#bodyGuarantee").html();
+                                      }
+                                              jQuery.fn.yiiGridView.update("guarantee-grid'.$index.'");
+                                      
+                                        }
+                                    } 
+                                    );
+
+                                  });
+
+                                $("#modalGuaranteeCancel").click(function(e){
+                                    
+                                    
+                                  $("#modalGuarantee").modal("hide");
+                                  $("#bodyGuarantee").html();
+                                      
+                                  });
+                                  return false;
+
+                                  }',
+                        )
+
+                    )
+
+                  
+                ),
+              )
+
+            ));
+
+             ?>
+            </div>
+          
+      </fieldset>
 
         <!-- PO -->
         <fieldset class="well the-fieldset">
@@ -1162,8 +1393,18 @@
  <?php //$this->endWidget(); ?>
 <?php 
 
-		$this->widget('application.extensions.moneymask.MMask',array(
+	$this->widget('application.extensions.moneymask.MMask',array(
                     'element'=>'#OutsourceContract_' . $index . '_oc_cost',
+                    'currency'=>'บาท',
+                    'config'=>array(
+                        'symbolStay'=>true,
+                        'thousands'=>',',
+                        'decimal'=>'.',
+                        'precision'=>2,
+                    )
+                ));
+    $this->widget('application.extensions.moneymask.MMask',array(
+                    'element'=>'#OutsourceContract_' . $index . '_oc_adv_guarantee_cost',
                     'currency'=>'บาท',
                     'config'=>array(
                         'symbolStay'=>true,
@@ -1185,6 +1426,9 @@
              //console.log("focus");
                 $(this).autocomplete("search");
       });
+
+      $("input[name*=cost]").maskMoney({"symbolStay":true,"thousands":",","decimal":".","precision":2,"symbol":null}) 
+       
   });
  </script> 
 

@@ -8,18 +8,20 @@
 
 
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
-<script type="text/javascript" src="/pea_track/themes/bootstrap/js/jquery.yiigridview.js"></script>
+<!-- <script type="text/javascript" src="./themes/bootstrap/js/jquery.yiigridview.js"></script> -->
 	<?php 
        /* Yii::app()->getClientScript()->reset(); 
         Yii::app()->bootstrap->register();   */
 
         
         Yii::app()->bootstrap->init();
-        //$cs = Yii::app()->clientScript;
-        //$cs->registerScriptFile(Yii::app()->theme->getBaseUrl().'/js/jquery.yiigridview.js');
+        $cs = Yii::app()->clientScript;
+        echo '<script type="text/javascript" src="'.Yii::app()->theme->getBaseUrl().'/js/jquery.yiigridview.js'.'"></script>';
+        echo '<link rel="shortcut icon" href="'.Yii::app()->baseUrl.'/favicon.ico">';
+       // $cs->registerScriptFile(Yii::app()->theme->getBaseUrl().'/js/jquery.yiigridview.js');
   ?>
 </head>
-<link rel="shortcut icon" href="/pea_track/favicon.ico">
+
 <style>
 
 .dropdown-menu {
@@ -113,7 +115,8 @@ float: none;
 
 }       
  .navbar-inner {
-	background-color:#229922;
+	  /*background-color:#229922;*/
+    background-color:#828080;
     color:#ffffff;
   	border-radius:0;
 }
@@ -198,28 +201,27 @@ nav .badge.red {
 
 @font-face {
     font-family: 'Boon400';
-    src: url('/pea_track/fonts/boon-400.eot');
-    src: url('/pea_track/fonts/boon-400.eot') format('embedded-opentype'),
-         url('/pea_track/fonts/boon-400.woff') format('woff'),
-         url('/pea_track/fonts/boon-400.ttf') format('truetype'),
-         url('/pea_track/fonts/boon-400.svg#Boon400') format('svg');
+    src: url('<?=Yii::app()->baseUrl;?>/fonts/boon-400.eot') format('embedded-opentype'),
+         url('<?=Yii::app()->baseUrl;?>/fonts/boon-400.woff') format('woff'),
+         url('<?=Yii::app()->baseUrl;?>/fonts/boon-400.ttf') format('truetype'),
+         url('<?=Yii::app()->baseUrl;?>/fonts/boon-400.svg#Boon400') format('svg');
 }
 
 @font-face {
     font-family: 'Boon700';
-    src: url('/pea_track/fonts/boon-700.eot');
-    src: url('/pea_track/fonts/boon-700.eot') format('embedded-opentype'),
-         url('/pea_track/fonts/boon-700.woff') format('woff'),
-         url('/pea_track/fonts/boon-700.ttf') format('truetype'),
-         url('/pea_track/fonts/boon-700.svg#Boon700') format('svg');
+    src: url('<?=Yii::app()->baseUrl;?>/fonts/boon-700.eot');
+    src: url('<?=Yii::app()->baseUrl;?>/fonts/boon-700.eot') format('embedded-opentype'),
+         url('<?=Yii::app()->baseUrl;?>/fonts/boon-700.woff') format('woff'),
+         url('<?=Yii::app()->baseUrl;?>/fonts/boon-700.ttf') format('truetype'),
+         url('<?=Yii::app()->baseUrl;?>/fonts/boon-700.svg#Boon700') format('svg');
 }
 
 @font-face {
     font-family: 'THSarabunPSK';
-    src: url('/pea_track/fonts/thsarabunnew-webfont.eot');
-    src: url('/pea_track/fonts/thsarabunnew-webfont.eot') format('embedded-opentype'),
-         url('/pea_track/fonts/thsarabunnew-webfont.woff') format('woff'),
-         url('/pea_track/fonts/thsarabunnew-webfont.ttf') format('truetype');
+    src: url('<?=Yii::app()->baseUrl;?>/fonts/thsarabunnew-webfont.eot');
+    src: url('<?=Yii::app()->baseUrl;?>/fonts/thsarabunnew-webfont.eot') format('embedded-opentype'),
+         url('<?=Yii::app()->baseUrl;?>/fonts/thsarabunnew-webfont.woff') format('woff'),
+         url('<?=Yii::app()->baseUrl;?>/fonts/thsarabunnew-webfont.ttf') format('truetype');
        
 }
 
@@ -298,31 +300,35 @@ select, input[type="file"] {
  //echo Yii::app()->theme->getBaseUrl(); 
 
 
-
-if(!Yii::app()->user->isGuest)
+if(Yii::app()->user->id !="")
 {
-  
-  Yii::import('application.controllers.NotifyController');
-  ///$num = notify::model()->getNotify();
-  
-  //$num = NotifyController::gnotify(1); // preparing object
-  $Criteria = new CDbCriteria();
-  $Criteria->condition = 'status=1';
-  $num = count(Notify::model()->findAll($Criteria));
-  
- $badge= '';
- ///$num = 0;
- if($num>0) 
-  $badge=$this->widget('bootstrap.widgets.TbBadge', array(
-    'type'=>'warning',
-    'label'=>$num,
-  ), true);
+    $num = 0;
+    if(Yii::app()->user->isAccess('/notify/index'))
+    {
+        Yii::import('application.controllers.NotifyController');
+        ///$num = notify::model()->getNotify();
+        
+        //$num = NotifyController::gnotify(1); // preparing object
+        $Criteria = new CDbCriteria();
+        $Criteria->condition = 'status=1';
+        $num = count(Notify::model()->findAll($Criteria));
+        
+      
+    }  
+
+     $badge= '';
+       
+       if($num>0) 
+        $badge=$this->widget('bootstrap.widgets.TbBadge', array(
+          'type'=>'warning',
+          'label'=>$num,
+        ), true);
 
    $this->widget('bootstrap.widgets.TbNavbar',array(
     'fixed'=>'top',
     'collapse'=>true,    
     'htmlOptions'=>array('class'=>'noPrint'),
-    'brand' =>  CHtml::image(Yii::app()->getBaseUrl() . '../images/pea_logo.png', 'Logo', array('width' => '220', 'height' => '30')),
+    'brand' =>  CHtml::image(Yii::app()->getBaseUrl() . '../images/pea_logo.png', 'Logo', array('width' => '300', 'height' => '30')),
     'items'=>array(
         array(
             'class'=>'bootstrap.widgets.TbMenu',
@@ -332,32 +338,41 @@ if(!Yii::app()->user->isGuest)
                 // array('label'=>'โครงการ','icon'=>'flag', 'url'=>array('/project/index')),
                 array('label'=>'โครงการ ','icon'=>'flag', 'url'=>'#','items'=>array(
                      array('label'=>'ข้อมูลโครงการ', 'url'=>array('/project/index')),
-                     array('label'=>'บันทึกค่าบริหารโครงการ', 'url'=>array('/managementCost/index'),'visible'=>!Yii::app()->user->isExecutive()),
-                     array('label'=>'บันทึกความก้าวหน้าสัญญาหลัก', 'url'=>array('/paymentProjectContract/index'),'visible'=>!Yii::app()->user->isExecutive()),
-                     array('label'=>'บันทึกความก้าวหน้าสัญญาจ้างช่วง/ซื้อ', 'url'=>array('/paymentOutsourceContract/index'),'visible'=>!Yii::app()->user->isExecutive()),
-                     array('label'=>'บันทึกค่าบริหารโครงการ (SAP)', 'url'=>array('/managementCostSap/index'),'visible'=>Yii::app()->user->isExecutive()),
-                      array('label'=>'หนังสือขอคืนค้ำประกันสัญญา', 'url'=>array('/report/guarantee'),'visible'=>!Yii::app()->user->isExecutive()),
+                     array('label'=>'บันทึกค่าบริหารโครงการ', 'url'=>array('/managementCost/index'),'visible'=>Yii::app()->user->isAccess('/managementCost/index')),
+                     array('label'=>'บันทึกความก้าวหน้าสัญญาหลัก', 'url'=>array('/paymentProjectContract/index'),'visible'=>Yii::app()->user->isAccess('/paymentProjectContract/index')),
+                     array('label'=>'บันทึกความก้าวหน้าสัญญาจ้างช่วง/ซื้อ', 'url'=>array('/paymentOutsourceContract/index'),'visible'=>Yii::app()->user->isAccess('/paymentOutsourceContract/index')),
+                     array('label'=>'บันทึกค่าบริหารโครงการ (SAP)', 'url'=>array('/managementCostSap/index'),'visible'=>Yii::app()->user->isAccess('/managementCostSap/index')),
+                      array('label'=>'หนังสือขอคืนค้ำประกันสัญญา', 'url'=>array('/report/guarantee'),'visible'=>Yii::app()->user->isAccess('/report/guarantee')),
                      
                     ),
                 ),
                 array('label'=>'รายงาน ','icon'=>'list-alt', 'url'=>'#','items'=>array(
-                     array('label'=>'project progress report', 'url'=>array('/report/progress')),
-                     array('label'=>'project summary report', 'url'=>array('/report/summary')),
-                     array('label'=>'BSC report', 'url'=>array('/report/bsc')),
+                     array('label'=>'project progress report', 'url'=>array('/report/progress'),'visible'=>Yii::app()->user->isAccess('/report/progress')),
+                     array('label'=>'project summary report', 'url'=>array('/report/summary'),'visible'=>Yii::app()->user->isAccess('/report/summary')),
+                     array('label'=>'BSC report', 'url'=>array('/report/bsc'),'visible'=>Yii::app()->user->isAccess('/report/bsc')),
+                     array('label'=>'รายงานค่ารับรองโครงการ', 'url'=>array('/report/management'),'visible'=>Yii::app()->user->isAccess('/report/management')),
                     
-                     array('label'=>'รายงานสรุปรายได้/ค่าใช้จ่าย', 'url'=>array('/report/cashflow'),'visible'=>Yii::app()->user->isExecutive()),
-                     array('label'=>'รายงานสรุปรายได้ ค่าใช้จ่ายงานบริการวิศวกรรม', 'url'=>array('/report/service'),'visible'=>Yii::app()->user->isExecutive()),
-                     array('label'=>'สรุปงานรายรับ-รายจ่ายงานโครงการ', 'url'=>array('/report/summaryCashflow'),'visible'=>Yii::app()->user->isExecutive()),
-                      array('label'=>'รายงานงบกำไรขาดทุน', 'url'=>array('/report/statement'),'visible'=>Yii::app()->user->isExecutive()),
+                     array('label'=>'รายงานสรุปรายได้/ค่าใช้จ่าย', 'url'=>array('/report/cashflow'),'visible'=>Yii::app()->user->isAccess('/report/cashflow')),
+                     array('label'=>'รายงานสรุปรายได้ ค่าใช้จ่ายงานบริการวิศวกรรม', 'url'=>array('/report/service'),'visible'=>Yii::app()->user->isAccess('/report/service')),
+                     array('label'=>'สรุปงานรายรับ-รายจ่ายงานโครงการ', 'url'=>array('/report/summaryCashflow'),'visible'=>Yii::app()->user->isAccess('/report/summaryCashflow')),
+                      array('label'=>'รายงานงบกำไรขาดทุน', 'url'=>array('/report/statement'),'visible'=>Yii::app()->user->isAccess('/report/statement')),
                     
                                                                  
 
                     ),
                 ),
-                array('label'=>'แจ้งเตือน '.$badge,'icon'=>'comment', 'url'=>array('/notify/index'), 'visible'=>!Yii::app()->user->isExecutive()),
-                array('label'=>'คู่สัญญา','icon'=>'briefcase', 'url'=>array('/vendor/admin'), 'visible'=>Yii::app()->user->isAdmin()),
-                array('label'=>'ประเภทงาน','icon'=>'briefcase', 'url'=>array('/workcategory/admin'), 'visible'=>Yii::app()->user->isAdmin()),
-                array('label'=>'ผู้ใช้งาน','icon'=>'user', 'url'=>array('/user/index'), 'visible'=>Yii::app()->user->isAdmin()),
+                array('label'=>'แจ้งเตือน '.$badge,'icon'=>'comment', 'url'=>array('/notify/index'), 'visible'=>Yii::app()->user->isAccess('/notify/index')),
+                array('label'=>'คู่สัญญา','icon'=>'briefcase', 'url'=>array('/vendor/admin'), 'visible'=>Yii::app()->user->isAccess('/vendor/admin')),
+                array('label'=>'ประเภทงาน','icon'=>'briefcase', 'url'=>array('/workcategory/admin'), 'visible'=>Yii::app()->user->isAccess('/workcategory/admin')),
+                
+   
+                array('label'=>'ผู้ดูแลระบบ ','icon'=>'eye-open', 'url'=>'#','visible'=>Yii::app()->user->isAccess('/user/index'),'items'=>array(
+                    
+                     array('label'=>'ผู้ใช้งาน', 'url'=>array('/user/index'),'visible'=>Yii::app()->user->isAccess('/user/index')),
+                     array('label'=>'กำหนดสิทธิผู้ใช้งาน', 'url'=>array('/authen/index'),'visible'=>Yii::app()->user->isAccess('/authen/index')),
+                     
+                    ),
+                ),
             ),
         ),    
         array(
@@ -377,41 +392,7 @@ if(!Yii::app()->user->isGuest)
         ),
         ),
     ));
-}
-else if(Yii::app()->user->isAdmin())
-{
-    
-   $this->widget('bootstrap.widgets.TbNavbar',array(
-    'fixed'=>'top',
-    'collapse'=>true,    
-    'htmlOptions'=>array('class'=>'noPrint'),
-    'brand' =>  CHtml::image(Yii::app()->getBaseUrl() . '../images/pea_logo.png', 'Logo', array('width' => '260', 'height' => '30')),
-    'items'=>array(
-        array(
-            'class'=>'bootstrap.widgets.TbMenu',
-            'items'=>array(
-                array('label'=>'รายชื่อผู้เข้ารับบริการ','icon'=>'user', 'url'=>array('/treatmentRecord/indexDoctor'), 'visible'=>Yii::app()->user->isDoctor()),
-              
-            ),
-        ),    
-        array(
-            'class'=>'bootstrap.widgets.TbButtonGroup',           
-            'htmlOptions'=>array('class'=>'pull-right'),
-            'type'=>'success', // '', 'primary', 'info', 'success', 'warning', 'danger' or 'inverse'
-            'buttons'=>array(
-                    array('label'=>Yii::app()->user->title.Yii::app()->user->firstname."   ".Yii::app()->user->lastname,'icon'=>Yii::app()->user->usertype, 'url'=>'#'),
-                    array('items'=>array(
-                        array('label'=>'เปลี่ยนรหัสผ่าน','icon'=>'cog', 'url'=>array('/user/password/'.Yii::app()->user->ID), 'visible'=>!Yii::app()->user->isGuest),
-                        '---',
-                        array('label'=>'ออกจากระบบ','icon'=>'off', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest),
-                    )),
-                ),
-            
-        ),
-        ),
-    ));
-    
-}
+ }
 else{
     $this->widget('bootstrap.widgets.TbNavbar',array(
     'fixed'=>'top',
@@ -420,7 +401,7 @@ else{
     'brand' =>  CHtml::image(Yii::app()->getBaseUrl() . '../images/pea_logo.png', 'Logo', array('width' => '260', 'height' => '30')),
    
     ));
-}   
+}     
  
    ?>
 

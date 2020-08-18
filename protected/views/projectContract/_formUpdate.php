@@ -982,7 +982,8 @@ Yii::app()->clientScript->registerScript('edit'.$index,'
           return false;
     });
     
-            
+      $("input[name*=pc_cost]").maskMoney({"symbolStay":true,"thousands":",","decimal":".","precision":2,"symbol":null}) 
+       
 
 
 ');
@@ -1072,40 +1073,40 @@ function deleteContract(elm, index)
            			id = $('#ProjectContract_'+index+'_pc_id').val();
 			            
 			           
-			             $.ajax( {
-			                type: 'POST',
-			                url: '../../ProjectContract/delete/'+id,
-			                dataType:'json',
+			              $.ajax( {
+			                 type: 'POST',
+			                 url: '../../ProjectContract/delete/'+id,
+			                 dataType:'json',
 			                
-			                success: function( msg ) {
-
-			                }
-			            });    
-					element=$(elm).parent().parent();
-				    /* animate div */
-				    $(element).animate(
-				    {
-				        opacity: 0.25,
-				        left: '+=50',
-				        height: 'toggle'
-				    }, 0,
-				    function() {
-				        /* remove div */
-				        $(element).remove();
-				    });
-				    num = $('#num').val();
-				    num--;
-				    //$('#num').val(num);
-				    
-				    //console.log('del num:'+$('#num').val());
-				    //rearrange no.
-		              var collection = $('.contract_no');
-		              //console.log(collection);
-		              for(var k=0; k<collection.length; k++){
-		                  var element = collection.eq(k);
-		                  element.html('สัญญาที่ '+(k+1));
-		                  //console.log(element.html());
-		              }
+			                 success: function( msg ) {
+                          element=$(elm).parent().parent().parent();
+                          /* animate div */
+                          $(element).animate(
+                          {
+                              opacity: 0.25,
+                              left: '+=50',
+                              height: 'toggle'
+                          }, 0,
+                          function() {
+                              /* remove div */
+                              $(element).remove();
+                          });
+                          num = $('#num').val();
+                          num--;
+                          //$('#num').val(num);
+                          
+                          //console.log('del num:'+$('#num').val());
+                          //rearrange no.
+                                var collection = $('.contract_no');
+                                //console.log(collection);
+                                for(var k=0; k<collection.length; k++){
+                                    var element = collection.eq(k);
+                                    element.html('สัญญาที่ '+(k+1));
+                                    //console.log(element.html());
+                                }
+			                 }
+			             });    
+					  
 				    		                   	      
             }
             		
@@ -1115,4 +1116,4 @@ function deleteContract(elm, index)
 }", CClientScript::POS_END);
 ?>
 
-<script type="text/javascript" src="/pea_track/assets/7d883f12/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<!-- <script type="text/javascript" src="/pea_track/assets/7d883f12/bootstrap-datepicker/js/bootstrap-datepicker.js"></script> -->

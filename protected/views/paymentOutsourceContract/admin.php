@@ -228,7 +228,8 @@ $('#search-form form').submit(function(){
 
 <?php 
 
-
+if(Yii::app()->user->getAccess(Yii::app()->request->url))
+{
 			$this->widget('bootstrap.widgets.TbButton', array(
 			    'buttonType'=>'link',
 			    
@@ -371,6 +372,75 @@ $('#search-form form').submit(function(){
 	),
 ));
 
+}
+else
+{
 
+	 $this->widget('bootstrap.widgets.TbGridView',array(
+	'id'=>'payment-outsource-contract-grid',
+	'type'=>'bordered condensed',
+	'dataProvider'=>$model->search(),
+	'filter'=>$model,
+	'selectableRows' =>2,
+	'htmlOptions'=>array('style'=>'padding-top:40px;width:100%'),
+    'enablePagination' => true,
+    'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+    'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+	'columns'=>array(
+		'checkbox'=> array(
+        	    'id'=>'selectedID',
+            	'class'=>'CCheckBoxColumn',
+            	//'selectableRows' => 2, 
+        		 'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
+	  	         'htmlOptions'=>array(
+	  	            	  			'style'=>'text-align:center'
+
+	  	            	  		)   	  		
+        ),
+		'proj_id'=>array(
+			    'header' => '<a class="sort-link">รายละเอียดโครงการ</a>',
+			    //'name' =>'proj_id',
+			    'value' => 'OutsourceContract::model()->FindByPk($data->contract_id)->oc_detail',
+			    'filter'=>CHtml::activeTextField($model, 'contract_id',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("proj_id"))),
+				'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #f5f5f5'),  	            	  	
+				'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+	  	),
+		//'v_address',
+		'detail'=>array(
+			    'name' => 'detail',
+			    'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #f5f5f5'),  	            	  	
+				'htmlOptions'=>array('style'=>'text-align:left')
+	  	),
+		'money'=>array(
+			    'name' => 'money',
+			    //'filter'=>CHtml::activeTextField($model, 'pj_fiscalyear',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("pj_fiscalyear"))),
+				'headerHtmlOptions' => array('style' => 'width:10%;text-align:center;background-color: #f5f5f5'),  	            	  	
+				'htmlOptions'=>array('style'=>'text-align:right')
+	  	),
+	  	'invoice_no/date'=>array(
+			    //'header' => '<a class="sort-link">เลขที่ใบแจ้งหนี้/วันที่ได้รับ</a>',
+			    'header'=>$model->getAttributeLabel('invoice_no/date'),
+			    'name'=>'invoice_receive_date',
+			    'headerHtmlOptions'=>array(),
+			    'type'=> 'raw',
+			    'value' => '$data->invoice_no."<br>วันที่ ".$data->invoice_receive_date',
+			    //'filter'=>CHtml::activeTextField($model, 'sumcost',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("pj_fiscalyear"))),
+				'headerHtmlOptions' => array('style' => 'width:15%;text-align:center;background-color: #f5f5f5'),  	            	  	
+				'htmlOptions'=>array('style'=>'text-align:center')
+	  	),
+	  	'approve_date'=>array(
+			    //'header' => '<a class="sort-link">วันที่อนุมัติ</a>',
+			    'name'=>'approve_date',
+			    'headerHtmlOptions'=>array(),
+			    //'type'=> 'raw',
+			    'value' => '$data->approve_date',
+			    //'filter'=>CHtml::activeTextField($model, 'sumcost',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("pj_fiscalyear"))),
+				'headerHtmlOptions' => array('style' => 'width:15%;text-align:center;background-color: #f5f5f5'),  	            	  	
+				'htmlOptions'=>array('style'=>'text-align:center')
+	  	),
+
+	),
+));
+}
 
 ?>
