@@ -5776,6 +5776,35 @@ $table = $section->addTable(array("cellMargin"=>0));
         
     }	
 
+    public function actionManager()
+	{
+		$model=new Project('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Project']))
+			$model->attributes=$_GET['Project'];
+
+		$this->render('manager',array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionGenManager()
+    {
+        
+    	$name = $_GET["manager_name"];
+		$start_date = $_GET['yearStart'].'-'.$_GET['monthStart'].'-01';
+		$end_date = $_GET['yearEnd'].'-'.$_GET['monthEnd'].'-'.cal_days_in_month(CAL_GREGORIAN,intval($_GET['monthEnd']),$_GET['yearEnd']);
+        $this->renderPartial('_formManager', array(
+            'name'=>$name,
+            'start_date'=>$start_date,
+            'end_date'=>$end_date,
+            'display' => 'block',
+        ), false, true);
+
+        
+    }	
+
+
 
     public function actionTest()
     {

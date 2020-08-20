@@ -351,7 +351,7 @@ if(Yii::app()->user->id !="")
                      array('label'=>'project summary report', 'url'=>array('/report/summary'),'visible'=>Yii::app()->user->isAccess('/report/summary')),
                      array('label'=>'BSC report', 'url'=>array('/report/bsc'),'visible'=>Yii::app()->user->isAccess('/report/bsc')),
                      array('label'=>'รายงานค่ารับรองโครงการ', 'url'=>array('/report/management'),'visible'=>Yii::app()->user->isAccess('/report/management')),
-                    
+                    array('label'=>'รายงานผู้จัดการโครงการ/ผู้อำนวยการโครงการ', 'url'=>array('/report/manager'),'visible'=>Yii::app()->user->isAccess('/report/manager')),
                      array('label'=>'รายงานสรุปรายได้/ค่าใช้จ่าย', 'url'=>array('/report/cashflow'),'visible'=>Yii::app()->user->isAccess('/report/cashflow')),
                      array('label'=>'รายงานสรุปรายได้ ค่าใช้จ่ายงานบริการวิศวกรรม', 'url'=>array('/report/service'),'visible'=>Yii::app()->user->isAccess('/report/service')),
                      array('label'=>'สรุปงานรายรับ-รายจ่ายงานโครงการ', 'url'=>array('/report/summaryCashflow'),'visible'=>Yii::app()->user->isAccess('/report/summaryCashflow')),

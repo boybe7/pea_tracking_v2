@@ -22,6 +22,7 @@ class Project extends CActiveRecord
 
 	public $workcat_search;
 	public $sumcost = 0;
+	public $manager_name;
 
 	private $idCache;
 
@@ -150,6 +151,29 @@ class Project extends CActiveRecord
 			'sort'=>$sort
 		));
 	}
+
+	public function searchManager()
+	{
+		
+		$criteria = new CDbCriteria;
+		$searchterm = empty($searchterm) ? trim(Yii::app()->request->getParam('manager_name')) : $searchterm;		    
+		$searchterm = htmlspecialchars($searchterm, ENT_QUOTES);
+		if (!empty($searchterm)) {
+		        $criteria->addCondition(' (t.pj_manager_name like "%' . $searchterm . '%" OR
+		              t.pj_director_name like "%' . $searchterm . '%" ) ');
+		} 
+
+	
+		  
+		    return new CActiveDataProvider($this, array(
+		        'criteria' => $criteria,
+		        'pagination' => array(
+		            'pagesize' => 25,
+		        )
+		    ));
+
+	}
+
 
 	public function getCost(){
 	     	$sum = 0;
