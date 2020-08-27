@@ -60,13 +60,13 @@ class NotifyController extends Controller
 
         //2.แจ้งเตือนครบกำหนดชำระเงินของ vendor
         //Alert before 7 days, until 90 days
-        $paymentProjectData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor ครั้งที่ 1' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
+        $paymentProjectData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของลูกค้า ครั้งที่ 1' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url,'2' as type,pj_id as update_id  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ),'".$current_date."')<=7  AND DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ),'".$current_date."')>-90 AND (invoice_alarm2 IS NULL  OR DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
             DAY ),'".$current_date."')>7)  AND (bill_date='' OR bill_date='0000-00-00') AND user.department_id='$user_dept'")->queryAll();
 
-        $paymentProjectData2=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor ครั้งที่ 2' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm2
+        $paymentProjectData2=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของลูกค้า ครั้งที่ 2' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm2
             DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url,'2' as type,pj_id as update_id  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
             DAY ),'".$current_date."')<=7  AND DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm2
             DAY ),'".$current_date."')>-90  AND (bill_date='' OR bill_date='0000-00-00') AND invoice_alarm2!='' AND user.department_id='$user_dept'")->queryAll();      
@@ -78,7 +78,7 @@ class NotifyController extends Controller
 
         //3.แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier
         //Alert before 10 days, until 90 days
-        $paymentOutsourceData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,oc_code as contract, 'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier' as alarm_detail,DATE_ADD( invoice_receive_date, INTERVAL 10
+        $paymentOutsourceData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,oc_code as contract, 'แจ้งเตือนครบกำหนดจ่ายเงินให้ผู้รับจ้าง/ผู้ขาย ' as alarm_detail,DATE_ADD( invoice_receive_date, INTERVAL 10
             DAY ) as date_end, CONCAT('paymentOutsourceContract/update/',id) as url,'3' as type, id as update_id FROM payment_outsource_contract pay_p LEFT JOIN outsource_contract ON pay_p.contract_id=oc_id LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON project.pj_user_create=user.u_id WHERE DATEDIFF('".$current_date."',invoice_receive_date)>=10 AND  DATEDIFF('".$current_date."',invoice_receive_date)<90  AND (approve_date='' OR approve_date='0000-00-00')  AND user.department_id='$user_dept'")->queryAll(); 
 
         //4.แจ้งเตือนบันทึกค่ารับรองประจำเดือน
@@ -319,19 +319,19 @@ class NotifyController extends Controller
         
 
             //Alert before 7 days, until 60 days
-            $paymentProjectData=Yii::app()->db->createCommand("SELECT pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
+            $paymentProjectData=Yii::app()->db->createCommand("SELECT pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของลูกค้า' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ),'".$current_date."')<=7  AND DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
             DAY ),'".$current_date."')>-60  AND (bill_date='' OR bill_date='0000-00-00') AND user.department_id='$user_dept'")->queryAll(); 
 
             //Alert before 10 days, until 60 days
-            $paymentOutsourceData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,oc_code as contract, 'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier' as alarm_detail,DATE_ADD( invoice_receive_date, INTERVAL 10
+            $paymentOutsourceData=Yii::app()->db->createCommand("SELECT pj_id,pj_name as project,oc_code as contract, 'แจ้งเตือนครบกำหนดจ่ายเงินให้ ผู้รับจ้าง/ผู้ขาย' as alarm_detail,DATE_ADD( invoice_receive_date, INTERVAL 10
             DAY ) as date_end, CONCAT('paymentOutsourceContract/update/',id) as url,'3' as type, id as update_id FROM payment_outsource_contract pay_p LEFT JOIN outsource_contract ON pay_p.contract_id=oc_id LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON project.pj_user_create=user.u_id WHERE DATEDIFF('".$current_date."',invoice_receive_date)>=10 AND  DATEDIFF('".$current_date."',invoice_receive_date)<60  AND (approve_date='' OR approve_date='0000-00-00')  AND user.department_id='$user_dept'")->queryAll(); 
 
             if(!empty($paymentOutsourceData))
             {
 
-            	Yii::app()->db->createCommand("INSERT INTO  notify (pj_id,project,contract,alarm_detail,date_end,url,type,update_id) SELECT pj_id,pj_name as project,oc_code as contract, 'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier' as alarm_detail,DATE_ADD( invoice_receive_date, INTERVAL 10
+            	Yii::app()->db->createCommand("INSERT INTO  notify (pj_id,project,contract,alarm_detail,date_end,url,type,update_id) SELECT pj_id,pj_name as project,oc_code as contract, 'แจ้งเตือนครบกำหนดจ่ายเงินให้ผู้รับจ้าง/ผู้ขาย' as alarm_detail,DATE_ADD( invoice_receive_date, INTERVAL 10
             DAY ) as date_end, CONCAT('paymentOutsourceContract/update/',id) as url,'3' as type, id as update_id FROM payment_outsource_contract pay_p LEFT JOIN outsource_contract ON pay_p.contract_id=oc_id LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON project.pj_user_create=user.u_id WHERE DATEDIFF('".$current_date."',invoice_receive_date)>=10 AND  DATEDIFF('".$current_date."',invoice_receive_date)<60  AND (approve_date='' OR approve_date='0000-00-00')  AND user.department_id='$user_dept'")->execute(); 
             }
 

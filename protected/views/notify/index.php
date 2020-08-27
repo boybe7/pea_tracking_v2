@@ -247,9 +247,9 @@ $('#search-form').submit(function(){
                 'label'=>$amount[2],
             ), true);
             if(isset($_GET['tab']) && $_GET['tab']==2 )      
-              echo '<li class="active"><a href="#vendorTab" data-toggle="tab">ชำระเงินของ vendor '.$badge.'</a></li>';
+              echo '<li class="active"><a href="#vendorTab" data-toggle="tab">ชำระเงินของลูกค้า '.$badge.'</a></li>';
             else
-              echo '<li ><a href="#vendorTab" data-toggle="tab">ชำระเงินของ vendor '.$badge.'</a></li>';
+              echo '<li ><a href="#vendorTab" data-toggle="tab">ชำระเงินของลูกค้า '.$badge.'</a></li>';
            
 
             $badge= '';
@@ -259,9 +259,9 @@ $('#search-form').submit(function(){
                 'label'=>$amount[3],
             ), true); 
             if(isset($_GET['tab']) && $_GET['tab']==3 )     
-              echo '<li class="active" ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ supplier '.$badge.'</a></li>';
+              echo '<li class="active" ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ผู้รับจ้าง/ผู้ขาย '.$badge.'</a></li>';
             else
-              echo '<li ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ supplier '.$badge.'</a></li>';
+              echo '<li ><a href="#supplierTab" data-toggle="tab">จ่ายเงินให้ผู้รับจ้าง/ผู้ขาย '.$badge.'</a></li>';
             
             $badge= '';
             if($amount[4]>0) 
@@ -377,7 +377,7 @@ $('#search-form').submit(function(){
        else 
             echo '<div class="tab-pane " id="vendorTab">';
     ?>   
-         <center><h4>แจ้งเตือนครบกำหนดชำระเงินของ vendor</h4></center>
+         <center><h4>แจ้งเตือนครบกำหนดชำระเงินของลูกค้า</h4></center>
          <?php
 
             $this->widget('bootstrap.widgets.TbGridView',array(
@@ -452,7 +452,7 @@ $('#search-form').submit(function(){
        else 
             echo '<div class="tab-pane " id="supplierTab">';
     ?>       
-         <center><h4>แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier</h4></center>
+         <center><h4>แจ้งเตือนครบกำหนดจ่ายเงินให้ผู้รับ้จาง/ผู้ขาย</h4></center>
          <?php
             $this->widget('bootstrap.widgets.TbGridView',array(
                 'id'=>'notify-grid-supplier',
@@ -616,15 +616,27 @@ $('#search-form').submit(function(){
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),
                             'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
-                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
+                            'headerHtmlOptions' => array('style' => 'width:37%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
                     ),
                     'con'=>array(
                             'name' => 'contract',
                             'header'=>$model->getAttributeLabel('contract'),
                             'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
-                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #eeeeee'),                       
                             'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
+
+                    'T'=>array(
+                            'name' => 'pc_T_percent',
+                            'header' => '<a class="sort-link">ความก้าวหน้าด้านเทคนิค (%T)</a>',
+                            'filter'=>false,
+                            'type'=>'raw', 
+                            'value' => function($model){
+                                 return $model->getPercentT($model);
+                             },
+                            'headerHtmlOptions' => array('style' => 'width:13%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:center;')
                     ),  
                    
                      array(
