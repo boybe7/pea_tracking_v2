@@ -145,8 +145,15 @@ class PaymentProjectContractController extends Controller
 				//$model->user_create = Yii::app()->user->ID;
 				// $t = $_POST["t_percent"];
 				// $a = $_POST["a_percent"];
-				
-		
+				header('Content-type: text/plain');
+				if(isset($_POST['PaymentType']))
+				{
+					foreach ($_POST['PaymentType'] as $key => $value) {
+						$pay_detail = new PaymentDetail;
+						echo $value."<br>";
+					}
+				}		
+				exit;
 
 			 	// $modelPC = ProjectContract::model()->FindByPk($model->proj_id);
 				// $modelPC->pc_T_percent = $t;
