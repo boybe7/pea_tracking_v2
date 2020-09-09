@@ -46,14 +46,14 @@
 .dropdown-submenu:focus > a {
   color: #ffffff;
   text-decoration: none;
-  background-color: #62c462;
-  background-image: -moz-linear-gradient(top, #62c462, #51a351);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62c462), to(#51a351));
-  background-image: -webkit-linear-gradient(top, #62c462, #51a351);
-  background-image: -o-linear-gradient(top,  #62c462, #51a351);
-  background-image: linear-gradient(to bottom ,#62c462, #51a351);
+  background-color: #202120;
+  background-image: -moz-linear-gradient(top, #202120, #51a351);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#202120), to(#51a351));
+  background-image: -webkit-linear-gradient(top, #202120, #51a351);
+  background-image: -o-linear-gradient(top,  #202120, #51a351);
+  background-image: linear-gradient(to bottom ,#202120, #51a351);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff62c462', endColorstr='#ff51a351', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff202120', endColorstr='#ff51a351', GradientType=0);
 }
 
 .dropdown-menu > .active > a,
@@ -61,15 +61,15 @@
 .dropdown-menu > .active > a:focus {
   color: #ffffff;
   text-decoration: none;
-  background-color: #62c462;
-  background-image: -moz-linear-gradient(top, #62c462, #51a351);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62c462), to(#51a351));
-  background-image: -webkit-linear-gradient(top, #62c462, #51a351);
-  background-image: -o-linear-gradient(top,  #62c462, #51a351);
-  background-image: linear-gradient(to bottom ,#62c462, #51a351);
+  background-color: #202120;
+  background-image: -moz-linear-gradient(top, #202120, #51a351);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#202120), to(#51a351));
+  background-image: -webkit-linear-gradient(top, #202120, #51a351);
+  background-image: -o-linear-gradient(top,  #202120, #51a351);
+  background-image: linear-gradient(to bottom ,#202120, #51a351);
   background-repeat: repeat-x;
   outline: 0;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff62c462', endColorstr='#ff51a351', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff202120', endColorstr='#ff51a351', GradientType=0);
 }
 
 .navbar .brand {
@@ -254,6 +254,23 @@ select, input[type="file"] {
     height: 30px;
     line-height: 30px;
 }
+
+#footer {
+    background-color: #F0EFEF;
+}
+.credit {
+    margin: 6px 0;
+    color: #ccc;
+    text-align: center;
+}
+#wrap {
+        min-height: 100%;
+        height: auto !important;
+        height: 100%;
+        /* Negative indent footer by it's height */
+        /*margin: 0 auto -60px;*/
+}
+
 
 .the-fieldset {
     background-color: whiteSmoke;
@@ -516,5 +533,14 @@ else{
 
 </div><!-- page -->
 
+
+<div class="navbar navbar-fixed-bottom">
+    <div class="navbar-inner" style="background-color: rgba(0, 0, 0, 0.76);">
+        <div class="width-constraint clearfix">
+             <p class="muted credit">พัฒนาโดย ฝ่ายบริการวิศวกรรม การไฟฟ้าส่วนภูมิภาค © 2020</p>
+     
+        </div>
+    </div>
+</div>
 </body>
 </html>

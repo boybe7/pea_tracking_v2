@@ -13,7 +13,7 @@ $this->pageTitle=Yii::app()->name . ' - Login';
      width:100%;
      min-height:340px;
      position: relative;
-     background: url(../images/intro-bg.jpg) no-repeat center center;
+     background: url(../images/intro-bg.jpg) ;
      background-size: cover;
      font: 16px/1.6em 'Boon400',sans-serif;
      font-weight: normal;
@@ -21,7 +21,7 @@ $this->pageTitle=Yii::app()->name . ' - Login';
 </style>
 
 <center>
-<div class="container-fluid well" style="width:350px;margin-top:49px;">
+<div class="container-fluid well" style="width:350px;margin-top:129px;">
 
  <div class="row-fluid">
 
