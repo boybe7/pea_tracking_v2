@@ -255,6 +255,25 @@ select, input[type="file"] {
     line-height: 30px;
 }
 
+.the-fieldset {
+    background-color: whiteSmoke;
+    border: 1px solid #E3E3E3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.the-legend {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 0;
+    width: inherit;
+    padding: 0 10px;
+    border-bottom: none;
+}
+
 .well-yellow {
     min-height: 20px;
     padding: 19px;
@@ -293,6 +312,83 @@ select, input[type="file"] {
             padding-right: 20px;
         } 
 </style>     
+<script type="text/javascript">
+  
+          function formatNumber(n) {
+            // format number 1000000 to 1,234,567
+     
+            return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+
+          }
+
+
+          function formatCurrency(input, blur) {
+            // appends $ to value, validates decimal side
+            // and puts cursor back in right position.
+            
+            // get input value
+            var input_val = input.val();
+            
+            // don't validate empty input
+            if (input_val === "") { return; }
+            
+            // original length
+            var original_len = input_val.length;
+
+            // initial caret position 
+            var caret_pos = input.prop("selectionStart");
+              
+            // check for decimal
+            if (input_val.indexOf(".") >= 0) {
+
+              // get position of first decimal
+              // this prevents multiple decimals from
+              // being entered
+              var decimal_pos = input_val.indexOf(".");
+
+              // split number by decimal point
+              var left_side = input_val.substring(0, decimal_pos);
+              var right_side = input_val.substring(decimal_pos);
+
+              // add commas to left side of number
+              left_side = formatNumber(left_side);
+
+              // validate right side
+              right_side = formatNumber(right_side);
+              
+              // On blur make sure 2 numbers after decimal
+              if (blur === "blur") {
+                right_side += "00";
+              }
+              
+              // Limit decimal to only 2 digits
+              right_side = right_side.substring(0, 2);
+
+              // join number by .
+              input_val = "" + left_side + "." + right_side;
+
+            } else {
+              // no decimal entered
+              // add commas to number
+              // remove all non-digits
+              input_val = formatNumber(input_val);
+              input_val = "" + input_val;
+              
+              // final formatting
+              if (blur === "blur") {
+                input_val += ".00";
+              }
+            }
+            
+            // send updated string to input
+            input.val(input_val);
+
+            // put caret back in the right position
+            var updated_len = input_val.length;
+            caret_pos = updated_len - original_len + caret_pos;
+            input[0].setSelectionRange(caret_pos, caret_pos);
+          }
+</script>
      
 <body class="body">
 

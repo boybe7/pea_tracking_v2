@@ -42,12 +42,12 @@ class Project extends CActiveRecord
 		return array(
 			array('pj_name,pj_status, pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_user_create, pj_user_update,pj_manager_name,pj_manager_position,pj_director_name,pj_director_position', 'required'),
 			array('pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_user_create, pj_user_update', 'numerical', 'integerOnly'=>true),
-			array('pj_name,pj_manager_name,pj_manager_position,pj_director_name,pj_director_position', 'length', 'max'=>400),
+			array('pj_name,pj_manager_name,pj_manager_position,pj_director_name,pj_director_position,pj_address', 'length', 'max'=>400),
 			array('pj_date_approved', 'safe'),
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('pj_id,pj_status,cost, pj_name,pj_CA, pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_date_approved, pj_user_create, pj_user_update,workcat_search,pj_close,pj_manager_name,pj_manager_position,pj_director_name,pj_director_position', 'safe', 'on'=>'search,create,update'),
+			array('pj_id,pj_status,cost, pj_name,pj_CA, pj_vendor_id, pj_work_cat, pj_fiscalyear, pj_date_approved, pj_user_create, pj_user_update,workcat_search,pj_close,pj_manager_name,pj_manager_position,pj_director_name,pj_director_position,pj_address', 'safe', 'on'=>'search,create,update'),
 		);
 	}
 
@@ -95,7 +95,8 @@ class Project extends CActiveRecord
 			'pj_manager_name'=>'ผู้จัดการโครงการ',
 			'pj_manager_position'=>'ตำแหน่ง',
 			'pj_director_name'=>'ผู้อำนวยการโครงการ',
-			'pj_director_position'=>'ตำแหน่ง'
+			'pj_director_position'=>'ตำแหน่ง',
+			'pj_address'=>'ที่อยู่'
 		);
 	}
 

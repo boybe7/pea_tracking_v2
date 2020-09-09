@@ -76,7 +76,12 @@ class ProjectContractController extends Controller
                 $data[] = array(
                         'id'=>$model['pc_id'],
                         'label'=>'ปี '.$modelProject->pj_fiscalyear.":".$model['pc_code']." ".$modelVendor->v_name,
-                        'cost'=>number_format($model['pc_cost']+$change,2)
+                        'cost'=>number_format($model['pc_cost']+$change,2),
+                        'address'=>$modelProject->pj_address,
+                        'manager_name'=>$modelProject->pj_manager_name,
+                        'manager_position'=>$modelProject->pj_manager_position,
+                        'director_name'=>$modelProject->pj_director_name,
+                        'director_position'=>$modelProject->pj_director_position,
                 );
 
             }

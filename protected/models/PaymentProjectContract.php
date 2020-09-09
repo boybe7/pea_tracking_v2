@@ -36,13 +36,15 @@ class PaymentProjectContract extends CActiveRecord
 		return array(
 			array('proj_id,invoice_alarm, invoice_no, invoice_date, user_create, user_update', 'required'),
 			array('proj_id, user_create, user_update,T,A', 'numerical', 'integerOnly'=>true),
-			array('money,invoice_alarm,invoice_alarm2', 'numerical'),
+			array('money,invoice_alarm,invoice_alarm2,pay_day,flag_delete', 'numerical'),
 			array('invoice_no, bill_no', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, proj_id,T,A, detail,invoice_alarm,invoice_alarm2, money, invoice_no, invoice_date, bill_no, bill_date, user_create, user_update, last_update,fine_amount', 'safe', 'on'=>'search,update,delete'),
+			array('id, proj_id,T,A, detail,invoice_alarm,invoice_alarm2, money, invoice_no, invoice_date, bill_no, bill_date, user_create, user_update, last_update,fine_amount,address,signed_name,signed_position,act_instead,email_alert,flag_delete,note,pay_day', 'safe', 'on'=>'search,update,delete'),
 		);
 	}
+
+	
 
 	/**
 	 * @return array relational rules.
@@ -67,8 +69,8 @@ class PaymentProjectContract extends CActiveRecord
 			'money' => 'ได้รับเงิน',
 			'invoice_no' => 'เลขที่ใบแจ้งหนี้',
 			'invoice_date' => 'วันที่ออกใบแจ้งหนี้',
-			'invoice_alarm' => 'ชำระเงินภายใน (วัน) ครั้งที่ 1',
-			'invoice_alarm2' => 'ชำระเงินภายใน (วัน) ครั้งที่ 2',
+			'invoice_alarm' => 'เตือนชำระเงินภายใน (วัน) ครั้งที่ 1',
+			'invoice_alarm2' => 'เตือนชำระเงินภายใน (วัน) ครั้งที่ 2',
 			'bill_no' => 'เลขที่ใบเสร็จรับเงิน',
 			'bill_date' => 'วันที่ได้รับใบเสร็จรับเงิน',
 			'user_create' => 'User Create',
@@ -80,7 +82,15 @@ class PaymentProjectContract extends CActiveRecord
 			'A%'=>'A%',
 			'bill_no/date'=>'เลขที่ใบเสร็จรับเงิน/วันที่ได้รับ',
 			'invoice_no/date'=>'เลขที่ใบแจ้งหนี้/วันที่ได้รับ',
-			'fine_amount'=>'ค่าปรับ'
+			'fine_amount'=>'ค่าปรับ',
+			'address'=>'ที่อยู่',
+			'email_alert'=>'อีเมล์แจ้งเตือน',
+			'signed_name'=>'ผู้ลงนาม',
+			'signed_position'=>'ตำแหน่ง',
+			'act_instead'=>'',
+			'flag_delete'=>'ยกเลิก',
+			'pay_day'=>'ชำระเงินภายใน (วัน)'
+
 		);
 	}
 
@@ -115,6 +125,8 @@ class PaymentProjectContract extends CActiveRecord
 		$criteria->compare('last_update',$this->last_update,true);
 		$criteria->compare('T',$this->T);
 		$criteria->compare('A',$this->A);
+		//$criteria->compare('flag_delete',0);
+		$criteria->compare('flag_delete',$this->flag_delete);
 		$user_dept = Yii::app()->user->userdept;
 		if(!Yii::app()->user->isExecutive())
 		{
@@ -128,7 +140,7 @@ class PaymentProjectContract extends CActiveRecord
             '*', // this adds all of the other columns as sortable
         );
 
-        $sort->defaultOrder = 'invoice_date asc';
+        $sort->defaultOrder = 'invoice_date desc';
 
 
 		return new CActiveDataProvider($this, array(

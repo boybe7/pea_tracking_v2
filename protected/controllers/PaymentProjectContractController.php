@@ -27,11 +27,11 @@ class PaymentProjectContractController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','print'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('admin','delete','create','update','DeleteSelected'),
+				'actions'=>array('admin','delete','cancel','create','update','DeleteSelected','createReference','updateReference','deleteReference','updateReferenceTemp','deleteReferenceTemp'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -54,6 +54,69 @@ class PaymentProjectContractController extends Controller
 			'model'=>$this->loadModel($id),
 		));
 	}
+
+	public function actionCreateReference()
+	{
+		if(!empty($_POST["payment_id"]) || $_POST["payment_id"]!="0")
+		{
+			$model=new PaymentDocRefer("search");
+			$model->payment_id = $_POST["payment_id"];
+			$model->detail = $_POST["detail"];
+			$model->save();
+	
+		}
+		else
+		{
+			$model=new PaymentDocReferTemp("search");
+			$model->user_id = Yii::app()->user->ID;
+			$model->detail = $_POST["detail"];
+			$model->save();
+		}
+		
+	}
+
+	public function actionUpdateReference()
+    {
+	    $es = new EditableSaver('PaymentDocRefer');
+	    try {
+	    	$es->update();
+	    } catch(CException $e) {
+	    	echo CJSON::encode(array('success' => false, 'msg' => $e->getMessage()));
+	    	return;
+	    }
+	    echo CJSON::encode(array('success' => true));
+    }
+
+    public function actionDeleteReference($id)
+	{
+
+		$model=PaymentDocRefer::model()->findByPk($id);
+		
+		$model->delete();
+
+	}
+
+	public function actionUpdateReferenceTemp()
+    {
+	    $es = new EditableSaver('PaymentDocReferTemp');
+	    try {
+	    	$es->update();
+	    } catch(CException $e) {
+	    	echo CJSON::encode(array('success' => false, 'msg' => $e->getMessage()));
+	    	return;
+	    }
+	    echo CJSON::encode(array('success' => true));
+    }
+
+    public function actionDeleteReferenceTemp($id)
+	{
+
+		$model=PaymentDocReferTemp::model()->findByPk($id);
+		
+		$model->delete();
+
+	}
+
 
 	/**
 	 * Creates a new model.
@@ -80,40 +143,73 @@ class PaymentProjectContractController extends Controller
 			//$model->user_create = Yii::app()->user->ID;
 			// $t = $_POST["t_percent"];
 			// $a = $_POST["a_percent"];
-			
+			$transaction=Yii::app()->db->beginTransaction();
+			try {
 
-			if($model->save())
-			{
-				$modelPC = ProjectContract::model()->FindByPk($model->proj_id);
-				// $modelPC->pc_T_percent = $t;
-				// $modelPC->pc_A_percent = $a;
-				// $modelPC->pc_user_update = Yii::app()->user->ID;
-				// $modelPC->pc_last_update =  (date("Y")).date("-m-d H:i:s");
-				// $modelPC->save();
+				if($model->save())
+				{
+					$modelPC = ProjectContract::model()->FindByPk($model->proj_id);
+					// $modelPC->pc_T_percent = $t;
+					// $modelPC->pc_A_percent = $a;
+					// $modelPC->pc_user_update = Yii::app()->user->ID;
+					// $modelPC->pc_last_update =  (date("Y")).date("-m-d H:i:s");
+					// $modelPC->save();
+					
+					$update = 0;
+					if($model->T > $modelPC->pc_T_percent)
+					{
+						$update = 1;
+						$modelPC->pc_T_percent = $model->T;	
+					}
+					if($model->A > $modelPC->pc_A_percent)
+					{
+						$update = 1;
+						$modelPC->pc_A_percent = $model->A;	
+					}
+					if($update==1)
+					{
+						$modelPC->pc_user_update = Yii::app()->user->ID;
+					    $modelPC->pc_last_update =  (date("Y")).date("-m-d H:i:s");
+					    $modelPC->save();
+							
+					}
+
+					$saveOK = true;
+					if(isset($_POST['PaymentType']))
+					{
+						$pid = 1;
+						foreach ($_POST['PaymentType'] as $key => $value) {
+							$pay_detail = new PaymentDetail;
+							$pay_detail->cost = str_replace(",", "",$value);
+							$pay_detail->payment_type_id = $pid;
+							$pay_detail->payment_id = $model->id;
+							
+							if(!$pay_detail->save())
+								$saveOK = false;
+							
+							$pid++;
+							
+						}
+					}		
+
+					if($saveOK)
+					   $transaction->commit();
 				
-				$update = 0;
-				if($model->T > $modelPC->pc_T_percent)
-				{
-					$update = 1;
-					$modelPC->pc_T_percent = $model->T;	
-				}
-				if($model->A > $modelPC->pc_A_percent)
-				{
-					$update = 1;
-					$modelPC->pc_A_percent = $model->A;	
-				}
-				if($update==1)
-				{
-					$modelPC->pc_user_update = Yii::app()->user->ID;
-				    $modelPC->pc_last_update =  (date("Y")).date("-m-d H:i:s");
-				    $modelPC->save();
-						
-				}
+					$this->redirect(array('index'));
+				}	
+				else
+					$model->money = $_POST['PaymentProjectContract']["money"];
 
-				$this->redirect(array('index'));
-			}	
-			else
-				$model->money = $_POST['PaymentProjectContract']["money"];
+
+			}
+			catch(Exception $e)
+	 		{
+	 			$transaction->rollBack();
+	 			Yii::trace(CVarDumper::dumpAsString($e->getMessage()));
+	 	        	//you should do sth with this exception (at least log it or show on page)
+	 	        Yii::log( 'Exception when saving data: ' . $e->getMessage(), CLogger::LEVEL_ERROR );
+	 
+			}	 
 		}
 
 		$this->render('create',array(
@@ -145,15 +241,33 @@ class PaymentProjectContractController extends Controller
 				//$model->user_create = Yii::app()->user->ID;
 				// $t = $_POST["t_percent"];
 				// $a = $_POST["a_percent"];
-				header('Content-type: text/plain');
+				//header('Content-type: text/plain');
 				if(isset($_POST['PaymentType']))
 				{
+					$pid = 1;
 					foreach ($_POST['PaymentType'] as $key => $value) {
-						$pay_detail = new PaymentDetail;
-						echo $value."<br>";
+						
+						$payment = PaymentDetail::model()->findAll('payment_id =:id AND payment_type_id=:type', array(':id' =>$id,':type'=>$pid));
+						if(!empty($payment))
+						{
+							$payment[0]->cost = str_replace(",", "",$value);
+							$payment[0]->save();	
+							//print_r($payment[0]);
+						}
+						else
+						{
+							$payment = new PaymentDetail;
+							$payment->payment_id = $id;
+							$payment->payment_type_id = $pid;
+							$payment->cost = str_replace(",", "",$value);
+							$payment->save();	
+						}
+						
+						$pid++;
+						//echo $value."<br>";
 					}
 				}		
-				exit;
+				//exit;
 
 			 	// $modelPC = ProjectContract::model()->FindByPk($model->proj_id);
 				// $modelPC->pc_T_percent = $t;
@@ -285,12 +399,53 @@ class PaymentProjectContractController extends Controller
 	public function actionDeleteSelected()
     {
     	$autoIdAll = $_POST['selectedID'];
+    	//header('Content-type: text/plain');
         if(count($autoIdAll)>0)
         {
             foreach($autoIdAll as $autoId)
             {
-                $this->loadModel($autoId)->delete();
+                //$this->loadModel($autoId)->delete();
+            		
+                $model = $this->loadModel($autoId);
+                $model->money = str_replace(",", "", $model->money); 
+                $model->flag_delete = 1;
+                $model->save();
+                print_r($model);
+               
             }
         }    
+
+        // exit;
+    }
+
+    public function actionCancel($id)
+	{
+		
+			$model=$this->loadModel($id);
+			$model->flag_delete = 1;
+			$model->note = $_GET["note"];
+			
+			$model->save();
+
+			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+			if(!isset($_GET['ajax']))
+				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+		
+	}
+
+
+     public function actionPrint($id)
+    {
+        	
+	    
+	    $model = $this->loadModel($id);
+	    
+
+        $this->renderPartial('_formPDF', array(
+            'model' => $model,
+            'display' => 'block',
+        ), false, true);
+
+        
     }
 }

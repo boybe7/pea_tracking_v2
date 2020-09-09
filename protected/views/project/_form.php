@@ -280,6 +280,13 @@ hr {
 						
 				?>
     			</div>
+
+          <div class="row-fluid">
+            <div class="span12">
+                <?php echo $form->textFieldRow($model,'pj_address',array('class'=>'span12','maxlength'=>400)); ?>
+            </div>
+          </div>   
+
           
           <div class="row-fluid">  
             <div class="span7">

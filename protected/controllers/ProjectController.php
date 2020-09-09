@@ -1106,7 +1106,31 @@ class ProjectController extends Controller
                     }    
 				    	//end
 
-
+                    if(isset($_POST['PaymentType']))
+					{
+						$pid = 1;
+						foreach ($_POST['PaymentType'] as $key => $value) {
+							
+							$payment = ProjectPaymentDetail::model()->findAll('proj_id =:id AND payment_type_id=:type', array(':id' =>$id,':type'=>$pid));
+							if(!empty($payment))
+							{
+								$payment[0]->cost = str_replace(",", "",$value);
+								$payment[0]->save();	
+								//print_r($payment[0]);
+							}
+							else
+							{
+								$payment = new ProjectPaymentDetail;
+								$payment->proj_id = $id;
+								$payment->payment_type_id = $pid;
+								$payment->cost = str_replace(",", "",$value);
+								$payment->save();	
+							}
+							
+							$pid++;
+							//echo $value."<br>";
+						}
+					}		
 		    	
 			    	$modelProj->attributes = $_POST["Project"];
 			    	$modelProj->pj_CA = $_POST["Project"]["pj_CA"];

@@ -72,6 +72,16 @@ hr {
           document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
       }
 
+          $("input[data-type='currency']").on({
+              keyup: function() {
+               
+                formatCurrency($(this));
+              },
+              blur: function() { 
+                formatCurrency($(this), "blur");
+              }
+          });
+
       function init () {
        
           $("form input").each(function(){
@@ -92,6 +102,10 @@ hr {
                                             
          });
 
+      
+
+
+
           console.log("init");
       }
 
@@ -99,6 +113,9 @@ hr {
 
     
   });
+
+
+
 
    function addWorkCode(){
   
@@ -126,16 +143,22 @@ hr {
     	e.relatedTarget // previous tab
     });
    
+      function calCostSummary() {
+          var cost_summary = 0;
+          $('.payment_type').each(function () {
+              value = parseFloat($(this).val().replace(/,/g,''));
+            
+              cost_summary = cost_summary + value;
+
+          })
+
+          $("#cost_summary").val(cost_summary.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+     }
+
    
 </script>
 
 
-<script type="text/javascript">
-  
-
-
-  
-</script>
 
 <div class="well">
 	<ul class="nav nav-tabs">
@@ -354,6 +377,12 @@ hr {
             
         ?>
           </div>
+
+           <div class="row-fluid">
+            <div class="span12">
+                <?php echo $form->textFieldRow($model,'pj_address',array('class'=>'span12','maxlength'=>400)); ?>
+            </div>
+          </div>   
           
           <div class="row-fluid">  
             <div class="span7">
@@ -415,6 +444,65 @@ hr {
             </div>
           </div>
 
+         
+
+          <div class="row-fluid">   
+            <div class="span4">
+             <?php 
+               $mc = Yii::app()->db->createCommand()
+                      ->select('mc_cost')
+                      ->from('management_cost')
+                      ->where('mc_proj_id=:id AND mc_in_project=2 AND mc_type=0', array(':id'=>$model->pj_id))
+                      ->queryAll();
+
+                $value = '';
+               if(!empty($mc))
+                 $value = number_format($mc[0]["mc_cost"],2);       
+        
+               echo CHtml::label('เงินประมาณการค่าใช้จ่ายด้านบุคลากร(ไม่รวมภาษีมูลค่าเพิ่ม)','expect_cost2');        
+               echo "<input type='text' id='expect_cost2' name='expect_cost2' class='span12' style='text-align:right' value='$value'>";
+
+            ?>
+            </div>
+
+            <div class="span4">
+             <?php 
+               $mc = Yii::app()->db->createCommand()
+                      ->select('mc_cost')
+                      ->from('management_cost')
+                      ->where('mc_proj_id=:id AND mc_in_project=3 AND mc_type=0', array(':id'=>$model->pj_id))
+                      ->queryAll();
+
+                $value = '';
+               if(!empty($mc))
+                 $value = number_format($mc[0]["mc_cost"],2);       
+        
+               echo CHtml::label('เงินประมาณการค่ารับรอง(ไม่รวมภาษีมูลค่าเพิ่ม)','expect_cost3');        
+               echo "<input type='text' id='expect_cost3' name='expect_cost3' class='span12' style='text-align:right' value='$value'>";
+
+            ?>
+            </div>
+
+           <div class="span4">
+             <?php 
+               $mc = Yii::app()->db->createCommand()
+                      ->select('mc_cost')
+                      ->from('management_cost')
+                      ->where('mc_proj_id=:id AND mc_in_project=1 AND mc_type=0', array(':id'=>$model->pj_id))
+                      ->queryAll();
+
+               $value = '';
+               if(!empty($mc))
+                 $value = number_format($mc[0]["mc_cost"],2);   
+
+       
+               echo CHtml::label('เงินประมาณการค่าใช้จ่ายในการบริหารโครงการ(ไม่รวมภาษีมูลค่าเพิ่ม)','expect_cost1');        
+               echo "<input type='text' id='expect_cost1' name='expect_cost1' class='span12' style='text-align:right' value='$value' >"; 
+            ?>
+            </div> 
+
+          </div>
+
           <div class="row-fluid">  
             <div class="span12">
             <?php echo $form->textFieldRow($model,'pj_close',array('class'=>'span6')); ?>
@@ -470,62 +558,35 @@ hr {
             </div>
             <div class="well-blue">
             <div class="row-fluid">
-            <div class="span12">
-             <?php 
-               $mc = Yii::app()->db->createCommand()
-                      ->select('mc_cost')
-                      ->from('management_cost')
-                      ->where('mc_proj_id=:id AND mc_in_project=1 AND mc_type=0', array(':id'=>$model->pj_id))
-                      ->queryAll();
+                <div><b><u>รายการรายได้ : </u></b></div><br>
+               <?php
+                  $type = PaymentType::model()->findAll();
+                  $cost_summary = 0;
+                  foreach ($type as $key => $value) {
+                      $id = 'payment_type_'.$value->id;
+                      $name = 'PaymentType['.$value->id.']';
+                      $payment = ProjectPaymentDetail::model()->findAll('proj_id =:id AND payment_type_id=:type', array(':id' =>$model->pj_id,':type'=>$value->id));
+                      $cost = empty($payment) ? 0 : $payment[0]->cost;
+                      $cost_summary += $cost;    
+                      echo CHtml::label($value->detail, $id);    
+                     
+                      echo CHtml::textField($name, $cost,array('id'=>$id,'data-type'=>"currency",'class'=>'span12 payment_type','style'=>'text-align:right','onChange'=>'javascript:calCostSummary()'));    
 
-               $value = '';
-               if(!empty($mc))
-                 $value = number_format($mc[0]["mc_cost"],2);   
+                      //echo "<input type='text' id='$id' class='span12' style='text-align:right' value='$cost' >";
+                  }
 
-       
-               echo CHtml::label('เงินประมาณการค่าใช้จ่ายในการบริหารโครงการ(ไม่รวมภาษีมูลค่าเพิ่ม)','expect_cost1');        
-               echo "<input type='text' id='expect_cost1' name='expect_cost1' class='span12' style='text-align:right' value='$value' >"; 
-            ?>
+               ?>
+                  
+
+                  <?php 
+                      $cost_summary = number_format($cost_summary,2);
+                      echo CHtml::label('รายได้รวม (ไม่รวมภาษีมูลค่าเพิ่ม)','cost_summary',array('style'=>'font-weight:bold'));
+                      echo "<input type='text' id='cost_summary' name='cost_summary' class='span12' style='text-align:right' readonly value='$cost_summary'>";
+
+
+                 ?>
             </div>
-          </div>
-          <div class="row-fluid">   
-            <div class="span12">
-             <?php 
-               $mc = Yii::app()->db->createCommand()
-                      ->select('mc_cost')
-                      ->from('management_cost')
-                      ->where('mc_proj_id=:id AND mc_in_project=2 AND mc_type=0', array(':id'=>$model->pj_id))
-                      ->queryAll();
-
-                $value = '';
-               if(!empty($mc))
-                 $value = number_format($mc[0]["mc_cost"],2);       
         
-               echo CHtml::label('เงินประมาณการค่าใช้จ่ายด้านบุคลากร(ไม่รวมภาษีมูลค่าเพิ่ม)','expect_cost2');        
-               echo "<input type='text' id='expect_cost2' name='expect_cost2' class='span12' style='text-align:right' value='$value'>";
-
-            ?>
-            </div>
-          </div>
-           <div class="row-fluid">   
-            <div class="span12">
-             <?php 
-               $mc = Yii::app()->db->createCommand()
-                      ->select('mc_cost')
-                      ->from('management_cost')
-                      ->where('mc_proj_id=:id AND mc_in_project=3 AND mc_type=0', array(':id'=>$model->pj_id))
-                      ->queryAll();
-
-                $value = '';
-               if(!empty($mc))
-                 $value = number_format($mc[0]["mc_cost"],2);       
-        
-               echo CHtml::label('เงินประมาณการค่ารับรอง(ไม่รวมภาษีมูลค่าเพิ่ม)','expect_cost3');        
-               echo "<input type='text' id='expect_cost3' name='expect_cost3' class='span12' style='text-align:right' value='$value'>";
-
-            ?>
-            </div>
-          </div>
 
     		</div>
     	</div>	

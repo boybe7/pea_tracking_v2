@@ -5804,6 +5804,136 @@ $table = $section->addTable(array("cellMargin"=>0));
         
     }	
 
+     public function actionPrintManager()
+    {
+  
+    	$name = $_GET["manager_name"];
+		$start_date = $_GET['yearStart'].'-'.$_GET['monthStart'].'-01';
+		$end_date = $_GET['yearEnd'].'-'.$_GET['monthEnd'].'-'.cal_days_in_month(CAL_GREGORIAN,intval($_GET['monthEnd']),$_GET['yearEnd']);
+      
+        $this->render('_formManagerPDF', array(
+            'name'=>$name,
+            'start_date'=>$start_date,
+            'end_date'=>$end_date,
+            'display' => 'block',
+            
+        ));
+
+    
+        
+    }
+
+
+     public function actionGenManagerExcel()
+    {
+
+    	  
+		   Yii::import('ext.phpexcel.XPHPExcel');    
+		   $objPHPExcel= XPHPExcel::createPHPExcel();
+		   $objReader = PHPExcel_IOFactory::createReader('Excel5');
+           $objPHPExcel = new PHPExcel();
+
+           $objPHPExcel->setActiveSheetIndex(0);
+
+		   	$name = $_GET["manager_name"];
+			$start_date = $_GET['yearStart'].'-'.$_GET['monthStart'].'-01';
+			$end_date = $_GET['yearEnd'].'-'.$_GET['monthEnd'].'-'.cal_days_in_month(CAL_GREGORIAN,intval($_GET['monthEnd']),$_GET['yearEnd']);
+
+
+		   $model = Yii::app()->db->createCommand()
+                ->select('*')
+                ->from('project')
+                ->where('pj_manager_name!="" AND pj_manager_name LIKE "%'.$name.'%" AND (pj_date_approved BETWEEN "'.$start_date.'" AND "'.$end_date.'")')
+                ->order("pj_fiscalyear DESC")
+                ->queryAll();
+       
+        	
+            //draw title
+		    // $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2',$projects[0]['pc_details']);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1','ลำดับ');
+		    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B1','ช่ื่อ-นามสกุล');
+		    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C1','ตำแหน่ง');
+		    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D1','โครงการ');
+		    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E1','ประเภทงาน');
+		    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F1','ปีงบประมาณ'); 
+		    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G1','วันที่อนุมัติ'); 
+		    
+
+        	$no = 1;
+        	$row = 2;        
+        	foreach ($model as $key => $value) {
+			
+		
+                    //print_r($model);	             
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$value['pj_manager_name']);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,'ผู้จัดการโครงการ');
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$value['pj_name']);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,WorkCategory::model()->findByPK($value['pj_work_cat'])->wc_name);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$value['pj_fiscalyear']);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,$value['pj_date_approved']);
+	        		$row++;
+	        		$no++;
+
+	        }
+	        	
+
+	        $model = Yii::app()->db->createCommand()
+                ->select('*')
+                ->from('project')
+                ->where('pj_director_name!="" AND pj_director_name LIKE "%'.$name.'%" AND (pj_date_approved BETWEEN "'.$start_date.'" AND "'.$end_date.'")')
+                ->order("pj_fiscalyear DESC")
+                ->queryAll();
+     
+        	foreach ($model as $key => $value) {
+          
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$value['pj_director_name']);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,'ผู้อำนวยการโครงการ');
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,$value['pj_name']);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,WorkCategory::model()->findByPK($value['pj_work_cat'])->wc_name);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$value['pj_fiscalyear']);
+	        		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$row,$value['pj_date_approved']);
+	        		$row++;
+	        		$no++;
+
+	        }
+
+
+
+	   			
+
+ 			ob_end_clean();
+			ob_start();
+
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="manager_report.xlsx"');
+			header('Cache-Control: max-age=0');
+			// If you're serving to IE 9, then the following may be needed
+			header('Cache-Control: max-age=1');
+
+			// If you're serving to IE over SSL, then the following may be needed
+			header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+			header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+			header ('Pragma: public'); // HTTP/1.0
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,  'Excel2007');
+			$objWriter->save('php://output');  //
+			// Yii::app()->end(); 
+
+			$xlsData = ob_get_contents();
+			//ob_end_clean();
+			$response =  array(
+		        'op' => 'ok',
+		        'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+		    );
+
+
+			
+    }
+
+   
 
 
     public function actionTest()

@@ -27,7 +27,7 @@ $this->breadcrumbs=array(
 
 
 <h4>รายงานผู้จัดการโครงการ/ผู้อำนวยการโครงการ</h4>
-<form class="" id="search-form" action="/pea_track3/report/manager" method="get">
+<form class="" id="search-form" action="/pea_track/report/manager" method="get">
 <div class="well">
   <div class="row-fluid">
 	<div class="span5">
@@ -276,11 +276,10 @@ $("#printReport").click(function(e){
     e.preventDefault();
 
     $.ajax({
-        url: "printCashflow",
-        data: {fiscalyear:$("#fiscalyear").val(),project: $("#project").val(),monthEnd:$("#monthEnd").val(),yearEnd:$("#yearEnd").val(),workcat:$("#workcat").val()
-              },
+        url: "printManager",
+        data: {manager_name:$("#manager_name").val(),monthStart:$("#monthStart").val(),yearStart:$("#yearStart").val(),monthEnd:$("#monthEnd").val(),yearEnd:$("#yearEnd").val()},
         success:function(response){
-            window.open("../tempReport.pdf", "_blank", "fullscreen=yes");              
+            window.open("'.Yii::app()->baseUrl.'/report/temp/tempReport.pdf'.'", "_blank", "fullscreen=yes");              
             
         }
 
@@ -292,7 +291,7 @@ $("#printReport").click(function(e){
 Yii::app()->clientScript->registerScript('exportExcel', '
 $("#exportExcel").click(function(e){
     e.preventDefault();
-    window.location.href = "genCashflowExcel?fiscalyear="+$("#fiscalyear").val()+"&project="+$("#project").val()+"&monthEnd="+$("#monthEnd").val()+"&yearEnd="+$("#yearEnd").val()+"&workcat="+$("#workcat").val();
+    window.location.href = "genManagerExcel?manager_name="+$("#manager_name").val()+"&monthStart="+$("#monthStart").val()+"&yearStart="+$("#yearStart").val()+"&monthEnd="+$("#monthEnd").val()+"&yearEnd="+$("#yearEnd").val();
               
 
 

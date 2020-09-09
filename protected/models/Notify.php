@@ -264,7 +264,10 @@ class Notify extends CActiveRecord
     	$str = "";
     	if(!empty($model))
     	{
-    		$str = $model[0]->pj_name;
+    		$pj_id = $model[0]->pj_id;
+    		$proj_con = ProjectContract::model()->findAll(array("condition"=>"pc_proj_id='".$pj_id."' "));
+    		$str = empty($proj_con) ? "":$proj_con[0]->pc_T_percent;
+
     	}
     	return $str;
     }

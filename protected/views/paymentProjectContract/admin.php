@@ -238,41 +238,41 @@ if(Yii::app()->user->getAccess(Yii::app()->request->url))
 			    'label'=>'เพิ่มรายการ',
 			    'icon'=>'plus-sign',
 			    'url'=>array('create'),
-			    'htmlOptions'=>array('class'=>'pull-right','style'=>'margin:24px 10px 0px 10px;'),
+			    'htmlOptions'=>array('class'=>'pull-right','style'=>'margin:24px 10px 20px 10px;'),
 			)); 
 
-			$this->widget('bootstrap.widgets.TbButton', array(
-			    'buttonType'=>'link',
+			// $this->widget('bootstrap.widgets.TbButton', array(
+			//     'buttonType'=>'link',
 			    
-			    'type'=>'danger',
-			    'label'=>'ลบรายการ',
-			    'icon'=>'minus-sign',
-			    //'url'=>array('delAll'),
-			    //'htmlOptions'=>array('id'=>"buttonDel2",'class'=>'pull-right'),
-			    'htmlOptions'=>array(
-			        //'data-toggle'=>'modal',
-			        //'data-target'=>'#myModal',
-			        'onclick'=>'      
-			                       if($.fn.yiiGridView.getSelection("payment-project-contract-grid").length==0)
-			                       		js:bootbox.alert("กรุณาเลือกแถวข้อมูลที่ต้องการลบ?","ตกลง");
-			                       else  
-			                          js:bootbox.confirm("คุณต้องการจะลบข้อมูล?","ยกเลิก","ตกลง",
-						                   function(confirmed){
+			//     'type'=>'danger',
+			//     'label'=>'ลบรายการ',
+			//     'icon'=>'minus-sign',
+			//     //'url'=>array('delAll'),
+			//     //'htmlOptions'=>array('id'=>"buttonDel2",'class'=>'pull-right'),
+			//     'htmlOptions'=>array(
+			//         //'data-toggle'=>'modal',
+			//         //'data-target'=>'#myModal',
+			//         'onclick'=>'      
+			//                        if($.fn.yiiGridView.getSelection("payment-project-contract-grid").length==0)
+			//                        		js:bootbox.alert("กรุณาเลือกแถวข้อมูลที่ต้องการลบ?","ตกลง");
+			//                        else  
+			//                           js:bootbox.confirm("คุณต้องการจะลบข้อมูล?","ยกเลิก","ตกลง",
+			// 			                   function(confirmed){
 						                   	 
-			                                if(confirmed)
-						                   	 $.ajax({
-													type: "POST",
-													url: "deleteSelected",
-													data: { selectedID: $.fn.yiiGridView.getSelection("payment-project-contract-grid")}
-													})
-													.done(function( msg ) {
-														$("#payment-project-contract-grid").yiiGridView("update",{});
-													});
-						                  })',
-			        'class'=>'pull-right',
-			        'style'=>'margin:24px 10px 20px 10px',
-			    ),
-			)); 
+			//                                 if(confirmed)
+			// 			                   	 $.ajax({
+			// 										type: "POST",
+			// 										url: "deleteSelected",
+			// 										data: { selectedID: $.fn.yiiGridView.getSelection("payment-project-contract-grid")}
+			// 										})
+			// 										.done(function( msg ) {
+			// 											$("#payment-project-contract-grid").yiiGridView("update",{});
+			// 										});
+			// 			                  })',
+			//         'class'=>'pull-right',
+			//         'style'=>'margin:24px 10px 20px 10px',
+			//     ),
+			// )); 
 
 			 $this->widget('bootstrap.widgets.TbGridView',array(
 				'id'=>'payment-project-contract-grid',
@@ -360,17 +360,42 @@ if(Yii::app()->user->getAccess(Yii::app()->request->url))
 							// 'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),  	            	  	
 							// 'htmlOptions'=>array('style'=>'text-align:center')
 				  	// ),
-					// 'v_contractor'=>array(
-					// 	    'name' => 'v_contractor',
-					// 	    'filter'=>CHtml::activeTextField($model, 'v_contractor',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("v_contractor"))),
-					// 		'headerHtmlOptions' => array('style' => 'width:20%;text-align:center;background-color: #f5f5f5'),  	            	  	
-					// 		'htmlOptions'=>array('style'=>'text-align:center')
-				 //  	),
+					'flag_del'=>array(
+						    'name' => 'flag_delete',
+						    'filter'=>CHtml::activeDropDownList($model, 'flag_delete', array('1' => 'ยกเลิก'),array('empty'=>'')),
+						    'type'=>'raw',
+							'value'=>function($data){
+									$str = $data->flag_delete==1 ? "<i class='icon-ok icon-red'></i>" : "";
+									return $str;	
+							},
+							'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),  	            	  	
+							'htmlOptions'=>array('style'=>'text-align:center')
+				  	),
 					array(
 						'header' => '<a class="sort-link">ดู/แก้ไข</a>',
 						'class'=>'bootstrap.widgets.TbButtonColumn',
 						'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
-						'template' => '{update}'
+						'template' => '{update} {cancel}',
+						'buttons'=>array
+					    (
+					       
+					        'cancel' => array
+					        (
+					            'label'=>'ยกเลิก',
+					            'icon' => 'icon-remove',
+					            'options'=>array('class'=>'cancel'),
+					            //'visible'=>'$data->user_id =='.Yii::app()->user->id,
+					            'url'=>function($data){
+
+										            return Yii::app()->createUrl('/paymentProjectContract/cancel/',
+
+										                    array('id'=>$data->id) /* <- customise that */
+
+										            );
+
+										        }, 
+					        ),
+					    ),
 					),
 				),
 			));
@@ -449,3 +474,26 @@ else
 
 
  ?>
+<?php
+
+Yii::app()->clientScript->registerScript('cancel', '
+$(".cancel").click(function(e){
+    e.preventDefault();
+    url = $(this).attr("href"),
+    str = url.split("/")
+    id = str[4]
+    bootbox.prompt("หมายเหตุการยกเลิก : ", function(result) {                
+	  		$.ajax({
+		        url: url,
+		        data: {note: result},
+		        success:function(response){
+		        		location.reload();
+		        }
+		    });
+	});
+    
+
+   
+});
+', CClientScript::POS_END);
+?>

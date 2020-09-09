@@ -58,6 +58,8 @@ function renderDate2($value)
 
 
 $month_th = array("1" => "มกราคม", "2" => "กุมภาพันธ์", "3" => "มีนาคม","4" => "เมษายน", "5" => "พฤษภาคม", "6" => "มิถุนายน","7" => "กรกฎาคม", "8" => "สิงหาคม", "9" => "กันยายน","10" => "ตุลาคม", "11" => "พฤศจิกายน", "12" => "ธันวาคม");
+
+$th_month = array("01"=>"ม.ค.",'02'=>"ก.พ.",'03'=>"มี.ค.",'04'=>"เม.ย.",'05'=>"พ.ค.",'06'=>"มิ.ย.",'07'=>"ก.ค.",'08'=>"ส.ค.",'09'=>"ก.ย.",'10'=>"ต.ค.",'11'=>"พ.ย.",'12'=>"ธ.ค.");
 /*
 $monthBetween = $month_th[$monthEnd]." ".$yearEnd;
 
@@ -74,53 +76,86 @@ $monthCondition = " <= '".$dayEnd."'";
 */
 
 		
-	
-	echo "<center><div class='header'><b>ช่วงเดือน </b></div></center>";
+	$start_str = explode("-", $start_date);
+    $end_str = explode("-", $end_date);
+
+	echo "<center><div class='header'><b>ช่วงเดือน ".$th_month[$start_str[1]]." ".($start_str[0]+543)." ถึงเดือน ".$th_month[$end_str[1]]." ".($end_str[0]+543)." </b></div></center>";
 	
 	echo "<table border='1' class='span12' style='margin-left:0px;margin-bottom:20px;'>";
 		echo "<tr style='background-color:#F5C27F'>";
 		 echo "<td style='text-align:center;width:5%'>ลำดับ</td>";
 		 echo "<td style='text-align:center;width:20%'>ช่ื่อ-นามสกุล</td>";
-		 echo "<td style='text-align:center;width:20%'>ตำแหน่ง</td>";
-		 echo "<td style='text-align:center;width:40%'>โครงการ</td>";
-		 echo "<td style='text-align:center;width:10%'>ปีงบประมาณ</td>";
+		 echo "<td style='text-align:center;width:10%'>ตำแหน่ง</td>";
+		 echo "<td style='text-align:center;width:35%'>โครงการ</td>";
+         echo "<td style='text-align:center;width:18%'>ประเภทงาน</td>";
+		 echo "<td style='text-align:center;width:7%'>ปีงบประมาณ</td>";
 
 		echo "</tr>";
 
-        $model = Yii::app()->db->createCommand()
-                ->select('*')
+        $firtQuery = Yii::app()->db->createCommand()
+                ->select('pj_name,pj_work_cat,pj_fiscalyear,pj_manager_name')
                 ->from('project')
-                ->where('pj_manager_name LIKE "%'.$name.'%" AND (pj_date_approved BETWEEN "'.$start_date.'" AND "'.$end_date.'")')
+                ->where('pj_manager_name!="" AND pj_manager_name LIKE "%'.$name.'%" AND (pj_date_approved BETWEEN "'.$start_date.'" AND "'.$end_date.'")')
                 ->order("pj_fiscalyear DESC")
                 ->queryAll();
+        
+
+        $second = Yii::app()->db->createCommand()
+                ->select('pj_name,pj_work_cat,pj_fiscalyear,pj_director_name')
+                ->from('project')
+                ->where('pj_director_name!="" AND pj_director_name LIKE "%'.$name.'%" AND (pj_date_approved BETWEEN "'.$start_date.'" AND "'.$end_date.'")')
+             
+                ->order("pj_fiscalyear DESC")
+                ->queryAll();
+
+        $result = array_merge($firtQuery, $second);              
+        $no = 1; 
        
-        $no = 1;        
-        foreach ($model as $key => $value) {
+
+        function array_orderby()
+        {
+            $args = func_get_args();
+            $data = array_shift($args);
+            foreach ($args as $n => $field) {
+                if (is_string($field)) {
+                    $tmp = array();
+                    foreach ($data as $key => $row)
+                        $tmp[$key] = $row[$field];
+                    $args[$n] = $tmp;
+                    }
+            }
+            $args[] = &$data;
+            call_user_func_array('array_multisort', $args);
+            return array_pop($args);
+        }
+
+
+
+        // Pass the array, followed by the column names and sort flags
+        $sorted = array_orderby($result, 'pj_fiscalyear', SORT_DESC); 
+     
+               
+        foreach ($sorted as $key => $value) {
            echo "<tr>";
                  echo "<td style='text-align:center;'>".($no++)."</td>";
-                 echo "<td style='text-align:left;'>".$value['pj_manager_name']."</td>";
-                 echo "<td style='text-align:center;'>ผู้จัดการโครงการ</td>";
+                 if(isset($value['pj_manager_name']))
+                 {
+                    echo "<td style='text-align:left;'>".$value['pj_manager_name']."</td>";
+                    echo "<td style='text-align:center;'>ผู้จัดการโครงการ</td>";   
+                 }
+                 else
+                 {
+                    echo "<td style='text-align:left;'>".$value['pj_director_name']."</td>";
+                    echo "<td style='text-align:center;'>ผู้อำนวยโครงการ</td>";
+                 }
+                 
                  echo "<td style='text-align:left;'>".$value['pj_name']."</td>";
+                 echo "<td style='text-align:center;'>".WorkCategory::model()->findByPK($value['pj_work_cat'])->wc_name."</td>";
                  echo "<td style='text-align:center;'>".$value['pj_fiscalyear']."</td>";
            echo "</tr>";
         } 
 
-        $model = Yii::app()->db->createCommand()
-                ->select('*')
-                ->from('project')
-                ->where('pj_director_name LIKE "%'.$name.'%" AND (pj_date_approved BETWEEN "'.$start_date.'" AND "'.$end_date.'")')
-                ->order("pj_fiscalyear DESC")
-                ->queryAll();
-     
-        foreach ($model as $key => $value) {
-           echo "<tr>";
-                 echo "<td style='text-align:center;'>".($no++)."</td>";
-                 echo "<td style='text-align:left;'>".$value['pj_director_name']."</td>";
-                 echo "<td style='text-align:center;'>ผู้อำนวยการโครงการ</td>";
-                 echo "<td style='text-align:left;'>".$value['pj_name']."</td>";
-                 echo "<td style='text-align:center;'>".$value['pj_fiscalyear']."</td>";
-           echo "</tr>";
-        }               
+      
 
 	echo "</table>";
 
