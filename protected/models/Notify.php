@@ -260,15 +260,11 @@ class Notify extends CActiveRecord
 	public function getPercentT($data)
     {
     	
-    	$model = Project::model()->findAll(array("condition"=>"pj_name='".$data->project."' "));
-    	$str = "";
-    	if(!empty($model))
-    	{
-    		$pj_id = $model[0]->pj_id;
-    		$proj_con = ProjectContract::model()->findAll(array("condition"=>"pc_proj_id='".$pj_id."' "));
+    	
+    		$proj_con = ProjectContract::model()->findAll(array("condition"=>"pc_proj_id='".$data->pj_id."' "));
     		$str = empty($proj_con) ? "":$proj_con[0]->pc_T_percent;
 
-    	}
+    
     	return $str;
     }
 

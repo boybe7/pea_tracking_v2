@@ -272,14 +272,70 @@ if(Yii::app()->user->getAccess(Yii::app()->request->url))
 			//         'class'=>'pull-right',
 			//         'style'=>'margin:24px 10px 20px 10px',
 			//     ),
-			// )); 
+			// ));
+
+			$this->widget('bootstrap.widgets.TbButton', array(
+			    'buttonType'=>'link',
+			    
+			    'type'=>'primary',
+			    'label'=>'Export ใบแจ้งหนี้',
+			    'icon'=>'excel',
+			    //'url'=>array('delAll'),
+			    //'htmlOptions'=>array('id'=>"buttonDel2",'class'=>'pull-right'),
+			    'htmlOptions'=>array(
+			        //'data-toggle'=>'modal',
+			        //'data-target'=>'#myModal',
+			        'onclick'=>'      
+			                       if($.fn.yiiGridView.getSelection("payment-project-contract-grid").length==0)
+			                       		js:bootbox.alert("กรุณาเลือกแถวข้อมูลที่ต้องการ?","ตกลง");
+			                       else  
+			                       {
+			                       	  id = $.fn.yiiGridView.getSelection("payment-project-contract-grid")
+						               window.location.href = "export/"+id;
+						            }      ',
+			        'class'=>'pull-right',
+			        'style'=>'margin:24px 0px 20px 10px',
+			    ),
+			)); 
+
+
+			$this->widget('bootstrap.widgets.TbButton', array(
+			    'buttonType'=>'link',
+			    
+			    'type'=>'info',
+			    'label'=>'พิมพ์ใบแจ้งหนี้',
+			    'icon'=>'print',
+			    //'url'=>array('delAll'),
+			    //'htmlOptions'=>array('id'=>"buttonDel2",'class'=>'pull-right'),
+			    'htmlOptions'=>array(
+			        //'data-toggle'=>'modal',
+			        //'data-target'=>'#myModal',
+			        'onclick'=>'      
+			                       if($.fn.yiiGridView.getSelection("payment-project-contract-grid").length==0)
+			                       		js:bootbox.alert("กรุณาเลือกแถวข้อมูลที่ต้องการ?","ตกลง");
+			                       else  
+			                       {
+			                       	  id = $.fn.yiiGridView.getSelection("payment-project-contract-grid")
+						                   	 $.ajax({
+													type: "POST",
+													url: "print/"+id,
+													data: {}
+													})
+													.done(function( msg ) {
+														window.open("'.Yii::app()->baseUrl.'/report/temp/invoice_"+id+".pdf'.'", "_blank", "fullscreen=yes");
+													});
+						            }      ',
+			        'class'=>'pull-right',
+			        'style'=>'margin:24px 0px 20px 10px',
+			    ),
+			)); 
 
 			 $this->widget('bootstrap.widgets.TbGridView',array(
 				'id'=>'payment-project-contract-grid',
 				'type'=>'bordered condensed',
 				'dataProvider'=>$model->search(),
 				'filter'=>$model,
-				'selectableRows' =>2,
+				'selectableRows' =>1,
 				'htmlOptions'=>array('style'=>'padding-top:40px;width:100%'),
 			    'enablePagination' => true,
 			    'enableSorting'=>true,

@@ -612,6 +612,9 @@ $('#search-form').submit(function(){
 
                                             )               
                     ),
+                    // 'pj_id'=>array(
+                    //         'name' => 'pj_id'
+                    //     ),
                     'proj'=>array(
                             'name' => 'project',
                             'header'=>$model->getAttributeLabel('project'),

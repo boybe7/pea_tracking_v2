@@ -218,8 +218,7 @@ class ReportController extends Controller
     public function actionGenServiceWord()
     {
     	   //$model = Project::model()->findByPk($_GET["project"]);
-    		$year = $_GET["fiscalyear"];
-    		$workcat = $_GET["workcat"];
+    	
   
 		    Yii::import('ext.phpword.XPHPWord');  
 
@@ -1306,6 +1305,39 @@ $table = $section->addTable(array("cellMargin"=>0));
 			    	$d = $dates[2];
 
 			    $renderDate = $d." ".$th_month[$mi]." ".$yi;
+			    if($renderDate==0)
+			        $renderDate = "";   
+		}	    
+	    return $renderDate;             
+	}
+
+	function renderDateThaiYear($value)
+	{
+	    $th_month = array("","ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค.");
+	    $dates = explode("-", $value);
+	    $d=0;
+	    $mi = 0;
+	    $yi = 0;
+
+	    $renderDate = "";
+	    if($value!="" && !empty($value))
+	    {
+
+			    foreach ($dates as $key => $value) {
+			         $d++;
+			         if($d==2)
+			            $mi = $value;
+			         if($d==1)
+			            $yi = $value;
+			    }
+			    if(substr($mi, 0,1)==0)
+			        $mi = substr($mi, 1);
+			    if(substr($dates[2], 0,1)==0)
+			        $d = substr($dates[2], 1);
+			    else
+			    	$d = $dates[2];
+
+			    $renderDate = $d." ".$th_month[$mi]." ".($yi+543);
 			    if($renderDate==0)
 			        $renderDate = "";   
 		}	    
@@ -5775,6 +5807,188 @@ $table = $section->addTable(array("cellMargin"=>0));
 
         
     }	
+
+     public function actionIncome()
+	{
+		$model=new Project('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Project']))
+			$model->attributes=$_GET['Project'];
+
+		$this->render('income',array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionGenIncome()
+    {
+        
+    
+		$start_date = $_GET['yearStart'].'-'.$_GET['monthStart'].'-01';
+		$end_date = $_GET['yearEnd'].'-'.$_GET['monthEnd'].'-'.cal_days_in_month(CAL_GREGORIAN,intval($_GET['monthEnd']),$_GET['yearEnd']);
+        $this->renderPartial('_formIncome', array(
+    
+            'start_date'=>$start_date,
+            'end_date'=>$end_date,
+            'display' => 'block',
+        ), false, true);
+
+        
+    }	
+
+
+	public function actionIncomeExcel()
+	{
+
+			$th_month = array("01"=>"ม.ค.",'02'=>"ก.พ.",'03'=>"มี.ค.",'04'=>"เม.ย.",'05'=>"พ.ค.",'06'=>"มิ.ย.",'07'=>"ก.ค.",'08'=>"ส.ค.",'09'=>"ก.ย.",'10'=>"ต.ค.",'11'=>"พ.ย.",'12'=>"ธ.ค.");
+
+			$start_date = $_GET['yearStart'].'-'.$_GET['monthStart'].'-01';
+			$end_date = $_GET['yearEnd'].'-'.$_GET['monthEnd'].'-'.cal_days_in_month(CAL_GREGORIAN,intval($_GET['monthEnd']),$_GET['yearEnd']);
+
+			$month_start = $_GET['monthStart'];
+			$year_start = $_GET['yearStart']+543;
+			$month_end = $_GET['monthEnd'];
+			$year_end = $_GET['yearEnd']+543;
+
+			$fiscalyear = intval($_GET['monthStart']) > 9 ? $year_start +1 : $year_start;
+
+
+		   Yii::import('ext.phpexcel.XPHPExcel');    
+		   $objPHPExcel= XPHPExcel::createPHPExcel();
+		   $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+           $objPHPExcel = $objReader->load("report/templateIncome.xlsx");
+
+           //sheet name
+           $objPHPExcel->setActiveSheetIndex(1)->setTitle("รายได้จริง ".$th_month[$month_end].' '.$fiscalyear);
+           $objPHPExcel->setActiveSheetIndex(0)->setTitle("รับงาน ".$th_month[$month_end].' '.$fiscalyear);
+
+           //report title                 
+           $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1','ข้อมูลด้านการให้บริการ ประจำปี '.$fiscalyear.' ตั้งแต่เดือน '.$th_month[$month_start].' - '.$th_month[$month_end].' '.$year_end.' (วงเงินไม่รวมภาษีมูลค่าเพิ่ม)');
+           $objPHPExcel->setActiveSheetIndex(1)->setCellValue('A1','ข้อมูลด้านรายได้จริง กบศ. ประจำปี '.$fiscalyear.' ตั้งแต่เดือน '.$th_month[$month_start].' - '.$th_month[$month_end].' '.$year_end.' (วงเงินไม่รวมภาษีมูลค่าเพิ่ม)');
+
+           //--------sheet 1  รายรับ-------------//
+            $model = Yii::app()->db->createCommand()
+                ->select('*')
+                ->from('project')
+                ->where('pj_date_approved BETWEEN "'.$start_date.'" AND "'.$end_date.'"')
+                ->order("pj_date_approved ASC")
+                ->queryAll();
+
+            $no = 1;    
+            $row = 5;
+            foreach ($model as $key => $value) {
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$row,$no);
+                $vendor = Vendor::model()->findByPk($value['pj_vendor_id']);
+                if(!empty($vendor))
+                	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$row,$vendor->v_name);
+
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$value['pj_name']);
+               
+                //workcode
+                $workcode = WorkCode::model()->findAll('pj_id =:id', array(':id' =>$value['pj_id']));
+                $str_workcode = "";
+                foreach ($workcode as $key => $code) {
+                	$str_workcode .= $code->code."\n";
+                }
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$row,$str_workcode);
+
+                $column = 'H';
+                $pj_detail = ProjectPaymentDetail::model()->findAll('proj_id =:id', array(':id' =>$value['pj_id']));
+                $summary_cost = 0;
+                foreach ($pj_detail as $key => $detail) {
+                	$objPHPExcel->setActiveSheetIndex(0)->setCellValue($column.$row,$detail->cost);
+                	if($detail->id!=7)
+                		$summary_cost += $detail->cost; 
+                	$column++;
+                }
+
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,'ลว. '.$this->renderDateThaiYear($value['pj_date_approved']));
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,$summary_cost);
+
+                $i = $objPHPExcel->setActiveSheetIndex(0)->getCell('I'.$row)->getValue();
+                $k = $objPHPExcel->setActiveSheetIndex(0)->getCell('K'.$row)->getValue();
+
+                if(($i+$k)>0)
+                  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('O'.$row,'=N'.$row.'/(I'.$row.'+K'.$row.')*100');
+
+              	if($row > 30)
+              		$objPHPExcel->setActiveSheetIndex(0)->insertNewRowBefore($row + 1, 1);
+
+                $no++;
+                $row++;
+            }    
+
+
+            $objPHPExcel->setActiveSheetIndex(0)->getStyle('O5:O'.$row)->getNumberFormat()->setFormatCode('#,##0.00');
+
+
+            //------------sheet 2 ------------------//
+             $model = Yii::app()->db->createCommand()
+                ->select('*')
+                ->from('payment_project_contract')
+                ->where('bill_date BETWEEN "'.$start_date.'" AND "'.$end_date.'"')
+                ->order("bill_date ASC")
+                ->queryAll();
+
+            $no = 1;    
+            $row = 5;
+            foreach ($model as $key => $value) {
+            	$objPHPExcel->setActiveSheetIndex(1)->setCellValue('A'.$row,$no);
+
+            	$project = ProjectContract::model()->findByPk($value['proj_id']);
+                $vendor = Vendor::model()->findByPk($project->pc_vendor_id);
+                if(!empty($vendor))
+                	$objPHPExcel->setActiveSheetIndex(1)->setCellValue('B'.$row,$vendor->v_name);
+
+                $objPHPExcel->setActiveSheetIndex(1)->setCellValue('C'.$row,$project->pc_details);
+                $objPHPExcel->setActiveSheetIndex(1)->setCellValue('D'.$row,$value['detail']);
+                $objPHPExcel->setActiveSheetIndex(1)->setCellValue('E'.$row,'ลว. '.$this->renderDateThaiYear($value['bill_date']));
+
+                $column = 'F';
+                $pj_detail = PaymentDetail::model()->findAll('payment_id =:id AND payment_type_id!=7', array(':id' =>$value['id']));
+                $summary_cost = 0;
+                foreach ($pj_detail as $key => $detail) {
+                	$objPHPExcel->setActiveSheetIndex(1)->setCellValue($column.$row,$detail->cost);
+                	$summary_cost += $detail->cost; 
+                	$column++;
+                }
+
+              	if($row > 50)
+              		$objPHPExcel->setActiveSheetIndex(1)->insertNewRowBefore($row + 1, 1);
+
+                $no++;
+                $row++;
+            }
+
+
+
+            ob_end_clean();
+			ob_start();
+
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="income_report.xlsx"');
+			header('Cache-Control: max-age=0');
+			// If you're serving to IE 9, then the following may be needed
+			header('Cache-Control: max-age=1');
+
+			// If you're serving to IE over SSL, then the following may be needed
+			header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+			header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+			header ('Pragma: public'); // HTTP/1.0
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,  'Excel2007');
+			$objWriter->save('php://output');  //
+			// Yii::app()->end(); 
+
+			$xlsData = ob_get_contents();
+			//ob_end_clean();
+			$response =  array(
+		        'op' => 'ok',
+		        'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+		    );
+	}
+
 
     public function actionManager()
 	{

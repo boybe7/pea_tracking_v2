@@ -34,13 +34,13 @@ class PaymentProjectContract extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('proj_id,invoice_alarm, invoice_no, invoice_date, user_create, user_update', 'required'),
+			array('proj_id,invoice_alarm, invoice_no, invoice_date, user_create, user_update,no', 'required'),
 			array('proj_id, user_create, user_update,T,A', 'numerical', 'integerOnly'=>true),
-			array('money,invoice_alarm,invoice_alarm2,pay_day,flag_delete', 'numerical'),
+			array('money,invoice_alarm,invoice_alarm2,pay_day,flag_delete,no', 'numerical'),
 			array('invoice_no, bill_no', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, proj_id,T,A, detail,invoice_alarm,invoice_alarm2, money, invoice_no, invoice_date, bill_no, bill_date, user_create, user_update, last_update,fine_amount,address,signed_name,signed_position,act_instead,email_alert,flag_delete,note,pay_day', 'safe', 'on'=>'search,update,delete'),
+			array('no,id, proj_id,T,A, detail,invoice_alarm,invoice_alarm2, money, invoice_no, invoice_date, bill_no, bill_date, user_create, user_update, last_update,fine_amount,address,signed_name,signed_position,act_instead,email_alert,flag_delete,note,pay_day', 'safe', 'on'=>'search,update,delete'),
 		);
 	}
 

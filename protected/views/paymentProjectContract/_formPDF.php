@@ -125,8 +125,10 @@ class MYPDF extends TCPDF {
         //$image_file = 'bank/image/mwa2.jpg';
         //$this->Image($image_file, 170, 270, 25, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         //$this->Cell(0, 5, date("d/m/Y"), 0, false, 'R', 0, '', 0, false, 'T', 'M');
-
-        //$this->writeHTMLCell(145, 550, 70, 200, '-'.$this->getAliasNumPage().'/'.$this->getAliasNbPages().'-', 0, 1, false, true, 'C', false);
+        $footer = "                  &nbsp;&nbsp;กง.11-ป.28<br>
+                   200 ถนนงามวงศ์วาน แขวงลาดยาว เขตจตุจักร กรุงเทพมหานคร 10900 โทร (662) 590-9596 โทรสาร (662) 590-9598<br>
+                   200 Ngam Wong Wan Road, Lat Yao, Chatuchak, Bangkok 10900 Tel. (662) 590-9596 Fax (662) 590-9598";
+        $this->writeHTMLCell(445, 550, 15, 265, $footer, 0, 1, false, true, 'L', false);
         //writeHTMLCell ($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=false, $reseth=true, $align='', $autopadding=true)
     }
 }
@@ -208,7 +210,7 @@ $html = "";
     
         $row = 0;
         foreach ($ref_model as $key => $value) {
-            $no = count($ref_model)==1 ? "" : ($row+1).". ";
+            $no = "";//count($ref_model)==1 ? "" : ($row+1).". ";
 
             if($row==0)
             {

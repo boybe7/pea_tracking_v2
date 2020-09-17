@@ -172,14 +172,19 @@
                </div>
 
                <div class="span3  pull-right" style='padding-right:30px;'>
-                  <?php echo $form->textFieldRow($model,'invoice_no',array('class'=>'span12','maxlength'=>200,'readonly'=>true)); ?>
+                  <?php
+
+
+                  
+                   echo $form->textFieldRow($model,'invoice_no',array('class'=>'span12','maxlength'=>200,'readonly'=>true)); ?>
                </div>
                
   </div>
  
  <?php
+    
     $model_pc = ProjectContract::model()->findByPk($model->proj_id);
-    $modelProj = Project::model()->findByPk($model_pc->pc_proj_id);
+    $modelProj = empty($model_pc) ? new Project : Project::model()->findByPk($model_pc->pc_proj_id);
 
 
     if(!empty($modelProj))
@@ -257,44 +262,12 @@
            ?>
            <?php echo $form->textAreaRow($model,'detail',array('rows'=>2, 'cols'=>50, 'class'=>'span12')); ?> 
 
-          <div class="row-fluid">       
-               <div class="span4">
-                  <?php echo $form->textFieldRow($model,'invoice_no',array('class'=>'span12','maxlength'=>200)); ?>
-               </div>
-               <div class="span4"> 
-                  <?php echo $form->labelEx($model,'invoice_date',array('class'=>'span12','style'=>'text-align:left;padding-right:10px;'));?>
-                      
-                  <?php 
+        
 
-                     
-                            echo '<div class="input-append span11" style="margin-top:-10px;margin-left:0px;">'; //ใส่ icon ลงไป
-                                $form->widget('zii.widgets.jui.CJuiDatePicker',
-
-                                array(
-                                    'name'=>'invoice_date',
-                                    'attribute'=>'invoice_date',
-                                    'model'=>$model,
-                                    'options' => array(
-                                                      'mode'=>'focus',
-                                                      //'language' => 'th',
-                                                      'format'=>'dd/mm/yyyy', //กำหนด date Format
-                                                      'showAnim' => 'slideDown',
-                                                      ),
-                                    'htmlOptions'=>array('class'=>'span12', 'value'=>$model->invoice_date),  // ใส่ค่าเดิม ในเหตุการ Update 
-                                 )
-                            );
-                            echo '<span class="add-on"><i class="icon-calendar"></i></span></div>';
-
-                 ?>
-               </div>
-                <div class="span4">
+          <div class="row-fluid">   
+            <div class="span4">
                     <?php echo $form->textFieldRow($model,'pay_day',array('class'=>'span12','maxlength'=>3,'style'=>'text-align:right')); ?>
-               </div>
-              
-     
-          </div>
-
-          <div class="row-fluid">       
+               </div>    
                <div class="span4">
                     <?php echo $form->textFieldRow($model,'invoice_alarm',array('class'=>'span12','maxlength'=>3,'style'=>'text-align:right')); ?>
                </div>

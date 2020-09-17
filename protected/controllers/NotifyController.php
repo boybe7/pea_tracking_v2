@@ -159,10 +159,11 @@ class NotifyController extends Controller
 				
 				$pj_name = $project->pj_name;
 
-				$sql = "SELECT sum(pc_cost) as sum_total,pc_code FROM project_contract WHERE pc_proj_id='$pj_id'";                  
+				$sql = "SELECT sum(pc_cost) as sum_total,pc_code,pc_T_percent FROM project_contract WHERE pc_proj_id='$pj_id'";                  
                 $records = Yii::app()->db->createCommand($sql)->queryAll();
                 $pc_cost = empty($records) ? 1 : $records[0]['sum_total'];
                 $pc_code = empty($records) ? "" : $records[0]['pc_code'];
+                $pc_T_percent = empty($records) ? 0 : $records[0]['pc_T_percent'];
 
                 $sql = "SELECT sum(money) as sum_total FROM payment_project_contract p LEFT JOIN project_contract o ON p.proj_id=o.pc_id WHERE o.pc_proj_id = '$pj_id'";// AND bill_no !=''  ";                  
 	            $records2 = Yii::app()->db->createCommand($sql)->queryAll();
@@ -171,21 +172,26 @@ class NotifyController extends Controller
                
 
                 //---outsource payment------//
-                $sql = "SELECT sum(oc_cost) as sum_total FROM outsource_contract WHERE oc_proj_id = '$pj_id' ";                  
+                $sql = "SELECT sum(oc_cost) as sum_total,COUNT(oc_id) as n_oc,SUM(oc_T_percent) as sum_T FROM outsource_contract WHERE oc_proj_id = '$pj_id'  ";                  
 	            $records2 = Yii::app()->db->createCommand($sql)->queryAll();
 	            $oc_cost = empty($records2) ? 1 : $records2[0]['sum_total'];
-	            
+                $oc_T_percent = 0;
+                if(!empty($records2) && $records2[0]['n_oc']!=0)
+                {
+                    $oc_T_percent =  $records2[0]['sum_T']/$records2[0]['n_oc'];
+                }
+                
 				$sql = "SELECT sum(money) as sum_total FROM payment_outsource_contract p LEFT JOIN outsource_contract o ON p.contract_id=o.oc_id WHERE o.oc_proj_id = '$pj_id'";// AND approve_date !=''  ";                  
 	            $records2 = Yii::app()->db->createCommand($sql)->queryAll();
 	            $pay_oc = empty($records2) ? 0 : $records2[0]['sum_total'];
 
-	            // if($pj_id==267)
-	            // {
-	            // 	echo $pay_pc.":".$pc_cost."<br>";
-	            // 	echo $pay_oc.":".$oc_cost."<br>";
+	            //  if($pj_id==336)
+	            //  {
+	            //  	echo $pay_pc.":".$pc_cost."<br>";
+	            //  	echo $pay_oc.":".$oc_cost."<br>";
 	            // }
 	            //------check-------------//
-	            if(($pc_cost-$pay_pc==0) && ($oc_cost-$pay_oc==0) )
+	            if(($pc_cost-$pay_pc==0 && $pc_T_percent==100) && ($oc_cost-$pay_oc==0 && $oc_T_percent==100) )
 				{
 							
 							//Yii::app()->db->createCommand("INSERT INTO  notify (pj_id,project,contract,alarm_detail,date_end,url,type,update_id) VALUES ($pj_id,'$pj_name','$pc_code','แจ้งเตือนดำเนินการปิดงาน','','',5,'')")->execute();
@@ -584,19 +590,19 @@ class NotifyController extends Controller
 		$projectContractData=Yii::app()->db->createCommand("SELECT pj_name as project,pc_code as contract,'แจ้งเตือนครบกำหนดค้ำประกันสัญญา' as alarm_detail,pc_garantee_date as date_end, CONCAT('project/update/',pc_id) as url FROM project_contract pc LEFT JOIN project p ON pc.pc_proj_id=p.pj_id WHERE DATEDIFF(pc_garantee_date,'".$current_date."')<=7  AND (pc_garantee_end='')")->queryAll(); 
 
 		$user_dept = Yii::app()->user->userdept;
-		$paymentProjectData=Yii::app()->db->createCommand("SELECT pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
+		$paymentProjectData=Yii::app()->db->createCommand("SELECT pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของลูกค้า' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
 		DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id LEFT JOIN user ON project.pj_user_create=user.u_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
 		DAY ),'".$current_date."')<=7  AND (bill_date='' OR bill_date='0000-00-00') AND user.department_id='$user_dept'")->queryAll(); 
 
 		if(Yii::app()->user->isAdmin())
 		{
-			$paymentProjectData=Yii::app()->db->createCommand("SELECT pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของ vendor' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
+			$paymentProjectData=Yii::app()->db->createCommand("SELECT pj_name as project,pc_code as contract, 'แจ้งเตือนครบกำหนดชำระเงินของลูกค้า' as alarm_detail,DATE_ADD( invoice_date, INTERVAL invoice_alarm
 		DAY ) as date_end, CONCAT('paymentProjectContract/update/',id) as url  FROM payment_project_contract pay_p LEFT JOIN project_contract ON pay_p.proj_id=pc_id LEFT JOIN project ON pc_proj_id=pj_id  WHERE DATEDIFF(DATE_ADD( invoice_date, INTERVAL invoice_alarm
 		DAY ),'".$current_date."')<=7  AND (bill_date='' OR bill_date='0000-00-00')")->queryAll(); 
 
 		}
 
-		$paymentOutsourceData=Yii::app()->db->createCommand("SELECT pj_name as project,oc_code as contract, 'แจ้งเตือนครบกำหนดจ่ายเงินให้ supplier' as alarm_detail,DATE_ADD( invoice_receive_date, INTERVAL 10
+		$paymentOutsourceData=Yii::app()->db->createCommand("SELECT pj_name as project,oc_code as contract, 'แจ้งเตือนครบกำหนดจ่ายเงินให้ผู้รับจ้าง/ผู้ขาย' as alarm_detail,DATE_ADD( invoice_receive_date, INTERVAL 10
 		DAY ) as date_end, CONCAT('paymentOutsourceContract/update/',id) as url FROM payment_outsource_contract pay_p LEFT JOIN outsource_contract ON pay_p.contract_id=oc_id LEFT JOIN project ON oc_proj_id=pj_id WHERE DATEDIFF('".$current_date."',invoice_receive_date)>=10  AND (approve_date='' OR approve_date='0000-00-00')")->queryAll(); 
 
 		

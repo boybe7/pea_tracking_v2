@@ -27,7 +27,7 @@ class PaymentProjectContractController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','print'),
+				'actions'=>array('index','view','print','mail','export'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -44,6 +44,241 @@ class PaymentProjectContractController extends Controller
 		);
 	}
 
+	function renderDate($value)
+	{
+	    $th_month = array("","ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค.");
+	    $dates = explode("/", $value);
+	    $d=0;
+	    $mi = 0;
+	    $yi = 0;
+	    foreach ($dates as $key => $value) {
+	         $d++;
+	         if($d==2)
+	            $mi = $value;
+	         if($d==3)
+	            $yi = $value;
+	    }
+	    if(substr($mi, 0,1)==0)
+	        $mi = substr($mi, 1);
+	    if(substr($dates[0], 0,1)==0)
+	        $d = substr($dates[0], 1);
+
+
+	    $renderDate = $d." ".$th_month[$mi]." ".$yi;
+	    if($renderDate==0)
+	        $renderDate = "";   
+
+	    return $renderDate;             
+	}
+	public function actionExport($id)
+    {
+    	
+		   Yii::import('ext.phpexcel.XPHPExcel');    
+		   $objPHPExcel= XPHPExcel::createPHPExcel();
+		   $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+           $objPHPExcel = $objReader->load("report/templateInvoice.xlsx");
+
+		    $title = new PHPExcel_Style();
+		    $title->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 16,     
+			            'bold'=>true,         
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			          
+			            
+			    ));
+		    $header = new PHPExcel_Style();
+			$header->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'fill'  => array(
+			            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+			            'color' => array('rgb' =>'64ED74')
+			        ),
+			            
+			    ));
+
+			$header2 = new PHPExcel_Style();
+			$header2->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'fill'  => array(
+			            'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+			            'color' => array('rgb' =>'F7E672')
+			        ),
+			            
+			    ));
+
+			$detail = new PHPExcel_Style();
+			$detail->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15, 
+			            'bold'=>true,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			             'borders' => array(
+				            'bottom'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'top'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'left'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'right'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	)             
+			        	)			            
+			    ));
+			$detail_tb = new PHPExcel_Style();
+			$detail_tb->applyFromArray(
+			        array(
+			            'font'  => array(
+			            'name'  => 'TH SarabunPSK', 
+			            'size'  => 15,              
+			            'color' => array(
+			            'rgb'   => '000000'
+			            )
+			        ),
+			            'borders' => array(
+				            'bottom'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'top'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'left'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	),
+				           	'right'    => array(
+				            	'style'   => PHPExcel_Style_Border::BORDER_THIN ,
+				            	'color'   => array(
+				            		'rgb'     => '000000'
+				              	)
+				           	)             
+			        	)
+			    ));
+
+
+			$model = $this->loadModel($id);
+
+			$vendor = Vendor::model()->findByPK(ProjectContract::model()->findByPK($model->proj_id)->pc_vendor_id);
+			$project = Project::model()->findByPK(ProjectContract::model()->findByPK($model->proj_id)->pc_proj_id);
+			$vendor_name = empty($vendor) ?"" : $vendor->v_name;
+
+			//กำหนดชำระภายใน
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J1',$model->pay_day);
+			//CA
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J2',$project->pj_CA);
+
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G2',"  ".$model->invoice_no);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F3',"  ".$this->renderDate($model->invoice_date));
+
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C7',$vendor_name);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C8',$model->address);
+			
+			$ref_model = PaymentDocRefer::model()->findAll('payment_id =:id', array(':id' =>$model->id));
+    
+	        $row = 9;
+	        $no = 0;
+	        foreach ($ref_model as $key => $value) {
+	           
+	            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$value->detail);	            
+	            $row++;
+	            $no++;
+	        }
+
+	        $objPHPExcel->getActiveSheet()->removeRow($row,$no);
+
+	        $row = $row + 3;
+	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$row,$model->detail);
+	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$row,$model->money);
+
+	        $objPHPExcel->getActiveSheet()->getStyle('E'.$row.':E'.($row+3))->getNumberFormat()->setFormatCode('#,##0.00');
+	        $objPHPExcel->getActiveSheet()->getStyle('E'.$row.':E'.($row+3))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);	 
+
+	        $row = $row + 6;
+	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$row,'(.............'.$model->signed_name.'.............)');
+	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.($row+1),'ตำแหน่ง.............'.$model->signed_position.'.............');
+	        if($model->act_instead)
+	        {
+	        	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.($row+2),'ปฏิบัติหน้าที่แทน ผวก.');
+	              
+	        }
+
+		    ob_end_clean();
+			ob_start();
+
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="invoice_.xlsx"');
+			header('Cache-Control: max-age=0');
+			// If you're serving to IE 9, then the following may be needed
+			header('Cache-Control: max-age=1');
+
+			// If you're serving to IE over SSL, then the following may be needed
+			header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+			header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+			header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+			header ('Pragma: public'); // HTTP/1.0
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,  'Excel2007');
+			$objWriter->save('php://output');  //
+			// Yii::app()->end(); 
+
+			$xlsData = ob_get_contents();
+			//ob_end_clean();
+			$response =  array(
+		        'op' => 'ok',
+		        'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+		    );
+
+    }	
+
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
@@ -52,6 +287,13 @@ class PaymentProjectContractController extends Controller
 	{
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
+		));
+	}
+
+	public function actionMail()
+	{
+		$this->render('mail',array(
+			
 		));
 	}
 
@@ -131,6 +373,28 @@ class PaymentProjectContractController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
+		//running invoice_no
+                  $year = date('Y');
+                  $sql = 'SELECT MAX(no) as max_no FROM payment_project_contract WHERE  YEAR(invoice_date)='.$year;
+                  $command = Yii::app()->db->createCommand($sql);
+                  $result = $command->queryAll();
+                  $max_no = $result[0]['max_no']+1;
+                  $year_th = $year+543;
+                  $no_str = $max_no;
+                  if($max_no<10)
+                  {
+                     $no_str = "00".$max_no;
+                  }
+                  else if($max_no<100)
+                  {
+                     $no_str = "0".$max_no;
+                  }
+                
+        
+                  $model->invoice_no = "กบศ.".substr($year_th, -2)."-".$no_str;
+
+
+
 		if(isset($_POST['PaymentProjectContract']))
 		{
 			$model->attributes = $_POST['PaymentProjectContract'];
@@ -145,6 +409,28 @@ class PaymentProjectContractController extends Controller
 			// $a = $_POST["a_percent"];
 			$transaction=Yii::app()->db->beginTransaction();
 			try {
+
+				//running invoice_no
+                  $year = date('Y');
+                  $sql = 'SELECT MAX(no) as max_no FROM payment_project_contract WHERE  YEAR(invoice_date)='.$year;
+                  $command = Yii::app()->db->createCommand($sql);
+                  $result = $command->queryAll();
+                  $max_no = $result[0]['max_no']+1;
+                  $year_th = $year+543;
+                  $no_str = $max_no;
+                  if($max_no<10)
+                  {
+                     $no_str = "00".$max_no;
+                  }
+                  else if($max_no<100)
+                  {
+                     $no_str = "0".$max_no;
+                  }
+                
+        
+                  $model->invoice_no = "กบศ.".substr($year_th, -2)."-".$no_str;
+                  $model->no = $max_no;
+
 
 				if($model->save())
 				{

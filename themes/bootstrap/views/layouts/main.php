@@ -46,12 +46,12 @@
 .dropdown-submenu:focus > a {
   color: #ffffff;
   text-decoration: none;
-  background-color: #202120;
-  background-image: -moz-linear-gradient(top, #202120, #51a351);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#202120), to(#51a351));
-  background-image: -webkit-linear-gradient(top, #202120, #51a351);
-  background-image: -o-linear-gradient(top,  #202120, #51a351);
-  background-image: linear-gradient(to bottom ,#202120, #51a351);
+  background-color: #dbdad7;
+  background-image: -moz-linear-gradient(top, #70cc68, #70cc68);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70cc68), to(#70cc68));
+  background-image: -webkit-linear-gradient(top, #70cc68, #70cc68);
+  background-image: -o-linear-gradient(top,  #70cc68, #70cc68);
+  background-image: linear-gradient(to bottom ,#70cc68, #70cc68);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff202120', endColorstr='#ff51a351', GradientType=0);
 }
@@ -62,11 +62,11 @@
   color: #ffffff;
   text-decoration: none;
   background-color: #202120;
-  background-image: -moz-linear-gradient(top, #202120, #51a351);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#202120), to(#51a351));
-  background-image: -webkit-linear-gradient(top, #202120, #51a351);
-  background-image: -o-linear-gradient(top,  #202120, #51a351);
-  background-image: linear-gradient(to bottom ,#202120, #51a351);
+  background-image: -moz-linear-gradient(top, #70cc68, #70cc68);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70cc68), to(#70cc68));
+  background-image: -webkit-linear-gradient(top, #70cc68, #70cc68);
+  background-image: -o-linear-gradient(top,  #70cc68, #70cc68);
+  background-image: linear-gradient(to bottom ,#70cc68, #70cc68);
   background-repeat: repeat-x;
   outline: 0;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff202120', endColorstr='#ff51a351', GradientType=0);
@@ -464,7 +464,7 @@ if(Yii::app()->user->id !="")
                      array('label'=>'project summary report', 'url'=>array('/report/summary'),'visible'=>Yii::app()->user->isAccess('/report/summary')),
                      array('label'=>'BSC report', 'url'=>array('/report/bsc'),'visible'=>Yii::app()->user->isAccess('/report/bsc')),
                      array('label'=>'รายงานค่ารับรองโครงการ', 'url'=>array('/report/management'),'visible'=>Yii::app()->user->isAccess('/report/management')),
-                    array('label'=>'รายงานผู้จัดการโครงการ/ผู้อำนวยการโครงการ', 'url'=>array('/report/manager'),'visible'=>Yii::app()->user->isAccess('/report/manager')),
+                    array('label'=>'รายงานรายได้', 'url'=>array('/report/income'),'visible'=>Yii::app()->user->isAccess('/report/income')),
                      array('label'=>'รายงานสรุปรายได้/ค่าใช้จ่าย', 'url'=>array('/report/cashflow'),'visible'=>Yii::app()->user->isAccess('/report/cashflow')),
                      array('label'=>'รายงานสรุปรายได้ ค่าใช้จ่ายงานบริการวิศวกรรม', 'url'=>array('/report/service'),'visible'=>Yii::app()->user->isAccess('/report/service')),
                      array('label'=>'สรุปงานรายรับ-รายจ่ายงานโครงการ', 'url'=>array('/report/summaryCashflow'),'visible'=>Yii::app()->user->isAccess('/report/summaryCashflow')),
