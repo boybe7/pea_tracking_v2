@@ -194,12 +194,12 @@
         </div>    
         <div class="row-fluid">
           
-          <div class="span4">     
+          <div class="span3">     
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_letter'); ?>
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_letter', array( 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_letter',array('class'=>'help-block error')); ?>          
           </div>
-          <div class="span2">
+          <div class="span3">
              <?php 
                    
                     echo CHtml::activeLabelEx($model, '[' . $index . ']oc_sign_date'); 
@@ -280,18 +280,24 @@
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_T_percent', array( 'maxlength' => 3,'class'=>'span6')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_T_percent',array('class'=>'help-block error')); ?>          
           </div> 
+           <!-- <div class="span1">     
+              <?php //echo CHtml::activeLabelEx($model, '[' . $index . ']oc_A_percent'); ?>
+              <?php //echo CHtml::activeTextField($model, '[' . $index . ']oc_A_percent', array( 'maxlength' => 3,'class'=>'span6','disabled'=>true)); ?>
+              <?php //echo CHtml::error($model, '[' . $index . ']oc_A_percent',array('class'=>'help-block error')); ?>          
+          </div> --> 
+           
         </div>
 
         
 
         <div class="row-fluid">
           
-          <div class="span4">     
+          <div class="span3">     
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee'); ?>
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee', array( 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee',array('class'=>'help-block error')); ?>          
           </div>
-          <div class="span4">
+          <div class="span3">
             <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee_cost'); ?>
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee_cost',array('class'=>'span12','style'=>'text-align:right')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee_cost',array('class'=>'help-block error')); ?>       
@@ -322,22 +328,23 @@
 
                ?>           
           </div> 
-          <div class="span2">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_A_percent'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_A_percent', array( 'maxlength' => 3,'class'=>'span6','disabled'=>true)); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_A_percent',array('class'=>'help-block error')); ?>          
+          <div class="span3">     
+              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee_cf'); ?>
+              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee_cf', array( 'maxlength' => 255,'class'=>'span12')); ?>
+              <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee_cf',array('class'=>'help-block error')); ?>          
           </div> 
-           
+         
         </div>
 
         
         <div class="row-fluid">
           
-          <div class="span4">     
-              <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_adv_guarantee_cf'); ?>
-              <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_adv_guarantee_cf', array( 'maxlength' => 255,'class'=>'span12')); ?>
-              <?php echo CHtml::error($model, '[' . $index . ']oc_adv_guarantee_cf',array('class'=>'help-block error')); ?>          
-          </div> 
+           <div class="span3">
+             <?php 
+                echo CHtml::activeCheckBox($model,'notify_insurance',  array());
+                echo "  <font color='red'><b>เตือนขอกรมธรรม์ประกันภัย</b></font>";    
+             ?>
+           </div>
          
            <div class="span3">     
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_insurance'); ?>

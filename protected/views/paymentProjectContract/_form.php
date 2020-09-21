@@ -597,8 +597,13 @@
                   $cost = empty($payment) ? 0 : $payment[0]->cost;
                   $cost_summary += $cost;    
                   echo CHtml::label($value->detail, $id);    
-                 
-                  echo CHtml::textField($name, $cost,array('id'=>$id,'data-type'=>"currency",'class'=>'span12 payment_type','style'=>'text-align:right','onChange'=>'javascript:calCostSummary()'));    
+                  if($value->id!=7)
+                  {   echo CHtml::textField($name, $cost,array('id'=>$id,'data-type'=>"currency",'class'=>'span12 payment_type','style'=>'text-align:right','onChange'=>'javascript:calCostSummary()'));  
+                  }
+                  else
+                  {
+                    echo CHtml::textField($name, $cost,array('id'=>$id,'data-type'=>"currency",'class'=>'span12 ','style'=>'text-align:right','onChange'=>'javascript:calCostSummary()'));    
+                  }
 
                   //echo "<input type='text' id='$id' class='span12' style='text-align:right' value='$cost' >";
               }

@@ -99,19 +99,19 @@ $this->breadcrumbs=array(
       <?php
 
 
-        $this->widget('bootstrap.widgets.TbButton', array(
-              'buttonType'=>'link',
+        // $this->widget('bootstrap.widgets.TbButton', array(
+        //       'buttonType'=>'link',
               
-              'type'=>'inverse',
-              'label'=>'view',
-              'icon'=>'list-alt white',
+        //       'type'=>'inverse',
+        //       'label'=>'view',
+        //       'icon'=>'list-alt white',
               
-              'htmlOptions'=>array(
-                'class'=>'span4',
-                'style'=>'margin:25px 10px 0px 0px;',
-                'id'=>'gentReport'
-              ),
-          ));
+        //       'htmlOptions'=>array(
+        //         'class'=>'span4',
+        //         'style'=>'margin:25px 10px 0px 0px;',
+        //         'id'=>'gentReport'
+        //       ),
+        //   ));
       ?>
     <!-- </div> -->
     <!-- <div class="span1"> -->

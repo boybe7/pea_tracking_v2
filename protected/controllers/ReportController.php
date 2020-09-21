@@ -5953,7 +5953,7 @@ $table = $section->addTable(array("cellMargin"=>0));
                 	$column++;
                 }
 
-              	if($row > 50)
+              	if($row > 30)
               		$objPHPExcel->setActiveSheetIndex(1)->insertNewRowBefore($row + 1, 1);
 
                 $no++;
