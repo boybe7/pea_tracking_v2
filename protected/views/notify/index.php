@@ -223,7 +223,7 @@ $('#search-form').submit(function(){
       <?php
             $sql = "SELECT count(id) as amount,type  FROM notify  GROUP BY type ORDER BY type ASC";                  
             $notifyData = Yii::app()->db->createCommand($sql)->queryAll();
-            $amount[1] = $amount[2] = $amount[3] = $amount[4] = $amount[5] = $amount[6] = '';
+            $amount[1] = $amount[2] = $amount[3] = $amount[4] = $amount[5] = $amount[6] = $amount[7]  = $amount[8] = '';
             foreach ($notifyData as $key => $value) {
                 $amount[$value['type']] = $value['amount'];
             }
@@ -299,6 +299,28 @@ $('#search-form').submit(function(){
             else
                 echo  '<li ><a href="#1000Tab" data-toggle="tab">ของบ .1000 '.$badge.'</a></li>';
           }
+
+           $badge= '';
+            if($amount[7]>0) 
+              $badge=$this->widget('bootstrap.widgets.TbBadge', array(
+                'type'=>'warning',
+                'label'=>$amount[7],
+            ), true);
+            if(isset($_GET['tab']) && $_GET['tab']==7 )
+                echo  '<li class="active"><a href="#insuranceTab" data-toggle="tab">กรมธรรม์ '.$badge.'</a></li>';
+            else
+                echo  '<li ><a href="#insuranceTab" data-toggle="tab">กรมธรรม์ '.$badge.'</a></li>';
+
+            $badge= '';
+            if($amount[8]>0) 
+              $badge=$this->widget('bootstrap.widgets.TbBadge', array(
+                'type'=>'warning',
+                'label'=>$amount[8],
+            ), true);
+            if(isset($_GET['tab']) && $_GET['tab']==8 )
+                echo  '<li class="active"><a href="#garanteeTab2" data-toggle="tab">ค้ำประกันผลงาน '.$badge.'</a></li>';
+            else
+                echo  '<li ><a href="#garanteeTab2" data-toggle="tab">ค้ำประกันผลงาน '.$badge.'</a></li>';
 
        ?>     
         
@@ -661,6 +683,136 @@ $('#search-form').submit(function(){
         ?>
     </div> 
 
+      <?php
+        if(isset($_GET['tab']) && $_GET['tab']==7)  
+          echo '<div class="tab-pane active " id="insuranceTab">';
+        else
+          echo '<div class="tab-pane " id="insuranceTab">';   
+    ?>     
+         <center><h4>แจ้งเตือนกรมธรรม์ประกันภัย</h4></center>
+        <?php
+         
+             $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'notify-grid-insurance',
+                'type'=>'bordered condensed',            
+                'dataProvider'=>$model->searchByType(7),
+                'filter'=>$model,
+                'selectableRows' =>2,
+                'htmlOptions'=>array('style'=>''),
+                'enablePagination' => true,
+                'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+                'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+                'columns'=>array(
+                    'checkbox'=> array(
+                            'id'=>'selectedID',
+                            'class'=>'CCheckBoxColumn',
+                            //'selectableRows' => 2, 
+                             'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
+                             'htmlOptions'=>array(
+                                                'style'=>'text-align:center'
+
+                                            )               
+                    ),
+                    'proj'=>array(
+                            'name' => 'project',
+                            'header'=>$model->getAttributeLabel('project'),
+                            'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
+                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'con'=>array(
+                            'name' => 'contract',
+                            'header'=>$model->getAttributeLabel('contract'),
+                            'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
+                   
+                    array(
+                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                            'template' => '{update}',
+                            'buttons'=>array(
+                                'update' => array
+                                    (
+                                                        
+                                        'icon'=>'icon-pencil',
+                                        'url'=>'Yii::app()->createUrl($data["url"])'
+                                    ),
+                            )
+                    ) 
+                    
+                ),
+            ));  
+   
+        ?>
+    </div>  
+
+     <?php
+        if(isset($_GET['tab']) && $_GET['tab']==8)  
+          echo '<div class="tab-pane active " id="garanteeTab2">';
+        else
+          echo '<div class="tab-pane " id="garanteeTab2">';   
+    ?>     
+         <center><h4>แจ้งเตือนค้ำประกันผลงาน</h4></center>
+        <?php
+         
+             $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'notify-grid-garantee2',
+                'type'=>'bordered condensed',            
+                'dataProvider'=>$model->searchByType(8),
+                'filter'=>$model,
+                'selectableRows' =>2,
+                'htmlOptions'=>array('style'=>''),
+                'enablePagination' => true,
+                'summaryText'=>'แสดงผล {start} ถึง {end} จากทั้งหมด {count} ข้อมูล',
+                'template'=>"{items}<div class='row-fluid'><div class='span6'>{pager}</div><div class='span6'>{summary}</div></div>",
+                'columns'=>array(
+                    'checkbox'=> array(
+                            'id'=>'selectedID',
+                            'class'=>'CCheckBoxColumn',
+                            //'selectableRows' => 2, 
+                             'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #f5f5f5'),
+                             'htmlOptions'=>array(
+                                                'style'=>'text-align:center'
+
+                                            )               
+                    ),
+                    'proj'=>array(
+                            'name' => 'project',
+                            'header'=>$model->getAttributeLabel('project'),
+                            'filter'=>CHtml::activeTextField($model, 'project',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("project"))),
+                            'headerHtmlOptions' => array('style' => 'width:40%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),
+                    'con'=>array(
+                            'name' => 'contract',
+                            'header'=>$model->getAttributeLabel('contract'),
+                            'filter'=>CHtml::activeTextField($model, 'contract',array("placeholder"=>"ค้นหาตาม".$model->getAttributeLabel("contract"))),
+                            'headerHtmlOptions' => array('style' => 'width:30%;text-align:center;background-color: #eeeeee'),                       
+                            'htmlOptions'=>array('style'=>'text-align:left;padding-left:10px;')
+                    ),  
+                   
+                    array(
+                            'class'=>'bootstrap.widgets.TbButtonColumn',
+                            'headerHtmlOptions' => array('style' => 'width:5%;text-align:center;background-color: #eeeeee'),
+                            'template' => '{update}',
+                            'buttons'=>array(
+                                'update' => array
+                                    (
+                                                        
+                                        'icon'=>'icon-pencil',
+                                        'url'=>'Yii::app()->createUrl($data["url"])'
+                                    ),
+                            )
+                    ) 
+                    
+                ),
+            ));  
+   
+        ?>
+    </div>  
+
     <?php
     if(Yii::app()->user->username=='tsd' || Yii::app()->user->username=='tsd01' || Yii::app()->user->username=='tsd02' || Yii::app()->user->username=='tsd03') 
     { 
@@ -731,5 +883,9 @@ $('#search-form').submit(function(){
 
         ?>
     </div>  
-    <?php }?>   
+    <?php }?>  
+
+
+  
+     
 </div>

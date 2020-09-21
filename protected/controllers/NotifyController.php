@@ -215,11 +215,19 @@ class NotifyController extends Controller
 
          $sql = "SELECT pj_id,pj_name as project, oc_code as contract,'' as date_end, CONCAT('project/update/',pj_id) as url,oc_id as update_id, '6' as type, 'แจ้งเตือนของบ .1000' as alarm_detail  FROM outsource_contract  LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE notify_1000=1 AND (notify_1000_close IS NULL OR notify_1000_close='') AND user.department_id = '$user_dept' AND pj_status=1 AND (".$fiscal_year."-pj_fiscalyear)<2";                  
 	     $notify1000Data = Yii::app()->db->createCommand($sql)->queryAll();
+
+         //7. เตือนกรมธรรม์ จนกว่าจะกรอกเลขที่กรมธรรม์
+         $sql = "SELECT pj_id,pj_name as project, oc_code as contract,'' as date_end, CONCAT('project/update/',pj_id) as url,oc_id as update_id, '7' as type, 'แจ้งเตือนขอกรมธรรม์ประกันภัย' as alarm_detail  FROM outsource_contract  LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE notify_insurance=1 AND oc_insurance='' AND user.department_id = '$user_dept' AND pj_status=1 AND (".$fiscal_year."-pj_fiscalyear)<2";    
          
+         $insuranceData = Yii::app()->db->createCommand($sql)->queryAll();
+
+         //8. เตือนค้ำประกันผลงาน จนกว่าจะกรอกเลขที่
+         $sql = "SELECT pj_id,pj_name as project, oc_code as contract,'' as date_end, CONCAT('project/update/',pj_id) as url,oc_id as update_id, '8' as type, 'แจ้งเตือนขอค้ำประกันผลงาน' as alarm_detail  FROM outsource_contract  LEFT JOIN project ON oc_proj_id=pj_id  LEFT JOIN user ON pj_user_create=user.u_id WHERE notify_insurance=1 AND (oc_insurance='') AND user.department_id = '$user_dept' AND pj_status=1 AND (".$fiscal_year."-pj_fiscalyear)<2";                  
+         $garanteeData = Yii::app()->db->createCommand($sql)->queryAll();
         
 
         //merge all notify data   
-        $records=array_merge($projectContractData,$projectContractData2 , $paymentProjectData,$paymentProjectData2,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2,$notify1000Data); 
+        $records=array_merge($projectContractData,$projectContractData2 , $paymentProjectData,$paymentProjectData2,$closeProjectData, $paymentOutsourceData,$mangementCostData1,$mangementCostData2,$notify1000Data,$insuranceData); 
 
         //echo sizeof($closeProjectData);
 

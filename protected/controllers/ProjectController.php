@@ -1204,7 +1204,7 @@ class ProjectController extends Controller
 		                                            $mt->delete();
 		                                        }	                                          
 		                                        else{
-		                                           $model->addError('contract', 'xxxกรุณากรอกข้อมูล "สัญญาที่ "'.$index.' ในช่องที่มีเครื่องหมาย (*) ให้ครบถ้วน.');		
+		                                           $model->addError('contract', 'กรุณากรอกข้อมูล "สัญญาที่ "'.$index.' ในช่องที่มีเครื่องหมาย (*) ให้ครบถ้วน.');		
 				 				            	   $savePC = false;
 
 		                                        }   	
@@ -1400,9 +1400,9 @@ class ProjectController extends Controller
 									    	 $modelOC->oc_user_create = Yii::app()->user->ID;
 									    	 $modelOC->oc_user_update = Yii::app()->user->ID;
 									    	 $modelOC->oc_proj_id = $id;
-											        // header('Content-type: text/plain');
-					              //             		print_r($modelOC);                    
-					              //             	    exit;
+											         // header('Content-type: text/plain');
+					               //             		print_r($modelOC);                    
+					               //             	    exit;
 					                         array_push($modelOutsource, $modelOC);
 									    	 if($modelOC->save())
 											{
@@ -1562,6 +1562,8 @@ class ProjectController extends Controller
 												//$modelOC->oc_guarantee_cost = $value["oc_guarantee_cost"];
 												$modelOC->oc_adv_guarantee_cost = $value["oc_adv_guarantee_cost"];
 												$modelOC->oc_adv_guarantee_date = $value["oc_adv_guarantee_date"];
+
+												$modelOC->notify_insurance = $value["notify_insurance"];
 
 
 												if(isset($value["notify_1000"]))

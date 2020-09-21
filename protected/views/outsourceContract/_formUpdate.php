@@ -14,7 +14,25 @@
   .tr_white {
       background-color: white;
    }
+   .notify_insurance {
+       visibility: hidden;
+   }
+
 </style>
+<script type="text/javascript">
+function insuranceCheck(id) {
+  // Get the checkbox
+  var checkBox = document.getElementById("OutsourceContract_"+id+"_notify_insurance");
+  var element = document.getElementById("notify_"+id);
+  if (checkBox.checked == true){     
+      element.classList.remove("notify_insurance");
+  }
+  else
+  {
+      element.classList.add("notify_insurance");
+  }
+}
+</script>
 <fieldset class="well-yellow">
         <legend class="the-legend contract_no_oc">สัญญาที่ <?php echo ($index);?></legend>
          <?php echo CHtml::activeHiddenField($model, '[' . $index . ']oc_id'); ?>
@@ -339,19 +357,21 @@
         
         <div class="row-fluid">
           
-           <div class="span3">
+           <div class="span3" style="margin-right: 25px;">
              <?php 
-                echo CHtml::activeCheckBox($model,'notify_insurance',  array());
+                echo CHtml::activeCheckBox($model,'[' . $index . ']notify_insurance',  array('onclick'=>"insuranceCheck(". $index .")"));
                 echo "  <font color='red'><b>เตือนขอกรมธรรม์ประกันภัย</b></font>";    
              ?>
            </div>
-         
-           <div class="span3">     
+         <?php echo '<span class="notify_insurance" id="notify_'.$index.'">'; ?>   
+
+           <div class="span3">
               <?php echo CHtml::activeLabelEx($model, '[' . $index . ']oc_insurance'); ?>
               <?php echo CHtml::activeTextField($model, '[' . $index . ']oc_insurance', array('size' => 20, 'maxlength' => 255,'class'=>'span12')); ?>
               <?php echo CHtml::error($model, '[' . $index . ']oc_insurance',array('class'=>'help-block error')); ?>          
           </div> 
-          <div class="span2">
+
+           <div class="span2 ">
 
                <?php 
 
@@ -377,8 +397,7 @@
 
                ?> 
           </div>
-          <div class="span2">
-
+          <div class="span2 ">
                <?php 
 
                     echo CHtml::activeLabelEx($model, '[' . $index . ']oc_insurance_end'); 
@@ -404,7 +423,7 @@
                ?> 
           </div>
           
-        
+                 <?php echo '</span>'; ?>   
            
            
         </div>
